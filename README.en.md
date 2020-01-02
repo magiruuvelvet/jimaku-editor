@@ -77,7 +77,7 @@ adding the hints below the timestamp.
 
    The text justification within the subtitle frame once rendered.
 
-   Possible values for `horizontal`: `left`, `center` (default), `right`
+   Possible values for `horizontal`: `left`, `center` (default), `right`\
    Possible values for `vertical`: `top` (default)
 
  - `margin` **(overwrite only)**
@@ -85,7 +85,7 @@ adding the hints below the timestamp.
    This property instructs the renderer how much margin from out-to-in
    must be applied for the subtitle frame.
 
-   When the direction is horizontal this adjusts the bottom margin.
+   When the direction is horizontal this adjusts the bottom margin.\
    When the direction is vertical this adjusts the side margin (left/right),
    depending on the text alignment.
 
