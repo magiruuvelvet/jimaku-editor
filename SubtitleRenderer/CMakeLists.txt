@@ -10,5 +10,6 @@ message(STATUS "${CURRENT_TARGET} include directory: ${SUBTITLERENDERER_INCLUDE_
 
 add_library(SubtitleRendererInterface INTERFACE)
 target_include_directories(SubtitleRendererInterface INTERFACE "${SUBTITLERENDERER_INCLUDE_DIR}")
+target_link_libraries(SubtitleRendererInterface INTERFACE SubtitleRenderer)
 
 message(STATUS "Configured target ${CURRENT_TARGET}.\n")

@@ -10,5 +10,6 @@ message(STATUS "${CURRENT_TARGET} include directory: ${PGSENCODER_INCLUDE_DIR}")
 
 add_library(PGSEncoderInterface INTERFACE)
 target_include_directories(PGSEncoderInterface INTERFACE "${PGSENCODER_INCLUDE_DIR}")
+target_link_libraries(PGSEncoderInterface INTERFACE PGSEncoder)
 
 message(STATUS "Configured target ${CURRENT_TARGET}.\n")

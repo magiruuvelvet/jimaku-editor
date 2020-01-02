@@ -10,5 +10,6 @@ message(STATUS "${CURRENT_TARGET} include directory: ${SUBTITLEPARSER_INCLUDE_DI
 
 add_library(SubtitleParserInterface INTERFACE)
 target_include_directories(SubtitleParserInterface INTERFACE "${SUBTITLEPARSER_INCLUDE_DIR}")
+target_link_libraries(SubtitleParserInterface INTERFACE SubtitleParser)
 
 message(STATUS "Configured target ${CURRENT_TARGET}.\n")
