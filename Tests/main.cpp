@@ -4,6 +4,8 @@
 
 #include "srtparsertest.hpp"
 
+static bool has_failed_tests = false;
+
 template<typename Func, typename... Args>
 void test(const std::string &test_name, Func func, Args&&... args)
 {
@@ -26,6 +28,9 @@ void test(const std::string &test_name, Func func, Args&&... args)
     }
     else
     {
+        // at least one test failed
+        has_failed_tests = true;
+
         if (exception)
         {
             std::cerr << "[Test] " << test_name << ": FAILED with exception -> " << message << std::endl;
@@ -43,5 +48,5 @@ int main(void)
 
     test("SrtParser::parse_basic", srtparser_tests::parse_basic);
 
-    return 0;
+    return has_failed_tests ? 1 : 0;
 }

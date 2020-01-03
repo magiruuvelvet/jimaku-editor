@@ -10,6 +10,7 @@ namespace SrtParser {
 
 namespace {
 
+// split a given string at delimiter and push results into elems
 static std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems)
 {
     std::stringstream ss(s);
@@ -23,13 +24,34 @@ static std::vector<std::string> &split(const std::string &s, char delim, std::ve
     return elems;
 }
 
+// silently ignore the BOM when present, assume file is in UTF-8 by default
+static void skip_utf8_bom(std::ifstream &fs)
+{
+    int dst[3];
+
+    for (auto& i : dst)
+    {
+        i = fs.get();
+    }
+
+    constexpr int utf8[] = { 0xEF, 0xBB, 0xBF };
+
+    if (!std::equal(std::begin(dst), std::end(dst), utf8))
+    {
+        fs.seekg(0);
+    }
+}
+
 } // anonymous namespace
 
 std::vector<SubtitleItem> parse(const std::string &fileName)
 {
     std::vector<SubtitleItem> subtitles;
 
+    // read file and ignore BOM when present (causing parsing issues with std::getline)
     std::ifstream infile(fileName);
+    skip_utf8_bom(infile);
+
     std::string line, start, end, completeLine = "", timeLine = "";
     sub_number_t subNo = 0;
     auto turn = 0;
@@ -42,17 +64,14 @@ std::vector<SubtitleItem> parse(const std::string &fileName)
 
     while (std::getline(infile, line))
     {
-        line.erase(remove(line.begin(), line.end(), '\r'), line.end());
+        // remove carriage return line breaks from line (only keep line feeds)
+        line.erase(std::remove(line.begin(), line.end(), '\r'), line.end());
 
-        if (line.compare(""))
+        if (!line.empty())
         {
             if (!turn)
             {
-                try {
-                    subNo = std::stoull(line);
-                } catch (...) {
-                    subNo = 0;
-                }
+                subNo = std::stoull(line);
 
                 turn++;
                 continue;
