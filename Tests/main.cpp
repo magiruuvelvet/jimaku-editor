@@ -3,6 +3,7 @@
 #include <string>
 
 #include "srtparsertest.hpp"
+#include "renderertest.hpp"
 
 static bool has_failed_tests = false;
 
@@ -48,6 +49,10 @@ int main(void)
 
     test("SrtParser::parse_basic", srtparser_tests::parse_basic);
     test("SrtParser::parse_styled", srtparser_tests::parse_styled);
+
+    test("PngRenderer::render_simple", renderer_tests::render_simple, "test1.png", "ここがウチの村");
+    test("PngRenderer::render_simple", renderer_tests::render_simple, "test2.png", "ここがウチの村\nのんびりのどかな所です");
+    test("PngRenderer::render_simple", renderer_tests::render_simple, "test3.png", "夏休み");
 
     return has_failed_tests ? 1 : 0;
 }

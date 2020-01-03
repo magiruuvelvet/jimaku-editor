@@ -51,7 +51,7 @@ format with an additional line after the timestamp.
 00:00:16,599 --> 00:00:18,935 
 # text-direction=horizontal
 # text-alignment=center
-# margin=90
+# margin-overwrite=90
 # font-size=42
 （宮内(みやうち)れんげ）おおーっ！
 ```
@@ -120,6 +120,10 @@ adding the hints below the timestamp.
    same line instead of placing them from top to bottom.
 
    Possible values: `true` (default), `false`
+
+  - `furigana-spacing`
+  - `furigana-distance`
+  - `furigana-font-size`
 
 
 ## Furigana
