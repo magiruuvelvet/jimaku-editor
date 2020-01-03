@@ -67,7 +67,7 @@ adding the hints below the timestamp.
 
  - `text-direction`
 
-   Possible values: `horizontal`, `vertical`
+   Possible values: `horizontal` (default), `vertical`
 
  - `text-alignment`
 

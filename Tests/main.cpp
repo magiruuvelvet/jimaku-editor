@@ -47,6 +47,7 @@ int main(void)
     std::cout << "Running tests..." << std::endl;
 
     test("SrtParser::parse_basic", srtparser_tests::parse_basic);
+    test("SrtParser::parse_styled", srtparser_tests::parse_styled);
 
     return has_failed_tests ? 1 : 0;
 }

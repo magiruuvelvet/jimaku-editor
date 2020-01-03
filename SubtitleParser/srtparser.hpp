@@ -96,6 +96,15 @@ public:
         _text = text;
     }
 
+    // set subtitle number
+    inline void setSubNumber(sub_number_t subNo)
+    {
+        _subNo = subNo;
+    }
+
+protected:
+    timestamp_t timeMSec(const std::string &value);
+
 private:
     timestamp_t _startTime;
     timestamp_t _endTime;
@@ -104,8 +113,6 @@ private:
     sub_number_t _subNo;
     std::string _startTimeString;
     std::string _endTimeString;
-
-    timestamp_t timeMSec(const std::string &value);
 };
 
 std::vector<SubtitleItem> parse(const std::string &fileName);
