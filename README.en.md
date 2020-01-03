@@ -83,7 +83,7 @@ adding the hints below the timestamp.
    Possible values for `horizontal`: `left`, `center` (default), `right`\
    Possible values for `vertical`: `top` (default)
 
- - `margin` **(overwrite only)**
+ - `margin-overwrite` **(overwrite only)**
 
    This property instructs the renderer how much margin from out-to-in
    must be applied for the subtitle frame.
