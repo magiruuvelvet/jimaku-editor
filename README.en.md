@@ -53,7 +53,7 @@ format with an additional line after the timestamp.
 # text-alignment=center
 # margin-overwrite=90
 # font-size=42
-（宮内(みやうち)れんげ）おおーっ！
+（{宮内|みやうち}れんげ）おおーっ！
 ```
 
 My idea is to have **global hints** on the top of the subtitle file which
@@ -128,15 +128,16 @@ adding the hints below the timestamp.
 
 ## Furigana
 
-To instruct the renderer about Furigana I'm using the format already
-found on many Japanese SRT subtitles found on the internet to avoid
-additional work.
+To instruct the renderer about Furigana I'm using the following format:
 
-`宮内(みやうち)`
+`{宮内|みやうち}れんげ`
 
-The Furigana is placed inside **ASCII parenthesis** right after the Kanji.
-To keep the implementation simple, this project depends on the ICU library
-in the future.
+The original text and Furigana are placed inside `{}`. The `|` (pipe) symbol
+acts as separator. That way no complicated implementation must be done and
+using of a library like ICU is not required. This makes is also possible for
+subtitle writers to exactly place the Furigana were it belongs too.
+
+This syntax is also already known to avoid confusing people.
 
 The decision where the Furigana should be placed is automatic. The rules
 are as follows:

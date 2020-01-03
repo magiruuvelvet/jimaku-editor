@@ -9,6 +9,9 @@
 #include <QFontInfo>
 #include <QFont>
 #include <QBuffer>
+#include <QRegularExpression>
+
+#include <QDebug>
 
 static QGuiApplication *qt_app = nullptr;
 
@@ -22,15 +25,71 @@ static void init_qt_context()
     }
 }
 
+namespace  {
+
+struct FuriganaPair
+{
+    QString kanji;
+    QString furigana;
+    int startPos = -1;
+    int length = 0;
+};
+
+static const QString getLineWithoutFurigana(const QString &line, QList<FuriganaPair> *furiganaPairs = nullptr)
+{
+    static const QRegularExpression furiganaCapture(R"(\{(.*)\|(.*)\})");
+
+    QString newLine = line.split(furiganaCapture).join("|");
+
+    int lastIndex = 0;
+    auto matches = furiganaCapture.globalMatch(line);
+    while (matches.hasNext())
+    {
+        auto match = matches.next();
+
+        lastIndex = newLine.indexOf('|', lastIndex);
+
+        // replace pipe symbol with original kanji
+        if (lastIndex != -1)
+        {
+            newLine.remove(lastIndex, 1);
+            newLine.insert(lastIndex, match.capturedTexts().at(1));
+        }
+
+        // append to furigana pair list
+        if (furiganaPairs)
+        {
+            furiganaPairs->append({
+                match.capturedTexts().at(1),    // original kanji
+                match.capturedTexts().at(2),    // furigana
+                match.capturedStart(0),         // position in line where kanji with furigana starts
+                match.capturedLength(1),        // kanji count
+            });
+        }
+    }
+
+    return newLine;
+}
+
+static bool hasLineFurigana(const QString &line)
+{
+    QList<FuriganaPair> furiganaPairs;
+    getLineWithoutFurigana(line, &furiganaPairs);
+    return !furiganaPairs.empty();
+}
+
+} // anonymous namespace
+
 PNGRenderer::PNGRenderer()
 {
     init_qt_context();
 }
 
-PNGRenderer::PNGRenderer(const std::string &text, const std::string &fontFamily, int fontSize)
+PNGRenderer::PNGRenderer(const std::string &text, const std::string &fontFamily, int fontSize, int furiganaFontSize)
     : _text(text),
       _fontFamily(fontFamily),
-      _fontSize(fontSize)
+      _fontSize(fontSize),
+      _furiganaFontSize(furiganaFontSize)
 {
     PNGRenderer();
 
@@ -50,41 +109,68 @@ const std::vector<char> PNGRenderer::render() const
 {
     const QString text = QString::fromUtf8(_text.c_str());
     const QFont font = QFont(_fontFamily.c_str(), _fontSize);
+    const QFont fontFurigana = QFont(_fontFamily.c_str(), _furiganaFontSize);
 
     // split lines
     QStringList lines = text.split('\n', QString::KeepEmptyParts);
 
     // calculate necessary size for subtitle image
     QSize size{0, 0};
-    int lineHeight = 0;
+    int lineHeight = 0, furiLineHeight = 0;
+    int glyphWidth = 0;
 
     for (auto&& line : lines)
     {
-        QFontMetrics textMetrics(font);
-        auto rect = textMetrics.boundingRect(line);
+        // take metrics without Furigana
+        auto lineWithoutFurigana = getLineWithoutFurigana(line);
 
-        // bounding rect has not enough width, use another function for this
-        rect.setWidth(textMetrics.horizontalAdvance(line));
+        QFontMetrics mainMetrics(font);
+        QFontMetrics furiMetrics(fontFurigana);
+
+        auto mainRect = mainMetrics.boundingRect(lineWithoutFurigana);
+        auto furiRect = furiMetrics.boundingRect(line);
+
+        // get width of glyph
+        glyphWidth = mainMetrics.size(0, lineWithoutFurigana.at(0)).width();
+
+        // bounding rect may not have enough width, use another function for this
+        mainRect.setWidth(mainMetrics.horizontalAdvance(lineWithoutFurigana));
 
         // maximum width
-        if (rect.size().width() > size.width())
+        if (mainRect.size().width() > size.width())
         {
-            size.setWidth(rect.width());
+            size.setWidth(mainRect.width());
         }
 
         // maximum height
-        if (rect.height() > size.height())
+        if (mainRect.height() > size.height())
         {
-            size.setHeight(rect.height());
-            lineHeight = rect.height();
+            size.setHeight(mainRect.height());
+            lineHeight = mainRect.height();
+        }
+
+        // maximum Furigana height
+        if (furiRect.height() > furiLineHeight)
+        {
+            furiLineHeight = furiRect.height();
         }
     }
 
     // line space reducer
-    static int line_space_reducer = 10;
+    static int line_space_reducer = 20;
 
     // calculate required image height
-    size.setHeight((size.height() * lines.size()) - (line_space_reducer * lines.size()));
+    size.setHeight((size.height() * lines.size()) - (line_space_reducer * (lines.size() - 1)));
+
+    // increase height to fit Furigana
+    for (auto&& line : lines)
+    {
+        bool hasFurigana = hasLineFurigana(line);
+        if (hasFurigana)
+        {
+            size.setHeight(size.height() + furiLineHeight);
+        }
+    }
 
     // create in-memory image
     QImage image(size, QImage::Format_ARGB32);
@@ -93,20 +179,66 @@ const std::vector<char> PNGRenderer::render() const
     // paint text onto image
     QPainter painter(&image);
     painter.setFont(font);
-    painter.setPen(Qt::black);
+    painter.setBackgroundMode(Qt::TransparentMode);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setRenderHint(QPainter::TextAntialiasing, true);
+
+    int nextYAdjust = 0;
 
     for (auto i = 0; i < lines.size(); ++i)
     {
-        int y = -line_space_reducer;
-
-        if (i != 0)
+        // vertical rendering
+        if (_vertical)
         {
-            y = ((lineHeight / 2) + line_space_reducer) * i;
+            // TODO
         }
 
-        // the Y position is reduced intentionally to not have extreme spacing between lines
-        // Japanese subtitles are more compact to be easier to read
-        painter.drawText(0, y, size.width(), lineHeight, Qt::AlignCenter, lines.at(i));
+        // horizontal rendering
+        else
+        {
+            QList<FuriganaPair> furiganaPairs;
+            auto lineWithoutFurigana = getLineWithoutFurigana(lines.at(i), &furiganaPairs);
+            bool hasFurigana = hasLineFurigana(lines.at(i));
+
+            // the Y position is reduced intentionally to not have extreme spacing between lines
+            // Japanese subtitles are more compact to be easier to read
+
+            int y = -5 + nextYAdjust;
+
+            if (i != 0)
+            {
+                y = (lineHeight * i) - (line_space_reducer * i) - 5 + nextYAdjust;
+            }
+
+            // Furigana on top
+            if (i == 0 && hasFurigana)
+            {
+                y += furiLineHeight;
+                nextYAdjust = furiLineHeight;
+            }
+
+            // Furigana on bottom
+            //  no Y adjust from top needed
+
+            // TODO: draw text outline and shadow
+            painter.setPen(Qt::black);
+            painter.drawText(0, y, size.width(), lineHeight, Qt::AlignCenter, lineWithoutFurigana);
+
+            // draw main text
+            painter.setPen(Qt::white);
+            painter.drawText(0, y, size.width(), lineHeight, Qt::AlignCenter, lineWithoutFurigana);
+
+            // draw Furigana, if any
+            if (hasFurigana)
+            {
+                // TODO
+
+                for (auto&& f : furiganaPairs)
+                {
+                    qDebug() << f.kanji << f.furigana << f.startPos << f.length;
+                }
+            }
+        }
     }
 
     // write PNG data and return it
