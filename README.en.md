@@ -49,7 +49,10 @@ format with an additional line after the timestamp.
 ```plain
 2
 00:00:16,599 --> 00:00:18,935 
-# text-direction=horizontal;text-alignment=center;margin=90;font-size=42;
+# text-direction=horizontal
+# text-alignment=center
+# margin=90
+# font-size=42
 （宮内(みやうち)れんげ）おおーっ！
 ```
 
@@ -91,11 +94,16 @@ adding the hints below the timestamp.
 
  - `margin-bottom` **(global only)**
 
-   Default bottom margin.
+   Default bottom margin. Default is 100 (*may change once the implementation has started*).
 
  - `margin-side` **(global only)**
 
-   Default side margin.
+   Default side margin. Default is 100 (*may change once the implementation has started*).
+
+ - `margin-top` **(overwrite and global)**
+
+   For vertical text only. Default top margin.
+   Default is 150 (*may change once the implementation has started*).
 
  - `font-family`
 
@@ -103,7 +111,7 @@ adding the hints below the timestamp.
 
  - `font-size`
 
-   The size of the font in `px`.
+   The size of the font in `px`. Default is 42 (*may change once the implementation has started*).
 
  - `horizontal-numbers`
 
