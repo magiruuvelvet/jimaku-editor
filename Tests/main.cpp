@@ -4,15 +4,16 @@
 
 #include "srtparsertest.hpp"
 
-template<typename Func>
-void test(const std::string &test_name, Func func)
+template<typename Func, typename... Args>
+void test(const std::string &test_name, Func func, Args&&... args)
 {
     bool result = false;
     bool exception = false;
     std::string message;
 
     try {
-        result = func();
+        // execute test function and forward additional arguments
+        result = func(args...);
     } catch (std::exception &e) {
         result = false;
         exception = true;
