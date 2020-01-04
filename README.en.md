@@ -190,3 +190,15 @@ Example showing vertical writing with Furigana on the right side.
 
 [Download](.readme/example.sup) and try yourself.
 
+
+## Progress Report
+
+#### 2020-01-04
+
+Horizontal text rendering is finished.
+
+Input: `（宮内{一穂|かずほ}）\nおばあちゃんが\n{買|か}ってくれたんだって`
+
+Renders into this with the default values:
+
+![Rendering Example 1](.readme/rendering-example-1.png)
