@@ -113,6 +113,11 @@ adding the hints below the timestamp.
 
    The size of the font in `pt`. Default is 42.
 
+ - `font-color`
+
+   The color of the font in HTML format with leading `#`.\
+   Default is `#f1f1f1`.
+
  - `horizontal-numbers`
 
    This property only applies when `vertical` text direction is used.
@@ -135,6 +140,11 @@ adding the hints below the timestamp.
  - `furigana-font-size`
 
    The size of the font in `pt` for Furigana. Default is 20.
+
+ - `furigana-font-color`
+
+   The color of the Furigana font in HTML format with leading `#`.\
+   Default is `#f1f1f1`.
 
  - `line-space-reduction`
 

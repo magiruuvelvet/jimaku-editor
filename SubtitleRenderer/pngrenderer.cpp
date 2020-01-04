@@ -149,6 +149,29 @@ static int getFuriganaDistanceValue(PNGRenderer::FuriganaDistance furiganaDistan
     }
 }
 
+// QPainter can't do this apparently, so we need to brute force it instead :(
+static void drawTextBorder(QPainter *painter, int x, int y, int borderSize, int width, int height, int alignment, const QString &text)
+{
+    // top left
+    painter->drawText(x-borderSize, y-borderSize, width, height, alignment, text);
+    // top
+    painter->drawText(x, y-borderSize, width, height, alignment, text);
+    // top right
+    painter->drawText(x+borderSize, y-borderSize, width, height, alignment, text);
+    // left
+    painter->drawText(x-borderSize, y, width, height, alignment, text);
+    // middle
+    painter->drawText(x, y, width, height, alignment, text);
+    // right
+    painter->drawText(x+borderSize, y, width, height, alignment, text);
+    // bottom left
+    painter->drawText(x-borderSize, y+borderSize, width, height, alignment, text);
+    // bottom
+    painter->drawText(x, y+borderSize, width, height, alignment, text);
+    // bottom right
+    painter->drawText(x+borderSize, y+borderSize, width, height, alignment, text);
+}
+
 } // anonymous namespace
 
 PNGRenderer::PNGRenderer()
@@ -238,7 +261,9 @@ const std::vector<char> PNGRenderer::render() const
 
     // create in-memory image
     QImage image(size, QImage::Format_ARGB32);
+    QImage background(size, QImage::Format_ARGB32);
     image.fill(Qt::transparent);
+    background.fill(Qt::transparent);
 
     // paint text onto image
     QPainter painter(&image);
@@ -246,6 +271,12 @@ const std::vector<char> PNGRenderer::render() const
     painter.setBackgroundMode(Qt::TransparentMode);
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setRenderHint(QPainter::TextAntialiasing, true);
+
+    QPainter bgPainter(&background);
+    bgPainter.setFont(font);
+    bgPainter.setBackgroundMode(Qt::TransparentMode);
+    bgPainter.setRenderHint(QPainter::Antialiasing, true);
+    bgPainter.setRenderHint(QPainter::TextAntialiasing, true);
 
     // horizontal only
     int nextYAdjust = 0;
@@ -255,6 +286,10 @@ const std::vector<char> PNGRenderer::render() const
 
     // get furigana distance value
     int furiganaDistance = getFuriganaDistanceValue(_furiganaDistance);
+
+    // TODO: make properties
+    int borderSize = 3;
+    int furiganaBorderSize = 1;
 
     for (auto i = 0; i < lines.size(); ++i)
     {
@@ -296,13 +331,14 @@ const std::vector<char> PNGRenderer::render() const
 
             // set main font
             painter.setFont(font);
+            bgPainter.setFont(font);
 
-            // TODO: draw text outline and shadow
-            painter.setPen(Qt::black);
-            painter.drawText(0, y, size.width(), lineHeight, alignment, lineWithoutFurigana, &drawnPosition);
+            // draw text outline and shadow
+            bgPainter.setPen(QColor(_borderColor.c_str()));
+            drawTextBorder(&bgPainter, 0, y, borderSize, size.width(), lineHeight, alignment, lineWithoutFurigana);
 
             // draw main text
-            painter.setPen(Qt::white);
+            painter.setPen(QColor(_fontColor.c_str()));
             painter.drawText(0, y, size.width(), lineHeight, alignment, lineWithoutFurigana, &drawnPosition);
 
             // draw Furigana
@@ -310,6 +346,7 @@ const std::vector<char> PNGRenderer::render() const
             {
                 // set furigana font
                 painter.setFont(fontFurigana);
+                bgPainter.setFont(fontFurigana);
 
                 for (auto&& f : furiganaPairs)
                 {
@@ -333,24 +370,24 @@ const std::vector<char> PNGRenderer::render() const
                     // draw on top
                     if (i == 0)
                     {
-                        // TODO: draw text outline and shadow
-                        painter.setPen(Qt::black);
-                        painter.drawText(startX, y - furiganaDistance, furiWidth, furiLineHeight, 0, f.furigana);
+                        // draw text outline and shadow
+                        bgPainter.setPen(QColor(_borderColor.c_str()));
+                        drawTextBorder(&bgPainter, startX, y - furiganaDistance, furiganaBorderSize, furiWidth, furiLineHeight, 0, f.furigana);
 
                         // draw main text
-                        painter.setPen(Qt::white);
+                        painter.setPen(QColor(_furiganaFontColor.c_str()));
                         painter.drawText(startX, y - furiganaDistance, furiWidth, furiLineHeight, 0, f.furigana);
                     }
 
                     // draw on bottom when multiple lines are present
                     if (i == lines.size() - 1 && lines.size() != 1)
                     {
-                        // TODO: draw text outline and shadow
-                        painter.setPen(Qt::black);
-                        painter.drawText(startX, y + furiganaDistance + (lineHeight / 2), furiWidth, furiLineHeight, 0, f.furigana);
+                        // draw text outline and shadow
+                        bgPainter.setPen(QColor(_borderColor.c_str()));
+                        drawTextBorder(&bgPainter, startX, y + furiganaDistance + (lineHeight / 2), furiganaBorderSize, furiWidth, furiLineHeight, 0, f.furigana);
 
                         // draw main text
-                        painter.setPen(Qt::white);
+                        painter.setPen(QColor(_furiganaFontColor.c_str()));
                         painter.drawText(startX, y + furiganaDistance + (lineHeight / 2), furiWidth, furiLineHeight, 0, f.furigana);
                     }
                 }
@@ -358,12 +395,21 @@ const std::vector<char> PNGRenderer::render() const
         }
     }
 
+    // TODO: blur background image
+    // current function can't handle transparency correctly
+    //bgPainter.end();
+    //background = blurImage(&background);
+
+    // merge main image into background so that it is in the foreground
+    //bgPainter.begin(&background);
+    bgPainter.drawImage(0, 0, image);
+
     // write PNG data and return it
     QByteArray png_data;
     QBuffer png_data_buf(&png_data);
     png_data_buf.open(QIODevice::WriteOnly);
 
-    image.save(&png_data_buf, "PNG");
+    background.save(&png_data_buf, "PNG");
 
     // convert Qt data to STL
     std::vector<char> png_data_no_qt;

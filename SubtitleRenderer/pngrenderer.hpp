@@ -53,9 +53,19 @@ public:
         _fontSize = fontSize;
     }
 
+    inline void setFontColor(const std::string &fontColor)
+    {
+        _fontColor = fontColor;
+    }
+
     inline void setFuriganaFontSize(int furiganaFontSize)
     {
         _furiganaFontSize = furiganaFontSize;
+    }
+
+    inline void setFuriganaFontColor(const std::string &furiganaFontColor)
+    {
+        _furiganaFontColor = furiganaFontColor;
     }
 
     inline void setLineSpaceReduction(int lineSpaceReduction)
@@ -73,6 +83,11 @@ public:
         _furiganaDistance = furiganaDistance;
     }
 
+    inline void setBorderColor(const std::string &borderColor)
+    {
+        _borderColor = borderColor;
+    }
+
     const std::vector<char> render() const;
 
 private:
@@ -80,10 +95,13 @@ private:
     std::string _text;
     std::string _fontFamily;
     int _fontSize = -1;
+    std::string _fontColor = "#f1f1f1";
     int _furiganaFontSize = -1;
+    std::string _furiganaFontColor = "#f1f1f1";
     int _lineSpaceReduction = 27;
     TextJustify _textJustify = TextJustify::Center;
     FuriganaDistance _furiganaDistance = FuriganaDistance::Narrow;
+    std::string _borderColor = "#191919";
 };
 
 #endif // PNGRENDERER_HPP
