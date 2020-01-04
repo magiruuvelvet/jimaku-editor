@@ -117,21 +117,17 @@ const std::vector<char> PNGRenderer::render() const
     // calculate necessary size for subtitle image
     QSize size{0, 0};
     int lineHeight = 0, furiLineHeight = 0;
-    int glyphWidth = 0;
+
+    QFontMetrics mainMetrics(font);
+    QFontMetrics furiMetrics(fontFurigana);
 
     for (auto&& line : lines)
     {
         // take metrics without Furigana
         auto lineWithoutFurigana = getLineWithoutFurigana(line);
 
-        QFontMetrics mainMetrics(font);
-        QFontMetrics furiMetrics(fontFurigana);
-
         auto mainRect = mainMetrics.boundingRect(lineWithoutFurigana);
         auto furiRect = furiMetrics.boundingRect(line);
-
-        // get width of glyph
-        glyphWidth = mainMetrics.size(0, lineWithoutFurigana.at(0)).width();
 
         // bounding rect may not have enough width, use another function for this
         mainRect.setWidth(mainMetrics.horizontalAdvance(lineWithoutFurigana));
@@ -185,6 +181,21 @@ const std::vector<char> PNGRenderer::render() const
 
     int nextYAdjust = 0;
 
+    // determine text alignment
+    Qt::AlignmentFlag alignment = Qt::AlignCenter;
+    if (_textJustify == TextJustify::Left)
+    {
+        alignment = Qt::AlignLeft;
+    }
+    else if (_textJustify == TextJustify::Center)
+    {
+        alignment = Qt::AlignCenter;
+    }
+    else if (_textJustify == TextJustify::Right)
+    {
+        alignment = Qt::AlignRight;
+    }
+
     for (auto i = 0; i < lines.size(); ++i)
     {
         // vertical rendering
@@ -220,22 +231,56 @@ const std::vector<char> PNGRenderer::render() const
             // Furigana on bottom
             //  no Y adjust from top needed
 
+            // the position where QPainter has drawn the text (required to render Furigana later)
+            QRect drawnPosition;
+
+            // set main font
+            painter.setFont(font);
+
             // TODO: draw text outline and shadow
             painter.setPen(Qt::black);
-            painter.drawText(0, y, size.width(), lineHeight, Qt::AlignCenter, lineWithoutFurigana);
+            painter.drawText(0, y, size.width(), lineHeight, alignment, lineWithoutFurigana, &drawnPosition);
 
             // draw main text
             painter.setPen(Qt::white);
-            painter.drawText(0, y, size.width(), lineHeight, Qt::AlignCenter, lineWithoutFurigana);
+            painter.drawText(0, y, size.width(), lineHeight, alignment, lineWithoutFurigana, &drawnPosition);
 
-            // draw Furigana, if any
+            // draw Furigana
             if (hasFurigana)
             {
-                // TODO
+                // set furigana font
+                painter.setFont(fontFurigana);
 
                 for (auto&& f : furiganaPairs)
                 {
-                    qDebug() << f.kanji << f.furigana << f.startPos << f.length;
+                    // get real width of Kanji and Furigana
+                    auto kanjiWidth = mainMetrics.horizontalAdvance(f.kanji);
+                    auto furiWidth = furiMetrics.horizontalAdvance(f.furigana);
+
+                    // calculate starting position for Furigana
+                    auto startX = mainMetrics.horizontalAdvance(lineWithoutFurigana, f.startPos);
+                    // center align Furigana
+                    startX += (kanjiWidth / 2) - (furiWidth / 2);
+                    // adjust position where text was actually drawn by QPainter
+                    startX += drawnPosition.x();
+
+                    // draw on top
+                    if (i == 0)
+                    {
+                        // TODO: draw text outline and shadow
+                        painter.setPen(Qt::black);
+                        painter.drawText(startX, 12, furiWidth, furiLineHeight, 0, f.furigana);
+
+                        // draw main text
+                        painter.setPen(Qt::white);
+                        painter.drawText(startX, 12, furiWidth, furiLineHeight, 0, f.furigana);
+                    }
+
+                    // draw on bottom
+                    if (i == lines.size() - 1)
+                    {
+                        // TODO
+                    }
                 }
             }
         }

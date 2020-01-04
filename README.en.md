@@ -111,7 +111,7 @@ adding the hints below the timestamp.
 
  - `font-size`
 
-   The size of the font in `px`. Default is 42 (*may change once the implementation has started*).
+   The size of the font in `pt`. Default is 42.
 
  - `horizontal-numbers`
 
@@ -121,9 +121,20 @@ adding the hints below the timestamp.
 
    Possible values: `true` (default), `false`
 
-  - `furigana-spacing`
-  - `furigana-distance`
-  - `furigana-font-size`
+ - `furigana-spacing`
+
+   The spacing between each Kana. Defaults to the font glyph spacing.
+   The value for the font default is `font`. Otherwise a number in pixel.
+
+ - `furigana-distance`
+
+   The distance between the Kanji and Furigana.
+
+   Possible values: `none`, `narrow` (default), `far`
+
+ - `furigana-font-size`
+
+   The size of the font in `pt` for Furigana. Default is 20.
 
 
 ## Furigana

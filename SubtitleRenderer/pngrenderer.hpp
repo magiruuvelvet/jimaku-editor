@@ -18,6 +18,13 @@ public:
     PNGRenderer(const std::string &text, const std::string &fontFamily = {}, int fontSize = 42, int furiganaFontSize = 20);
     ~PNGRenderer() = default;
 
+    enum class TextJustify
+    {
+        Left,
+        Center,
+        Right,
+    };
+
     inline void setVertical(bool vertical)
     {
         _vertical = vertical;
@@ -43,6 +50,11 @@ public:
         _furiganaFontSize = furiganaFontSize;
     }
 
+    inline void setTextJustify(TextJustify textJustify)
+    {
+        _textJustify = textJustify;
+    }
+
     const std::vector<char> render() const;
 
 private:
@@ -51,6 +63,7 @@ private:
     std::string _fontFamily;
     int _fontSize = -1;
     int _furiganaFontSize = -1;
+    TextJustify _textJustify = TextJustify::Center;
 };
 
 #endif // PNGRENDERER_HPP

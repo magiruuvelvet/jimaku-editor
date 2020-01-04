@@ -22,6 +22,9 @@ const style_hints_t default_hints = {
     {"font-family",         "Noto Sans CJK JP"}, // avoid empty string as default
     {"font-size",           "42"},
     {"horizontal-numbers",  "true"},
+    {"furigana-spacing",    "font"},
+    {"furigana-distance",   "narrow"},
+    {"furigana-font-size",  "20"},
 };
 
 static std::pair<std::string, std::string> parse_hint(const std::string &line)
