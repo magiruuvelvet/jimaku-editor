@@ -152,24 +152,27 @@ static int getFuriganaDistanceValue(PNGRenderer::FuriganaDistance furiganaDistan
 // QPainter can't do this apparently, so we need to brute force it instead :(
 static void drawTextBorder(QPainter *painter, int x, int y, int borderSize, int width, int height, int alignment, const QString &text)
 {
-    // top left
-    painter->drawText(x-borderSize, y-borderSize, width, height, alignment, text);
-    // top
-    painter->drawText(x, y-borderSize, width, height, alignment, text);
-    // top right
-    painter->drawText(x+borderSize, y-borderSize, width, height, alignment, text);
-    // left
-    painter->drawText(x-borderSize, y, width, height, alignment, text);
-    // middle
-    painter->drawText(x, y, width, height, alignment, text);
-    // right
-    painter->drawText(x+borderSize, y, width, height, alignment, text);
-    // bottom left
-    painter->drawText(x-borderSize, y+borderSize, width, height, alignment, text);
-    // bottom
-    painter->drawText(x, y+borderSize, width, height, alignment, text);
-    // bottom right
-    painter->drawText(x+borderSize, y+borderSize, width, height, alignment, text);
+    for (auto i = 0; i < borderSize + 1; ++i)
+    {
+        // top left
+        painter->drawText(x-i, y-i, width, height, alignment, text);
+        // top
+        painter->drawText(x, y-i, width, height, alignment, text);
+        // top right
+        painter->drawText(x+i, y-i, width, height, alignment, text);
+        // left
+        painter->drawText(x-i, y, width, height, alignment, text);
+        // middle
+        painter->drawText(x, y, width, height, alignment, text);
+        // right
+        painter->drawText(x+i, y, width, height, alignment, text);
+        // bottom left
+        painter->drawText(x-i, y+i, width, height, alignment, text);
+        // bottom
+        painter->drawText(x, y+i, width, height, alignment, text);
+        // bottom right
+        painter->drawText(x+i, y+i, width, height, alignment, text);
+    }
 }
 
 } // anonymous namespace
