@@ -20,14 +20,15 @@ const style_hints_t default_hints = {
     {"margin-side",             "100"},
     {"margin-top",              "150"},
     {"font-family",             "Noto Sans CJK JP"}, // avoid empty string as default, TODO: figure out what font Netflix Japan is using and make it the default
-    {"font-size",               "42"},
+    {"font-size",               "48"},
     {"font-color",              "#f1f1f1"},
     {"horizontal-numbers",      "true"},
     {"furigana-spacing",        "font"},
-    {"furigana-distance",       "narrow"},
+    {"furigana-distance",       "unchanged"},
     {"furigana-font-size",      "20"},
     {"furigana-font-color",     "#f1f1f1"},
-    {"line-space-reduction",    "27"},
+    {"line-space-reduction",    "0"},
+    {"border-color",            "#191919"},
 };
 
 static std::pair<std::string, std::string> parse_hint(const std::string &line)

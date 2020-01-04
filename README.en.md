@@ -111,7 +111,7 @@ adding the hints below the timestamp.
 
  - `font-size`
 
-   The size of the font in `pt`. Default is 42.
+   The size of the font in `pt`. Default is 48.
 
  - `font-color`
 
@@ -133,9 +133,13 @@ adding the hints below the timestamp.
 
  - `furigana-distance`
 
-   The distance between the Kanji and Furigana.
+   The distance between the Kanji and Furigana. This option is interesting together with
+   the `line-space-reduction` option to adjust the Furigana distance on bad fonts.
+   By default the distance is calculated to be directly placed to the Kanji, which works
+   for most fonts. For fonts with huge glyph heights 3 possible values are offered to place
+   the Furigana closer to the Kanji.
 
-   Possible values: `none`, `narrow` (default), `far`, `unchanged` (use font defaults)
+   Possible values: `none`, `narrow`, `far`, `unchanged` (default, use font defaults)
 
  - `furigana-font-size`
 
@@ -153,7 +157,12 @@ adding the hints below the timestamp.
    font for the subtitle. Some fonts may have too much glyph height,
    which causes a huge amount on line spacing being rendered between lines.
 
-   The default value is 27.
+   The default value is 0.
+
+ - `border-color`
+
+   The color of the text border in HTML format with leading `#`.\
+   Default is `#191919`.
 
 
 ## Furigana
