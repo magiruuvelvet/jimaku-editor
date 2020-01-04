@@ -14,8 +14,12 @@
 #include <QDebug>
 
 // TODO:
-//  furigana-spacing
-//  horizontal-numbers
+//  -> furigana-spacing
+//  -> horizontal-numbers
+
+// NOTES:
+//  -> if furigana are too long, the image size may be too small for short text (example: {旭丘|あさひがおか})
+//     can be easily fixed by adding extra spaces though
 
 static QGuiApplication *qt_app = nullptr;
 

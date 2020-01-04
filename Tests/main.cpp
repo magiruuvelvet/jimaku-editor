@@ -57,9 +57,12 @@ int main(void)
     test("PngRenderer::render_simple", renderer_tests::render_simple, "test4.png", "（宮内{一穂|かずほ}）\nおばあちゃんが\n{買|か}ってくれたんだって", false);
     test("PngRenderer::render_simple", renderer_tests::render_simple, "test5.png", "（{宮内|みやうち}れんげ）おおーっ！", false);
     test("PngRenderer::render_simple", renderer_tests::render_simple, "test6.png", "戻ってないから\n行くよ 学校", false);
+    test("PngRenderer::render_simple", renderer_tests::render_simple, "test7.png", "（{越谷|こしがや}{夏海|なつみ}）\nあれ ２人ともどうしたの？", false);
 
-    test("PngRenderer::render_simple", renderer_tests::render_simple, "test7.png", "力を{集|あつ}め {新世界|しんせかい}への\nポータルを{開|ひら}く", false);
-    test("PngRenderer::render_simple", renderer_tests::render_simple, "test8.png", "{話|・}{せ|・}{る|・}", false);
+
+    test("PngRenderer::render_simple", renderer_tests::render_simple, "test8.png", "力を{集|あつ}め {新世界|しんせかい}への\nポータルを{開|ひら}く", false);
+    test("PngRenderer::render_simple", renderer_tests::render_simple, "test9.png", "{話|・}{せ|・}{る|・}", false);
+    test("PngRenderer::render_simple", renderer_tests::render_simple, "test10.png", "♪ {旭丘|あさひがおか} ", false);
 
 
     // vertical rendering tests
@@ -69,9 +72,11 @@ int main(void)
     test("PngRenderer::render_simple", renderer_tests::render_simple, "vtest4.png", "（宮内{一穂|かずほ}）\nおばあちゃんが\n{買|か}ってくれたんだって", true);
     test("PngRenderer::render_simple", renderer_tests::render_simple, "vtest5.png", "（{宮内|みやうち}れんげ）おおーっ！", true);
     test("PngRenderer::render_simple", renderer_tests::render_simple, "vtest6.png", "戻ってないから\n行くよ 学校", true);
+    test("PngRenderer::render_simple", renderer_tests::render_simple, "vtest7.png", "（{越谷|こしがや}{夏海|なつみ}）\nあれ ２人ともどうしたの？", true);
 
-    test("PngRenderer::render_simple", renderer_tests::render_simple, "vtest7.png", "力を{集|あつ}め {新世界|しんせかい}への\nポータルを{開|ひら}く", true);
-    test("PngRenderer::render_simple", renderer_tests::render_simple, "vtest8.png", "{話|・}{せ|・}{る|・}", true);
+    test("PngRenderer::render_simple", renderer_tests::render_simple, "vtest8.png", "力を{集|あつ}め {新世界|しんせかい}への\nポータルを{開|ひら}く", true);
+    test("PngRenderer::render_simple", renderer_tests::render_simple, "vtest9.png", "{話|・}{せ|・}{る|・}", true);
+    test("PngRenderer::render_simple", renderer_tests::render_simple, "vtest10.png", "♪ {旭丘|あさひがおか}", true);
 
     return has_failed_tests ? 1 : 0;
 }
