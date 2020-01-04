@@ -216,3 +216,10 @@ Input: `力を{集|あつ}め {新世界|しんせかい}への\nポータルを
 Renders into this:
 
 ![Rendering Example 2](.readme/rendering-example-2.png)
+
+
+Input: `{話|・}{せ|・}{る|・}` (Boutens)
+
+Renders into this:
+
+![Rendering Example 3](.readme/rendering-example-3.png)

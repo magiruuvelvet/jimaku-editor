@@ -50,6 +50,7 @@ int main(void)
     test("SrtParser::parse_basic", srtparser_tests::parse_basic);
     test("SrtParser::parse_styled", srtparser_tests::parse_styled);
 
+    // horizontal rendering tests
     test("PngRenderer::render_simple", renderer_tests::render_simple, "test1.png", "ここがウチの村", false);
     test("PngRenderer::render_simple", renderer_tests::render_simple, "test2.png", "ここがウチの村\nのんびりのどかな所です", false);
     test("PngRenderer::render_simple", renderer_tests::render_simple, "test3.png", "夏休み", false);
@@ -57,8 +58,10 @@ int main(void)
     test("PngRenderer::render_simple", renderer_tests::render_simple, "test5.png", "（{宮内|みやうち}れんげ）おおーっ！", false);
 
     test("PngRenderer::render_simple", renderer_tests::render_simple, "test6.png", "力を{集|あつ}め {新世界|しんせかい}への\nポータルを{開|ひら}く", false);
+    test("PngRenderer::render_simple", renderer_tests::render_simple, "test7.png", "{話|・}{せ|・}{る|・}", false);
 
 
+    // vertical rendering tests
     test("PngRenderer::render_simple", renderer_tests::render_simple, "vtest1.png", "ここがウチの村", true);
     test("PngRenderer::render_simple", renderer_tests::render_simple, "vtest2.png", "ここがウチの村\nのんびりのどかな所です", true);
     test("PngRenderer::render_simple", renderer_tests::render_simple, "vtest3.png", "夏休み", true);

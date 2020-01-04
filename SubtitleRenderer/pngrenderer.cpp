@@ -68,7 +68,9 @@ static const QString getLineWithoutFurigana(const QString &line, QList<FuriganaP
             {
                 for (auto&& m : lastMatchs)
                 {
-                    startOffset += m.capturedStart(0) + m.capturedStart(1);
+                    // offset is the total of the capture length "{}" subtracted with the kanji count
+                    // all past matches are summed up as the new string shrinks to the left
+                    startOffset += m.capturedLength(0) - m.capturedLength(1);
                 }
             }
 
