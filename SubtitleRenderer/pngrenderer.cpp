@@ -106,10 +106,6 @@ static Qt::AlignmentFlag getQtTextAlignmentFlag(PNGRenderer::TextJustify textJus
     {
         return Qt::AlignCenter;
     }
-    else if (textJustify == PNGRenderer::TextJustify::Right)
-    {
-        return Qt::AlignRight;
-    }
     else
     {
         return Qt::AlignCenter;

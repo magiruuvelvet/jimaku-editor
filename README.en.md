@@ -80,7 +80,7 @@ adding the hints below the timestamp.
 
    The text justification within the subtitle frame once rendered.
 
-   Possible values for `horizontal`: `left`, `center` (default), `right`\
+   Possible values for `horizontal`: `left`, `center` (default)\
    Possible values for `vertical`: `top` (default)
 
  - `margin-overwrite` **(overwrite only)**

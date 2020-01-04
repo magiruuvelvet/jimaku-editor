@@ -22,7 +22,6 @@ public:
     {
         Left,
         Center,
-        Right,
     };
 
     enum class FuriganaDistance
