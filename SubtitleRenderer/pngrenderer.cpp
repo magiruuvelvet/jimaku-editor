@@ -105,7 +105,7 @@ static int getFuriganaDistanceValue(PNGRenderer::FuriganaDistance furiganaDistan
         // absolutely no spacing between Kanji and Furigana
         // (may look better in some cases than Narrow, best to be judged
         //  by the subtitle writer)
-        return 25;
+        return 15;
     }
     else if (furiganaDistance == PNGRenderer::FuriganaDistance::Narrow)
     {
@@ -118,12 +118,12 @@ static int getFuriganaDistanceValue(PNGRenderer::FuriganaDistance furiganaDistan
         // huge spacing between Kanji and Furigana
         // (may has its use cases, hence its an offered option)
         // (note: some fonts may need this)
-        return 5;
+        return 25;
     }
     else if (furiganaDistance == PNGRenderer::FuriganaDistance::Unchanged)
     {
         // for use with fonts without extra top and bottom spacing
-        return 0;
+        return -1;
     }
     else
     {
@@ -229,6 +229,7 @@ const std::vector<char> PNGRenderer::render() const
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setRenderHint(QPainter::TextAntialiasing, true);
 
+    // horizontal only
     int nextYAdjust = 0;
 
     // determine text alignment
@@ -239,6 +240,10 @@ const std::vector<char> PNGRenderer::render() const
 
     for (auto i = 0; i < lines.size(); ++i)
     {
+        QList<FuriganaPair> furiganaPairs;
+        auto lineWithoutFurigana = getLineWithoutFurigana(lines.at(i), &furiganaPairs);
+        bool hasFurigana = !furiganaPairs.isEmpty();
+
         // vertical rendering
         if (_vertical)
         {
@@ -248,10 +253,6 @@ const std::vector<char> PNGRenderer::render() const
         // horizontal rendering
         else
         {
-            QList<FuriganaPair> furiganaPairs;
-            auto lineWithoutFurigana = getLineWithoutFurigana(lines.at(i), &furiganaPairs);
-            bool hasFurigana = hasLineFurigana(lines.at(i));
-
             // the Y position is reduced intentionally to not have extreme spacing between lines
             // Japanese subtitles are more compact to be easier to read
 
@@ -305,22 +306,34 @@ const std::vector<char> PNGRenderer::render() const
                     // adjust position where text was actually drawn by QPainter
                     startX += drawnPosition.x();
 
+                    // calculate distance based on line height when mode is "Unchanged"
+                    if (furiganaDistance == -1)
+                    {
+                        furiganaDistance = lineHeight / 2;
+                    }
+
                     // draw on top
                     if (i == 0)
                     {
                         // TODO: draw text outline and shadow
                         painter.setPen(Qt::black);
-                        painter.drawText(startX, furiganaDistance, furiWidth, furiLineHeight, 0, f.furigana);
+                        painter.drawText(startX, y - furiganaDistance, furiWidth, furiLineHeight, 0, f.furigana);
 
                         // draw main text
                         painter.setPen(Qt::white);
-                        painter.drawText(startX, furiganaDistance, furiWidth, furiLineHeight, 0, f.furigana);
+                        painter.drawText(startX, y - furiganaDistance, furiWidth, furiLineHeight, 0, f.furigana);
                     }
 
-                    // draw on bottom
-                    if (i == lines.size() - 1)
+                    // draw on bottom when multiple lines are present
+                    if (i == lines.size() - 1 && lines.size() != 1)
                     {
-                        // TODO
+                        // TODO: draw text outline and shadow
+                        painter.setPen(Qt::black);
+                        painter.drawText(startX, y + furiganaDistance + (lineHeight / 2), furiWidth, furiLineHeight, 0, f.furigana);
+
+                        // draw main text
+                        painter.setPen(Qt::white);
+                        painter.drawText(startX, y + furiganaDistance + (lineHeight / 2), furiWidth, furiLineHeight, 0, f.furigana);
                     }
                 }
             }
