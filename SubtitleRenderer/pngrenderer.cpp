@@ -378,7 +378,7 @@ const std::vector<char> PNGRenderer::render() const
 
             if (i != 0)
             {
-                adjustX = 10;
+                adjustX = 4;
             }
 
             int x = (size.width() - ((glyphWidth + adjustX) * (i + 1)) - 10) - nextXAdjust;
@@ -387,9 +387,11 @@ const std::vector<char> PNGRenderer::render() const
             // Furigana on the right
             if (i == 0 && hasFurigana)
             {
-                x -= furiGlyphWidth - 3;
-                nextXAdjust = furiGlyphWidth - 3;
+                x -= furiGlyphWidth * 1.5;
+                nextXAdjust = furiGlyphWidth * 1.5;
             }
+
+            std::printf("x=%i\n", x);
 
             // Furigana on the left
             //  no X adjust from right needed
