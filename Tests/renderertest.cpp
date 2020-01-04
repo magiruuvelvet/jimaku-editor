@@ -5,12 +5,18 @@
 
 namespace renderer_tests {
 
-bool render_simple(const std::string &out_file, const std::string &text)
+bool render_simple(const std::string &out_file, const std::string &text, bool vertical)
 {
     PNGRenderer renderer(text, "Noto Sans CJK JP");
     //renderer.setTextJustify(PNGRenderer::TextJustify::Left);
     //renderer.setFuriganaDistance(PNGRenderer::FuriganaDistance::Unchanged);
     //renderer.setLineSpaceReduction(0);
+
+    if (vertical)
+    {
+        renderer.setVertical(true);
+    }
+
     const auto png = renderer.render();
 
     const auto png_file = std::string{UNIT_TEST_TEMPORARY_DIR} + "/" + out_file;

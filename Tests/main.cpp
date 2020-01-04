@@ -50,11 +50,20 @@ int main(void)
     test("SrtParser::parse_basic", srtparser_tests::parse_basic);
     test("SrtParser::parse_styled", srtparser_tests::parse_styled);
 
-    test("PngRenderer::render_simple", renderer_tests::render_simple, "test1.png", "ここがウチの村");
-    test("PngRenderer::render_simple", renderer_tests::render_simple, "test2.png", "ここがウチの村\nのんびりのどかな所です");
-    test("PngRenderer::render_simple", renderer_tests::render_simple, "test3.png", "夏休み");
-    test("PngRenderer::render_simple", renderer_tests::render_simple, "test4.png", "（宮内{一穂|かずほ}）\nおばあちゃんが\n買ってくれたんだって");
-    test("PngRenderer::render_simple", renderer_tests::render_simple, "test5.png", "（{宮内|みやうち}れんげ）おおーっ！");
+    test("PngRenderer::render_simple", renderer_tests::render_simple, "test1.png", "ここがウチの村", false);
+    test("PngRenderer::render_simple", renderer_tests::render_simple, "test2.png", "ここがウチの村\nのんびりのどかな所です", false);
+    test("PngRenderer::render_simple", renderer_tests::render_simple, "test3.png", "夏休み", false);
+    test("PngRenderer::render_simple", renderer_tests::render_simple, "test4.png", "（宮内{一穂|かずほ}）\nおばあちゃんが\n{買|か}ってくれたんだって", false);
+    test("PngRenderer::render_simple", renderer_tests::render_simple, "test5.png", "（{宮内|みやうち}れんげ）おおーっ！", false);
+
+    test("PngRenderer::render_simple", renderer_tests::render_simple, "test6.png", "力を{集|あつ}め {新世界|しんせかい}への\nポータルを{開|ひら}く", false);
+
+
+    test("PngRenderer::render_simple", renderer_tests::render_simple, "vtest1.png", "ここがウチの村", true);
+    test("PngRenderer::render_simple", renderer_tests::render_simple, "vtest2.png", "ここがウチの村\nのんびりのどかな所です", true);
+    test("PngRenderer::render_simple", renderer_tests::render_simple, "vtest3.png", "夏休み", true);
+    test("PngRenderer::render_simple", renderer_tests::render_simple, "vtest4.png", "（宮内{一穂|かずほ}）\nおばあちゃんが\n{買|か}ってくれたんだって", true);
+    test("PngRenderer::render_simple", renderer_tests::render_simple, "vtest5.png", "（{宮内|みやうち}れんげ）おおーっ！", true);
 
     return has_failed_tests ? 1 : 0;
 }

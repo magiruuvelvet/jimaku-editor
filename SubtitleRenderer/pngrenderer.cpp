@@ -37,10 +37,12 @@ struct FuriganaPair
 
 static const QString getLineWithoutFurigana(const QString &line, QList<FuriganaPair> *furiganaPairs = nullptr)
 {
-    static const QRegularExpression furiganaCapture(R"(\{(.*)\|(.*)\})");
+    // matches {漢字|かんじ} non-greedy and creates matching groups
+    static const QRegularExpression furiganaCapture(R"(\{(.*?)\|(.*?)\})");
 
     QString newLine = line.split(furiganaCapture).join("|");
 
+    QList<QRegularExpressionMatch> lastMatchs;
     int lastIndex = 0;
     auto matches = furiganaCapture.globalMatch(line);
     while (matches.hasNext())
@@ -54,18 +56,32 @@ static const QString getLineWithoutFurigana(const QString &line, QList<FuriganaP
         {
             newLine.remove(lastIndex, 1);
             newLine.insert(lastIndex, match.capturedTexts().at(1));
+            lastIndex = 0;
         }
 
         // append to furigana pair list
         if (furiganaPairs)
         {
+            // fix start offset for next match because of string manipulation
+            int startOffset = 0;
+            if (!lastMatchs.isEmpty() && lastMatchs.last().hasMatch())
+            {
+                for (auto&& m : lastMatchs)
+                {
+                    startOffset += m.capturedStart(0) + m.capturedStart(1);
+                }
+            }
+
             furiganaPairs->append({
-                match.capturedTexts().at(1),    // original kanji
-                match.capturedTexts().at(2),    // furigana
-                match.capturedStart(0),         // position in line where kanji with furigana starts
-                match.capturedLength(1),        // kanji count
+                match.capturedTexts().at(1),          // original kanji
+                match.capturedTexts().at(2),          // furigana
+                match.capturedStart(0) - startOffset, // position in line where kanji with furigana starts
+                match.capturedLength(1),              // kanji count
             });
         }
+
+        // store last match, required to fix the start offset
+        lastMatchs.append(match);
     }
 
     return newLine;

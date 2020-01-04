@@ -209,3 +209,10 @@ Input: `（宮内{一穂|かずほ}）\nおばあちゃんが\n{買|か}って�
 Renders into this with the default values:
 
 ![Rendering Example 1](.readme/rendering-example-1.png)
+
+
+Input: `力を{集|あつ}め {新世界|しんせかい}への\nポータルを{開|ひら}く` (taken from Netflix Tech Blog)
+
+Renders into this:
+
+![Rendering Example 2](.readme/rendering-example-2.png)
