@@ -88,6 +88,16 @@ public:
         _borderColor = borderColor;
     }
 
+    inline void setBorderSize(int borderSize)
+    {
+        _borderSize = borderSize;
+    }
+
+    inline void setFuriganaBorderSize(int furiganaBorderSize)
+    {
+        _furiganaBorderSize = furiganaBorderSize;
+    }
+
     const std::vector<char> render() const;
 
 private:
@@ -102,6 +112,8 @@ private:
     TextJustify _textJustify = TextJustify::Center;
     FuriganaDistance _furiganaDistance = FuriganaDistance::Unchanged;
     std::string _borderColor = "#191919";
+    int _borderSize = 4;
+    int _furiganaBorderSize = 2;
 };
 
 #endif // PNGRENDERER_HPP

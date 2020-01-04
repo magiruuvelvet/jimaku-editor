@@ -291,10 +291,6 @@ const std::vector<char> PNGRenderer::render() const
     int nextXAdjust = alignment == Qt::AlignCenter ? 0 : 5;
     int nextYAdjust = 5;
 
-    // TODO: make properties
-    int borderSize = 4;
-    int furiganaBorderSize = 2;
-
     for (auto i = 0; i < lines.size(); ++i)
     {
         QList<FuriganaPair> furiganaPairs;
@@ -339,7 +335,7 @@ const std::vector<char> PNGRenderer::render() const
 
             // draw text outline and shadow
             bgPainter.setPen(QColor(_borderColor.c_str()));
-            drawTextBorder(&bgPainter, nextXAdjust, y, borderSize, size.width(), lineHeight, alignment, lineWithoutFurigana);
+            drawTextBorder(&bgPainter, nextXAdjust, y, _borderSize, size.width(), lineHeight, alignment, lineWithoutFurigana);
 
             // draw main text
             painter.setPen(QColor(_fontColor.c_str()));
@@ -378,7 +374,7 @@ const std::vector<char> PNGRenderer::render() const
 
                         // draw text outline and shadow
                         bgPainter.setPen(QColor(_borderColor.c_str()));
-                        drawTextBorder(&bgPainter, startX, y - realDistance, furiganaBorderSize, furiWidth, furiLineHeight, 0, f.furigana);
+                        drawTextBorder(&bgPainter, startX, y - realDistance, _furiganaBorderSize, furiWidth, furiLineHeight, 0, f.furigana);
 
                         // draw main text
                         painter.setPen(QColor(_furiganaFontColor.c_str()));
@@ -398,7 +394,7 @@ const std::vector<char> PNGRenderer::render() const
 
                         // draw text outline and shadow
                         bgPainter.setPen(QColor(_borderColor.c_str()));
-                        drawTextBorder(&bgPainter, startX, dY, furiganaBorderSize, furiWidth, furiLineHeight, 0, f.furigana);
+                        drawTextBorder(&bgPainter, startX, dY, _furiganaBorderSize, furiWidth, furiLineHeight, 0, f.furigana);
 
                         // draw main text
                         painter.setPen(QColor(_furiganaFontColor.c_str()));

@@ -164,6 +164,16 @@ adding the hints below the timestamp.
    The color of the text border in HTML format with leading `#`.\
    Default is `#191919`.
 
+ - `border-size`
+
+   The border size in pixel for the main text.\
+   Default is 4.
+
+ - `furigana-border-size`
+
+   The border size in pixel for the Furigana.\
+   Default is 2.
+
 
 ## Furigana
 

@@ -29,6 +29,9 @@ const style_hints_t default_hints = {
     {"furigana-font-color",     "#f1f1f1"},
     {"line-space-reduction",    "0"},
     {"border-color",            "#191919"},
+    {"border-size",             "4"},
+    {"furigana-border-size",    "2"},
+    // {margin-overwrite}
 };
 
 static std::pair<std::string, std::string> parse_hint(const std::string &line)
