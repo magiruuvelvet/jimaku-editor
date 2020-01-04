@@ -170,6 +170,13 @@ are as follows:
 Furigana are always "center" aligned for the first version of this project.
 In the future I may add extra alignment hints for Furigana.
 
+**Attention**: Furigana between lines which is not the first or the last line
+are silently removed from the rendering result. If you are a subtitle writer,
+take that in mind. In general, subtitles should not have more than 2 lines,
+except when the first line is only the speaker name. The **hard limit** is 3 lines.
+While the renderer just takes it, the rendering result may be undefined for more
+than 3 lines.
+
 
 ## Why?
 
