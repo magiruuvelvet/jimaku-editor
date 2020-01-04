@@ -13,18 +13,19 @@ namespace SrtParser {
 namespace {
 
 const style_hints_t default_hints = {
-    {"text-direction",      "horizontal"},
-    {"text-alignment",      "center"},
-    {"text-justify",        "center"},
-    {"margin-bottom",       "100"},
-    {"margin-side",         "100"},
-    {"margin-top",          "150"},
-    {"font-family",         "Noto Sans CJK JP"}, // avoid empty string as default
-    {"font-size",           "42"},
-    {"horizontal-numbers",  "true"},
-    {"furigana-spacing",    "font"},
-    {"furigana-distance",   "narrow"},
-    {"furigana-font-size",  "20"},
+    {"text-direction",          "horizontal"},
+    {"text-alignment",          "center"},
+    {"text-justify",            "center"},
+    {"margin-bottom",           "100"},
+    {"margin-side",             "100"},
+    {"margin-top",              "150"},
+    {"font-family",             "Noto Sans CJK JP"}, // avoid empty string as default, TODO: figure out what font Netflix Japan is using and make it the default
+    {"font-size",               "42"},
+    {"horizontal-numbers",      "true"},
+    {"furigana-spacing",        "font"},
+    {"furigana-distance",       "narrow"},
+    {"furigana-font-size",      "20"},
+    {"line-space-reduction",    "27"},
 };
 
 static std::pair<std::string, std::string> parse_hint(const std::string &line)

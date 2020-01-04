@@ -130,11 +130,20 @@ adding the hints below the timestamp.
 
    The distance between the Kanji and Furigana.
 
-   Possible values: `none`, `narrow` (default), `far`
+   Possible values: `none`, `narrow` (default), `far`, `unchanged` (use font defaults)
 
  - `furigana-font-size`
 
    The size of the font in `pt` for Furigana. Default is 20.
+
+ - `line-space-reduction`
+
+   A value in pixel how much the spacing between lines in multi-line
+   subtitle frames should be reduced. This may depend on the chosen
+   font for the subtitle. Some fonts may have too much glyph height,
+   which causes a huge amount on line spacing being rendered between lines.
+
+   The default value is 27.
 
 
 ## Furigana

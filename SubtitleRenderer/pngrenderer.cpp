@@ -78,6 +78,59 @@ static bool hasLineFurigana(const QString &line)
     return !furiganaPairs.empty();
 }
 
+static Qt::AlignmentFlag getQtTextAlignmentFlag(PNGRenderer::TextJustify textJustify)
+{
+    if (textJustify == PNGRenderer::TextJustify::Left)
+    {
+        return Qt::AlignLeft;
+    }
+    else if (textJustify == PNGRenderer::TextJustify::Center)
+    {
+        return Qt::AlignCenter;
+    }
+    else if (textJustify == PNGRenderer::TextJustify::Right)
+    {
+        return Qt::AlignRight;
+    }
+    else
+    {
+        return Qt::AlignCenter;
+    }
+}
+
+static int getFuriganaDistanceValue(PNGRenderer::FuriganaDistance furiganaDistance)
+{
+    if (furiganaDistance == PNGRenderer::FuriganaDistance::None)
+    {
+        // absolutely no spacing between Kanji and Furigana
+        // (may look better in some cases than Narrow, best to be judged
+        //  by the subtitle writer)
+        return 25;
+    }
+    else if (furiganaDistance == PNGRenderer::FuriganaDistance::Narrow)
+    {
+        // slight spacing between Kanji and Furigana
+        // (the default, works best for most cases)
+        return 20;
+    }
+    else if (furiganaDistance == PNGRenderer::FuriganaDistance::Far)
+    {
+        // huge spacing between Kanji and Furigana
+        // (may has its use cases, hence its an offered option)
+        // (note: some fonts may need this)
+        return 5;
+    }
+    else if (furiganaDistance == PNGRenderer::FuriganaDistance::Unchanged)
+    {
+        // for use with fonts without extra top and bottom spacing
+        return 0;
+    }
+    else
+    {
+        return 20;
+    }
+}
+
 } // anonymous namespace
 
 PNGRenderer::PNGRenderer()
@@ -152,11 +205,8 @@ const std::vector<char> PNGRenderer::render() const
         }
     }
 
-    // line space reducer
-    static int line_space_reducer = 20;
-
     // calculate required image height
-    size.setHeight((size.height() * lines.size()) - (line_space_reducer * (lines.size() - 1)));
+    size.setHeight((size.height() * lines.size()) - (_lineSpaceReduction * (lines.size() - 1)));
 
     // increase height to fit Furigana
     for (auto&& line : lines)
@@ -182,19 +232,10 @@ const std::vector<char> PNGRenderer::render() const
     int nextYAdjust = 0;
 
     // determine text alignment
-    Qt::AlignmentFlag alignment = Qt::AlignCenter;
-    if (_textJustify == TextJustify::Left)
-    {
-        alignment = Qt::AlignLeft;
-    }
-    else if (_textJustify == TextJustify::Center)
-    {
-        alignment = Qt::AlignCenter;
-    }
-    else if (_textJustify == TextJustify::Right)
-    {
-        alignment = Qt::AlignRight;
-    }
+    Qt::AlignmentFlag alignment = getQtTextAlignmentFlag(_textJustify);
+
+    // get furigana distance value
+    int furiganaDistance = getFuriganaDistanceValue(_furiganaDistance);
 
     for (auto i = 0; i < lines.size(); ++i)
     {
@@ -214,11 +255,11 @@ const std::vector<char> PNGRenderer::render() const
             // the Y position is reduced intentionally to not have extreme spacing between lines
             // Japanese subtitles are more compact to be easier to read
 
-            int y = -5 + nextYAdjust;
+            int y = nextYAdjust;
 
             if (i != 0)
             {
-                y = (lineHeight * i) - (line_space_reducer * i) - 5 + nextYAdjust;
+                y = (lineHeight * i) - (_lineSpaceReduction * i) + nextYAdjust;
             }
 
             // Furigana on top
@@ -269,11 +310,11 @@ const std::vector<char> PNGRenderer::render() const
                     {
                         // TODO: draw text outline and shadow
                         painter.setPen(Qt::black);
-                        painter.drawText(startX, 12, furiWidth, furiLineHeight, 0, f.furigana);
+                        painter.drawText(startX, furiganaDistance, furiWidth, furiLineHeight, 0, f.furigana);
 
                         // draw main text
                         painter.setPen(Qt::white);
-                        painter.drawText(startX, 12, furiWidth, furiLineHeight, 0, f.furigana);
+                        painter.drawText(startX, furiganaDistance, furiWidth, furiLineHeight, 0, f.furigana);
                     }
 
                     // draw on bottom

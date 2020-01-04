@@ -25,6 +25,14 @@ public:
         Right,
     };
 
+    enum class FuriganaDistance
+    {
+        None,
+        Narrow,
+        Far,
+        Unchanged,
+    };
+
     inline void setVertical(bool vertical)
     {
         _vertical = vertical;
@@ -50,9 +58,19 @@ public:
         _furiganaFontSize = furiganaFontSize;
     }
 
+    inline void setLineSpaceReduction(int lineSpaceReduction)
+    {
+        _lineSpaceReduction = lineSpaceReduction;
+    }
+
     inline void setTextJustify(TextJustify textJustify)
     {
         _textJustify = textJustify;
+    }
+
+    inline void setFuriganaDistance(FuriganaDistance furiganaDistance)
+    {
+        _furiganaDistance = furiganaDistance;
     }
 
     const std::vector<char> render() const;
@@ -63,7 +81,9 @@ private:
     std::string _fontFamily;
     int _fontSize = -1;
     int _furiganaFontSize = -1;
+    int _lineSpaceReduction = 27;
     TextJustify _textJustify = TextJustify::Center;
+    FuriganaDistance _furiganaDistance = FuriganaDistance::Narrow;
 };
 
 #endif // PNGRENDERER_HPP
