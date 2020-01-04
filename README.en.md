@@ -252,3 +252,14 @@ Input: `{話|・}{せ|・}{る|・}` (Boutens)
 Renders into this:
 
 ![Rendering Example 3](.readme/rendering-example-3.png)
+
+
+#### 2020-01-04 (late night)
+
+Initial work on vertical text rendering has started.
+
+Input: `ここがウチの村\nのんびりのどかな所です`
+
+Renders into this:
+
+![Rendering Example 4](.readme/rendering-example-4.png)

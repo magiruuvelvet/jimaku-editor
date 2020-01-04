@@ -13,6 +13,10 @@
 
 #include <QDebug>
 
+// TODO:
+//  furigana-spacing
+//  horizontal-numbers
+
 static QGuiApplication *qt_app = nullptr;
 
 static void init_qt_context()
@@ -96,6 +100,16 @@ static bool hasLineFurigana(const QString &line)
     return !furiganaPairs.empty();
 }
 
+static QStringList splitIntoCharacters(const QString &str)
+{
+    QStringList chars;
+    for (auto&& c : str)
+    {
+        chars.append(c);
+    }
+    return chars;
+}
+
 static Qt::AlignmentFlag getQtTextAlignmentFlag(PNGRenderer::TextJustify textJustify)
 {
     if (textJustify == PNGRenderer::TextJustify::Left)
@@ -171,6 +185,30 @@ static void drawTextBorder(QPainter *painter, int x, int y, int borderSize, int 
     }
 }
 
+struct VerticalRenderingSettings
+{
+    QPoint pos;
+    QSize size;
+};
+
+// TODO: *** QPainter::rotate !!! (needs more handling to position the chars correctly)
+static VerticalRenderingSettings verticalConfigurePainter(QPainter *painter, QString ch, int glyphWidth, int glyphHeight)
+{
+    painter->save();
+
+    QPoint pos{0, 0};
+    QSize size{0, 0};
+
+    if (ch.contains(QRegularExpression("（|）|「|」|ー")))
+    {
+        painter->rotate(90);
+        // literally only works for "ー" :(
+        pos = {-10, (glyphHeight * 2) + 35};
+    }
+
+    return {pos, size};
+}
+
 } // anonymous namespace
 
 PNGRenderer::PNGRenderer()
@@ -209,7 +247,9 @@ const std::vector<char> PNGRenderer::render() const
 
     // calculate necessary size for subtitle image
     QSize size{0, 0};
+    int longestLineCount = 0;
     int lineHeight = 0, furiLineHeight = 0;
+    int glyphWidth = 0, furiGlyphWidth = 0;
 
     QFontMetrics mainMetrics(font);
     QFontMetrics furiMetrics(fontFurigana);
@@ -219,19 +259,42 @@ const std::vector<char> PNGRenderer::render() const
         // take metrics without Furigana
         auto lineWithoutFurigana = getLineWithoutFurigana(line);
 
+        if (lineWithoutFurigana.size() > longestLineCount)
+        {
+            longestLineCount = lineWithoutFurigana.size();
+        }
+
         auto mainRect = mainMetrics.boundingRect(lineWithoutFurigana);
         auto furiRect = furiMetrics.boundingRect(line);
+
+        for (auto&& c : lineWithoutFurigana)
+        {
+            auto glyphRect = mainMetrics.boundingRect(c);
+            auto furiGlyphRect = furiMetrics.boundingRect(c);
+
+            // maximum glyph width
+            if (glyphRect.size().width() > glyphWidth)
+            {
+                glyphWidth = glyphRect.size().width();
+            }
+
+            // maximum Furigana glyph width
+            if (furiGlyphRect.size().width() > furiGlyphWidth)
+            {
+                furiGlyphWidth = furiGlyphRect.size().width();
+            }
+        }
 
         // bounding rect may not have enough width, use another function for this
         mainRect.setWidth(mainMetrics.horizontalAdvance(lineWithoutFurigana) + 10);
 
-        // maximum width
+        // maximum total width
         if (mainRect.size().width() > size.width())
         {
             size.setWidth(mainRect.width());
         }
 
-        // maximum height
+        // maximum total height
         if (mainRect.height() > size.height())
         {
             size.setHeight(mainRect.height());
@@ -258,6 +321,15 @@ const std::vector<char> PNGRenderer::render() const
         }
     }
 
+    // invert the image size on vertical rendering
+    if (_vertical)
+    {
+        size = QSize(size.height(), size.width());
+
+        // fix image height to fit all Kanji
+        size.setHeight(((lineHeight + 2) * longestLineCount) - (_lineSpaceReduction * (lines.size() - 1)));
+    }
+
     // create in-memory image
     QImage image(size, QImage::Format_ARGB32);
     QImage background(size, QImage::Format_ARGB32);
@@ -280,10 +352,15 @@ const std::vector<char> PNGRenderer::render() const
     // determine text alignment
     Qt::AlignmentFlag alignment = getQtTextAlignmentFlag(_textJustify);
 
+    if (_vertical)
+    {
+        alignment = Qt::AlignCenter;
+    }
+
     // get furigana distance value
     int furiganaDistance = getFuriganaDistanceValue(_furiganaDistance);
 
-    // horizontal only
+    // alignment helper
     int nextXAdjust = alignment == Qt::AlignCenter ? 0 : 5;
     int nextYAdjust = 5;
 
@@ -294,9 +371,62 @@ const std::vector<char> PNGRenderer::render() const
         bool hasFurigana = !furiganaPairs.isEmpty();
 
         // vertical rendering
+        // TODO
         if (_vertical)
         {
-            // TODO
+            int adjustX = 0;
+
+            if (i != 0)
+            {
+                adjustX = 10;
+            }
+
+            int x = (size.width() - ((glyphWidth + adjustX) * (i + 1)) - 10) - nextXAdjust;
+            int y = 0;
+
+            // Furigana on the right
+            if (i == 0 && hasFurigana)
+            {
+                x -= furiGlyphWidth - 3;
+                nextXAdjust = furiGlyphWidth - 3;
+            }
+
+            // Furigana on the left
+            //  no X adjust from right needed
+
+            // the position where QPainter has drawn the text (required to render Furigana later)
+            QList<QRect> drawnPositions;
+
+            // set main font
+            painter.setFont(font);
+            bgPainter.setFont(font);
+
+            int chCounter = 1;
+            for (auto&& ch : splitIntoCharacters(lineWithoutFurigana))
+            {
+                auto height = mainMetrics.boundingRect(ch).height();
+                std::printf("%s = %i\n", QString(ch).toUtf8().constData(), height);
+
+                auto bgSettings = verticalConfigurePainter(&bgPainter, ch, glyphWidth, height);
+                auto mainSettings = verticalConfigurePainter(&painter, ch, glyphWidth, height);
+
+                // draw text outline and shadow
+                bgPainter.setPen(QColor(_borderColor.c_str()));
+                drawTextBorder(&bgPainter, x - mainSettings.pos.x(), y - mainSettings.pos.y(), _borderSize, glyphWidth, height, Qt::AlignCenter, ch);
+
+                // draw main text
+                QRect drawnPosition;
+                painter.setPen(QColor(_fontColor.c_str()));
+                painter.drawText(x - bgSettings.pos.x(), y - bgSettings.pos.y(), glyphWidth, height, Qt::AlignCenter, ch, &drawnPosition);
+                drawnPositions.append(drawnPosition);
+
+                y += height - _lineSpaceReduction;
+                ++chCounter;
+
+                // reset painter to its previous state (saved by verticalConfigurePainter)
+                painter.restore();
+                bgPainter.restore();
+            }
         }
 
         // horizontal rendering
