@@ -56,9 +56,10 @@ int main(void)
     test("PngRenderer::render_simple", renderer_tests::render_simple, "test3.png", "夏休み", false);
     test("PngRenderer::render_simple", renderer_tests::render_simple, "test4.png", "（宮内{一穂|かずほ}）\nおばあちゃんが\n{買|か}ってくれたんだって", false);
     test("PngRenderer::render_simple", renderer_tests::render_simple, "test5.png", "（{宮内|みやうち}れんげ）おおーっ！", false);
+    test("PngRenderer::render_simple", renderer_tests::render_simple, "test6.png", "戻ってないから\n行くよ 学校", false);
 
-    test("PngRenderer::render_simple", renderer_tests::render_simple, "test6.png", "力を{集|あつ}め {新世界|しんせかい}への\nポータルを{開|ひら}く", false);
-    test("PngRenderer::render_simple", renderer_tests::render_simple, "test7.png", "{話|・}{せ|・}{る|・}", false);
+    test("PngRenderer::render_simple", renderer_tests::render_simple, "test7.png", "力を{集|あつ}め {新世界|しんせかい}への\nポータルを{開|ひら}く", false);
+    test("PngRenderer::render_simple", renderer_tests::render_simple, "test8.png", "{話|・}{せ|・}{る|・}", false);
 
 
     // vertical rendering tests
@@ -67,6 +68,7 @@ int main(void)
     test("PngRenderer::render_simple", renderer_tests::render_simple, "vtest3.png", "夏休み", true);
     test("PngRenderer::render_simple", renderer_tests::render_simple, "vtest4.png", "（宮内{一穂|かずほ}）\nおばあちゃんが\n{買|か}ってくれたんだって", true);
     test("PngRenderer::render_simple", renderer_tests::render_simple, "vtest5.png", "（{宮内|みやうち}れんげ）おおーっ！", true);
+    test("PngRenderer::render_simple", renderer_tests::render_simple, "vtest6.png", "戻ってないから\n行くよ 学校", true);
 
     return has_failed_tests ? 1 : 0;
 }

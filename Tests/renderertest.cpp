@@ -7,10 +7,10 @@ namespace renderer_tests {
 
 bool render_simple(const std::string &out_file, const std::string &text, bool vertical)
 {
-    PNGRenderer renderer(text, "Noto Sans CJK JP", 45);
-    //renderer.setTextJustify(PNGRenderer::TextJustify::Left);
-    //renderer.setFuriganaDistance(PNGRenderer::FuriganaDistance::Unchanged);
-    //renderer.setLineSpaceReduction(0);
+    PNGRenderer renderer(text, "Noto Sans CJK JP");
+    renderer.setTextJustify(PNGRenderer::TextJustify::Left);
+    renderer.setFuriganaDistance(PNGRenderer::FuriganaDistance::Narrow);
+    renderer.setLineSpaceReduction(27);
 
     if (vertical)
     {

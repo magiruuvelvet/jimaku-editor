@@ -227,7 +227,7 @@ const std::vector<char> PNGRenderer::render() const
         auto furiRect = furiMetrics.boundingRect(line);
 
         // bounding rect may not have enough width, use another function for this
-        mainRect.setWidth(mainMetrics.horizontalAdvance(lineWithoutFurigana));
+        mainRect.setWidth(mainMetrics.horizontalAdvance(lineWithoutFurigana) + 10);
 
         // maximum width
         if (mainRect.size().width() > size.width())
@@ -250,7 +250,7 @@ const std::vector<char> PNGRenderer::render() const
     }
 
     // calculate required image height
-    size.setHeight((size.height() * lines.size()) - (_lineSpaceReduction * (lines.size() - 1)));
+    size.setHeight((size.height() * lines.size()) - (_lineSpaceReduction * (lines.size() - 1)) + 10);
 
     // increase height to fit Furigana
     for (auto&& line : lines)
@@ -281,18 +281,19 @@ const std::vector<char> PNGRenderer::render() const
     bgPainter.setRenderHint(QPainter::Antialiasing, true);
     bgPainter.setRenderHint(QPainter::TextAntialiasing, true);
 
-    // horizontal only
-    int nextYAdjust = 0;
-
     // determine text alignment
     Qt::AlignmentFlag alignment = getQtTextAlignmentFlag(_textJustify);
 
     // get furigana distance value
     int furiganaDistance = getFuriganaDistanceValue(_furiganaDistance);
 
+    // horizontal only
+    int nextXAdjust = alignment == Qt::AlignCenter ? 0 : 5;
+    int nextYAdjust = 5;
+
     // TODO: make properties
-    int borderSize = 3;
-    int furiganaBorderSize = 1;
+    int borderSize = 4;
+    int furiganaBorderSize = 2;
 
     for (auto i = 0; i < lines.size(); ++i)
     {
@@ -323,7 +324,7 @@ const std::vector<char> PNGRenderer::render() const
             if (i == 0 && hasFurigana)
             {
                 y += furiLineHeight;
-                nextYAdjust = furiLineHeight;
+                nextYAdjust += furiLineHeight;
             }
 
             // Furigana on bottom
@@ -338,11 +339,11 @@ const std::vector<char> PNGRenderer::render() const
 
             // draw text outline and shadow
             bgPainter.setPen(QColor(_borderColor.c_str()));
-            drawTextBorder(&bgPainter, 0, y, borderSize, size.width(), lineHeight, alignment, lineWithoutFurigana);
+            drawTextBorder(&bgPainter, nextXAdjust, y, borderSize, size.width(), lineHeight, alignment, lineWithoutFurigana);
 
             // draw main text
             painter.setPen(QColor(_fontColor.c_str()));
-            painter.drawText(0, y, size.width(), lineHeight, alignment, lineWithoutFurigana, &drawnPosition);
+            painter.drawText(nextXAdjust, y, size.width(), lineHeight, alignment, lineWithoutFurigana, &drawnPosition);
 
             // draw Furigana
             if (hasFurigana)
@@ -364,34 +365,44 @@ const std::vector<char> PNGRenderer::render() const
                     // adjust position where text was actually drawn by QPainter
                     startX += drawnPosition.x();
 
-                    // calculate distance based on line height when mode is "Unchanged"
-                    if (furiganaDistance == -1)
-                    {
-                        furiganaDistance = lineHeight / 2;
-                    }
+                    auto realDistance = furiganaDistance;
 
                     // draw on top
                     if (i == 0)
                     {
+                        // calculate distance based on line height when mode is "Unchanged"
+                        if (furiganaDistance == -1)
+                        {
+                            realDistance = lineHeight / 2;
+                        }
+
                         // draw text outline and shadow
                         bgPainter.setPen(QColor(_borderColor.c_str()));
-                        drawTextBorder(&bgPainter, startX, y - furiganaDistance, furiganaBorderSize, furiWidth, furiLineHeight, 0, f.furigana);
+                        drawTextBorder(&bgPainter, startX, y - realDistance, furiganaBorderSize, furiWidth, furiLineHeight, 0, f.furigana);
 
                         // draw main text
                         painter.setPen(QColor(_furiganaFontColor.c_str()));
-                        painter.drawText(startX, y - furiganaDistance, furiWidth, furiLineHeight, 0, f.furigana);
+                        painter.drawText(startX, y - realDistance, furiWidth, furiLineHeight, 0, f.furigana);
                     }
 
                     // draw on bottom when multiple lines are present
                     if (i == lines.size() - 1 && lines.size() != 1)
                     {
+                        // calculate distance based on line height when mode is "Unchanged"
+                        if (furiganaDistance == -1)
+                        {
+                            realDistance = 0;
+                        }
+
+                        auto dY = (y + lineHeight) - realDistance;
+
                         // draw text outline and shadow
                         bgPainter.setPen(QColor(_borderColor.c_str()));
-                        drawTextBorder(&bgPainter, startX, y + furiganaDistance + (lineHeight / 2), furiganaBorderSize, furiWidth, furiLineHeight, 0, f.furigana);
+                        drawTextBorder(&bgPainter, startX, dY, furiganaBorderSize, furiWidth, furiLineHeight, 0, f.furigana);
 
                         // draw main text
                         painter.setPen(QColor(_furiganaFontColor.c_str()));
-                        painter.drawText(startX, y + furiganaDistance + (lineHeight / 2), furiWidth, furiLineHeight, 0, f.furigana);
+                        painter.drawText(startX, dY, furiWidth, furiLineHeight, 0, f.furigana);
                     }
                 }
             }

@@ -15,7 +15,7 @@ class PNGRenderer
 {
 public:
     PNGRenderer();
-    PNGRenderer(const std::string &text, const std::string &fontFamily = {}, int fontSize = 42, int furiganaFontSize = 20);
+    PNGRenderer(const std::string &text, const std::string &fontFamily = {}, int fontSize = 48, int furiganaFontSize = 20);
     ~PNGRenderer() = default;
 
     enum class TextJustify
@@ -94,13 +94,13 @@ private:
     bool _vertical = false;
     std::string _text;
     std::string _fontFamily;
-    int _fontSize = -1;
+    int _fontSize = 48;
     std::string _fontColor = "#f1f1f1";
-    int _furiganaFontSize = -1;
+    int _furiganaFontSize = 20;
     std::string _furiganaFontColor = "#f1f1f1";
-    int _lineSpaceReduction = 27;
+    int _lineSpaceReduction = 0;
     TextJustify _textJustify = TextJustify::Center;
-    FuriganaDistance _furiganaDistance = FuriganaDistance::Narrow;
+    FuriganaDistance _furiganaDistance = FuriganaDistance::Unchanged;
     std::string _borderColor = "#191919";
 };
 
