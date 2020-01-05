@@ -151,7 +151,7 @@ std::vector<StyledSubtitleItem> parseStyled(const std::string &fileName)
         // check for overwrite properties
         if (overwrite_hints.find("margin-overwrite") != overwrite_hints.end())
         {
-            const auto &text_alignment = overwrite_hints.at("text-alignment");
+            const auto &text_alignment = overwrite_hints.at("text-direction");
             const auto margin_overwrite = overwrite_hints.at("margin-overwrite");
 
             if (text_alignment == "horizontal")
