@@ -650,6 +650,11 @@ const std::vector<char> PNGRenderer::render() const
     //bgPainter.begin(&background);
     bgPainter.drawImage(0, 0, image);
 
+    // reduce color count to be BDSup PGS compliant
+    // limited to 255 colors per subtitle frame
+    bgPainter.end();
+    background.setColorCount(255);
+
     // write PNG data and return it
     QByteArray png_data;
     QBuffer png_data_buf(&png_data);
