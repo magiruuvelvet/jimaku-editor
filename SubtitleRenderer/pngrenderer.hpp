@@ -1,7 +1,7 @@
 /**
  * PNG Renderer
  *
- * Renders a single PNG image.
+ * Renders a single PNG subtitle image.
  *
  */
 
@@ -30,6 +30,24 @@ public:
         Narrow,
         Far,
         Unchanged,
+    };
+
+    // the final image size
+    struct size_t
+    {
+        unsigned width = 0;
+        unsigned height = 0;
+    };
+
+    // the starting position of the subtitle frame when aligning it inside a PGS frame
+    // Furigana are ignored when calculating the starting position, only main characters are respected
+    // horizontal == (top) left most main char, depending on the text justification
+    // vertical == top right most main char (x,y == glyph top right)
+    struct pos_t
+    {
+        bool vertical = false;
+        unsigned x = 0;
+        unsigned y = 0;
     };
 
     inline void setVertical(bool vertical)
@@ -82,9 +100,45 @@ public:
         _textJustify = textJustify;
     }
 
+    inline void setTextJustify(const std::string &textJustify)
+    {
+        if (textJustify == "left")
+        {
+            _textJustify = TextJustify::Left;
+        }
+        else if (textJustify == "center")
+        {
+            _textJustify = TextJustify::Center;
+        }
+        else
+        {
+            _textJustify = TextJustify::Center;
+        }
+    }
+
     inline void setFuriganaDistance(FuriganaDistance furiganaDistance)
     {
         _furiganaDistance = furiganaDistance;
+    }
+
+    inline void setFuriganaDistance(const std::string &furiganaDistance)
+    {
+        if (furiganaDistance == "none")
+        {
+            _furiganaDistance = FuriganaDistance::None;
+        }
+        else if (furiganaDistance == "narrow")
+        {
+            _furiganaDistance = FuriganaDistance::Narrow;
+        }
+        else if (furiganaDistance == "far")
+        {
+            _furiganaDistance = FuriganaDistance::Far;
+        }
+        else
+        {
+            _furiganaDistance = FuriganaDistance::Unchanged;
+        }
     }
 
     inline void setBorderColor(const std::string &borderColor)
@@ -102,7 +156,7 @@ public:
         _furiganaBorderSize = furiganaBorderSize;
     }
 
-    const std::vector<char> render() const;
+    const std::vector<char> render(size_t *size = nullptr, pos_t *pos  = nullptr) const;
 
 private:
     bool _vertical = false;

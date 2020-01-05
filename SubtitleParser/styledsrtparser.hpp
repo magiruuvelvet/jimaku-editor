@@ -73,18 +73,32 @@ public:
     // get property value
     // if value is not present in item, return global default
     // if the property is not part of the spec, an empty string is returned
-    inline const std::string property(const std::string &property)
+    inline const std::string property(const std::string &property) const
     {
         return this->get_property_value(property);
     }
 
-    inline const std::string property(Properties property)
+    inline const std::string property(Properties property) const
     {
         return this->get_property_value(property_string(property));
     }
 
+    int fontSize() const;
+    int furiganaFontSize() const;
+    int lineSpaceReduction() const;
+    int furiganaLineSpaceReduction() const;
+
+    int borderSize() const;
+    int furiganaBorderSize() const;
+
+    int marginBottom() const;
+    int marginSide() const;
+    int marginTop() const;
+
+    bool isVertical() const;
+
 protected:
-    const std::string get_property_value(const std::string &property);
+    const std::string get_property_value(const std::string &property) const;
 
     // convert properties enum to property string
     static const std::string property_string(Properties property)

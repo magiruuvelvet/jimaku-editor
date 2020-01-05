@@ -105,13 +105,106 @@ static std::string extract_hints(const SubtitleItem &sub, style_hints_t &target_
 
 } // anonymous namespace
 
-const std::string StyledSubtitleItem::get_property_value(const std::string &property)
+int StyledSubtitleItem::fontSize() const
+{
+    try {
+        return std::stoi(property(FontSize));
+    } catch (...) {
+        return 48;
+    }
+}
+
+int StyledSubtitleItem::furiganaFontSize() const
+{
+    try {
+        return std::stoi(property(FuriganaFontSize));
+    } catch (...) {
+        return 20;
+    }
+}
+
+int StyledSubtitleItem::lineSpaceReduction() const
+{
+    try {
+        return std::stoi(property(LineSpaceReduction));
+    } catch (...) {
+        return 0;
+    }
+}
+
+int StyledSubtitleItem::furiganaLineSpaceReduction() const
+{
+    try {
+        return std::stoi(property(FuriganaLineSpaceReduction));
+    } catch (...) {
+        return 0;
+    }
+}
+
+int StyledSubtitleItem::borderSize() const
+{
+    try {
+        return std::stoi(property(BorderSize));
+    } catch (...) {
+        return 4;
+    }
+}
+
+int StyledSubtitleItem::furiganaBorderSize() const
+{
+    try {
+        return std::stoi(property(FuriganaBorderSize));
+    } catch (...) {
+        return 2;
+    }
+}
+
+int StyledSubtitleItem::marginBottom() const
+{
+    try {
+        return std::stoi(property(MarginBottom));
+    } catch (...) {
+        return 100;
+    }
+}
+
+int StyledSubtitleItem::marginSide() const
+{
+    try {
+        return std::stoi(property(MarginSide));
+    } catch (...) {
+        return 100;
+    }
+}
+
+int StyledSubtitleItem::marginTop() const
+{
+    try {
+        return std::stoi(property(MarginTop));
+    } catch (...) {
+        return 150;
+    }
+}
+
+bool StyledSubtitleItem::isVertical() const
+{
+    return property(TextDirection) == "vertical";
+}
+
+const std::string StyledSubtitleItem::get_property_value(const std::string &property) const
 {
     // don't do anything on empty input
     if (property.empty())
     {
         return {};
     }
+
+    if (_hints.find(property) != _hints.end())
+    {
+        return _hints.at(property);
+    }
+
+    return {};
 }
 
 std::vector<StyledSubtitleItem> parseStyled(const std::string &fileName)
@@ -148,22 +241,30 @@ std::vector<StyledSubtitleItem> parseStyled(const std::string &fileName)
         style_hints_t overwrite_hints = global_hints;
         sub.setText(extract_hints(unstyledSub, overwrite_hints));
 
+        const auto &text_direction = overwrite_hints.at("text-direction");
+
         // check for overwrite properties
         if (overwrite_hints.find("margin-overwrite") != overwrite_hints.end())
         {
-            const auto &text_alignment = overwrite_hints.at("text-direction");
             const auto margin_overwrite = overwrite_hints.at("margin-overwrite");
 
-            if (text_alignment == "horizontal")
+            if (text_direction == "horizontal")
             {
                 overwrite_hints["margin-bottom"] = margin_overwrite;
             }
-            else if (text_alignment == "vertical")
+            else if (text_direction == "vertical")
             {
                 overwrite_hints["margin-side"] = margin_overwrite;
             }
 
+            // remove overwrite properties
             overwrite_hints.erase(overwrite_hints.find("margin-overwrite"));
+        }
+
+        // set default text alignment to right on vertical when value is center
+        if (text_direction == "vertical" && overwrite_hints["text-alignment"] == "center")
+        {
+            overwrite_hints["text-alignment"] = "right";
         }
 
         sub.setStyleHints(overwrite_hints);

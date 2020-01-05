@@ -92,15 +92,15 @@ adding the hints below the timestamp.
    When the direction is vertical this adjusts the side margin (left/right),
    depending on the text alignment.
 
- - `margin-bottom` **(global only)**
+ - `margin-bottom`
 
    Default bottom margin. Default is 100 (*may change once the implementation has started*).
 
- - `margin-side` **(global only)**
+ - `margin-side`
 
    Default side margin. Default is 100 (*may change once the implementation has started*).
 
- - `margin-top` **(overwrite and global)**
+ - `margin-top`
 
    For vertical text only. Default top margin.
    Default is 150 (*may change once the implementation has started*).

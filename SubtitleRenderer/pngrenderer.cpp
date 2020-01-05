@@ -211,11 +211,15 @@ struct VerticalRenderingSettings
 {
     QPoint pos;
     QSize size;
+    bool isRotated = false;
 };
 
 static VerticalRenderingSettings verticalConfigurePainter(QPainter *painter, QString ch, int glyphWidth, int glyphHeight, int lineSpaceReduction, const QSize &imageSize, const DrawnPosition &lastPosition)
 {
     painter->save();
+
+    // keep track of rotation
+    bool isRotated = false;
 
     // position offset
     QPoint pos{0, 0};
@@ -224,7 +228,7 @@ static VerticalRenderingSettings verticalConfigurePainter(QPainter *painter, QSt
     QSize size{glyphWidth, glyphHeight};
 
     // character rotation
-    if (ch.contains(QRegularExpression("ー|（|）|「|」|｛|｝|＜|＞|─")))
+    if (ch.contains(QRegularExpression("ー|（|）|「|」|｛|｝|＜|＞|─|〜")))
     {
         auto realHeight = lastPosition.halfwidth ? lastPosition.pos.height() / 2 : lastPosition.pos.height();
         auto p = QRect(
@@ -237,6 +241,7 @@ static VerticalRenderingSettings verticalConfigurePainter(QPainter *painter, QSt
         painter->translate(p.center());
         painter->rotate(90);
         painter->translate(-p.center());
+        isRotated = true;
     }
 
     // ASCII white space, reduce height by half of glyph height
@@ -245,7 +250,7 @@ static VerticalRenderingSettings verticalConfigurePainter(QPainter *painter, QSt
         size = {0, (glyphHeight / 2)};
     }
 
-    return {pos, size};
+    return {pos, size, isRotated};
 }
 
 } // anonymous namespace
@@ -275,7 +280,7 @@ PNGRenderer::PNGRenderer(const std::string &text, const std::string &fontFamily,
 // first result for horizontal text rendering is looking good :)
 //
 //
-const std::vector<char> PNGRenderer::render() const
+const std::vector<char> PNGRenderer::render(size_t *_size, pos_t *_pos) const
 {
     const QString text = QString::fromUtf8(_text.c_str());
     const QFont font = QFont(_fontFamily.c_str(), _fontSize);
@@ -421,7 +426,6 @@ const std::vector<char> PNGRenderer::render() const
         bool hasFurigana = !furiganaPairs.isEmpty();
 
         // vertical rendering
-        // TODO
         if (_vertical)
         {
             int adjustX = 0;
@@ -451,7 +455,6 @@ const std::vector<char> PNGRenderer::render() const
             painter.setFont(font);
             bgPainter.setFont(font);
 
-            int chCounter = 1;
             for (auto&& ch : splitIntoCharacters(lineWithoutFurigana))
             {
                 auto height = mainMetrics.boundingRect(ch).height();
@@ -477,7 +480,19 @@ const std::vector<char> PNGRenderer::render() const
                 drawnPositions.append({drawnPosition, halfwidth});
 
                 y += mainSettings.size.height() - _lineSpaceReduction;
-                ++chCounter;
+
+                // set position when given
+                if (_pos && !mainSettings.isRotated)
+                {
+                    if (_pos->x == 0 && _pos->y == 0)
+                    {
+                        _pos->vertical = true;
+                        auto _x = drawnPosition.x() + glyphWidth;
+                        auto _y = drawnPosition.y();
+                        _pos->x = unsigned(_x < 0 ? 0: _x);
+                        _pos->y = unsigned(_y < 0 ? 0: _y);
+                    }
+                }
 
                 // reset painter to its previous state (saved by verticalConfigurePainter)
                 painter.restore();
@@ -577,6 +592,24 @@ const std::vector<char> PNGRenderer::render() const
             painter.setPen(QColor(_fontColor.c_str()));
             painter.drawText(nextXAdjust, y, size.width(), lineHeight, alignment, lineWithoutFurigana, &drawnPosition);
 
+            // set position when given
+            if (_pos)
+            {
+                _pos->vertical = false;
+
+                if (_pos->x == 0 && lineWithoutFurigana.size() == longestLineCount)
+                {
+                    auto _x = drawnPosition.x();
+                    _pos->x = unsigned(_x < 0 ? 0: _x);
+                }
+
+                if (_pos->y == 0)
+                {
+                    auto _y = drawnPosition.y();
+                    _pos->y = unsigned(_y < 0 ? 0: _y);
+                }
+            }
+
             // draw Furigana
             if (hasFurigana)
             {
@@ -654,6 +687,13 @@ const std::vector<char> PNGRenderer::render() const
     // limited to 255 colors per subtitle frame
     bgPainter.end();
     background.setColorCount(255);
+
+    // set image size when given
+    if (_size)
+    {
+        _size->width = unsigned(size.width());
+        _size->height = unsigned(size.height());
+    }
 
     // write PNG data and return it
     QByteArray png_data;

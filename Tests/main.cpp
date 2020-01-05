@@ -80,5 +80,9 @@ int main(void)
 
     test("PngRenderer::render_simple", renderer_tests::render_simple, "vtest11.png", " （あ）　「あ」　｛か｝\n　（あ） 「あ」＜か＞\nー あぁ──", true);
 
+
+    // pgs
+    test("PgsFrameCreator::render", renderer_tests::render_pgs_frames);
+
     return has_failed_tests ? 1 : 0;
 }
