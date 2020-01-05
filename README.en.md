@@ -3,6 +3,8 @@
 An experimental work-in-progress subtitle editor with
 **first class** Japanese language support.
 
+Examples and rendering tests available at [jimaku-editor-examples](https://github.com/magiruuvelvet/jimaku-editor-examples)
+
 ## Planned Features
 
  - Furigana
@@ -278,3 +280,11 @@ Input: `（宮内{一穂|かずほ}）\nおばあちゃんが\n{買|か}って�
 Renders into this:
 
 ![Rendering Example 5](.readme/rendering-example-5.png)
+
+
+#### 2020-01-05 (early night)
+
+Rendered the first subtitle today :)
+
+Grep some examples at [jimaku-editor-examples](https://github.com/magiruuvelvet/jimaku-editor-examples)
+
