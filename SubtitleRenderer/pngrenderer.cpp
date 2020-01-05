@@ -347,13 +347,24 @@ const std::vector<char> PNGRenderer::render() const
         }
     }
 
-    // invert the image size on vertical rendering
+    // image size for vertical rendering
     if (_vertical)
     {
-        size = QSize(size.height(), size.width());
-
         // fix image height to fit all Kanji
-        size.setHeight((lineHeight * longestLineCount) - (_lineSpaceReduction * (lines.size() - 1)));
+        size.setHeight((lineHeight * longestLineCount) - (_lineSpaceReduction * (longestLineCount - 1)) + 10);
+
+        // fix image width
+        size.setWidth(((glyphWidth + 30) * lines.size()));
+
+        // increase width to fit Furigana
+        for (auto&& line : lines)
+        {
+            bool hasFurigana = hasLineFurigana(line);
+            if (hasFurigana)
+            {
+                size.setWidth(size.width() + furiGlyphWidth);
+            }
+        }
     }
 
     // create in-memory image
@@ -408,7 +419,7 @@ const std::vector<char> PNGRenderer::render() const
             }
 
             int x = (size.width() - ((glyphWidth + adjustX) * (i + 1)) - 10) - nextXAdjust;
-            int y = 0;
+            int y = nextYAdjust;
 
             // Furigana on the right
             if (i == 0 && hasFurigana)
