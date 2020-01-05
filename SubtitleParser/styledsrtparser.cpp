@@ -28,6 +28,7 @@ const style_hints_t default_hints = {
     {"furigana-font-size",      "20"},
     {"furigana-font-color",     "#f1f1f1"},
     {"line-space-reduction",    "0"},
+    {"furigana-line-space-reduction", "0"},
     {"border-color",            "#191919"},
     {"border-size",             "4"},
     {"furigana-border-size",    "2"},

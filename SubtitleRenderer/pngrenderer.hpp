@@ -72,6 +72,11 @@ public:
         _lineSpaceReduction = lineSpaceReduction;
     }
 
+    inline void setFuriganaLineSpaceReduction(int furiganaLineSpaceReduction)
+    {
+        _furiganaLineSpaceReduction = furiganaLineSpaceReduction;
+    }
+
     inline void setTextJustify(TextJustify textJustify)
     {
         _textJustify = textJustify;
@@ -108,6 +113,7 @@ private:
     int _furiganaFontSize = 20;
     std::string _furiganaFontColor = "#f1f1f1";
     int _lineSpaceReduction = 0;
+    int _furiganaLineSpaceReduction = 0;
     TextJustify _textJustify = TextJustify::Center;
     FuriganaDistance _furiganaDistance = FuriganaDistance::Unchanged;
     std::string _borderColor = "#191919";

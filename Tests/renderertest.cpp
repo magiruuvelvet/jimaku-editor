@@ -11,6 +11,7 @@ bool render_simple(const std::string &out_file, const std::string &text, bool ve
     renderer.setTextJustify(PNGRenderer::TextJustify::Left);
     renderer.setFuriganaDistance(PNGRenderer::FuriganaDistance::Narrow);
     renderer.setLineSpaceReduction(27);
+    renderer.setFuriganaLineSpaceReduction(10);
 
     if (vertical)
     {

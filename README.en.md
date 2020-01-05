@@ -150,12 +150,14 @@ adding the hints below the timestamp.
    The color of the Furigana font in HTML format with leading `#`.\
    Default is `#f1f1f1`.
 
- - `line-space-reduction`
+ - `line-space-reduction`, `furigana-line-space-reduction`
 
    A value in pixel how much the spacing between lines in multi-line
    subtitle frames should be reduced. This may depend on the chosen
    font for the subtitle. Some fonts may have too much glyph height,
    which causes a huge amount on line spacing being rendered between lines.
+
+   A seperate option for Furigana exists too.
 
    The default value is 0.
 

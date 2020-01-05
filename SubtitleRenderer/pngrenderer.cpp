@@ -164,8 +164,20 @@ static int getFuriganaDistanceValue(PNGRenderer::FuriganaDistance furiganaDistan
 // QPainter can't do this apparently, so we need to brute force it instead :(
 static void drawTextBorder(QPainter *painter, int x, int y, int borderSize, int width, int height, int alignment, const QString &text)
 {
+    // don't do anything when border size is zero
+    if (borderSize == 0)
+    {
+        return;
+    }
+
     for (auto i = 0; i < borderSize + 1; ++i)
     {
+        // draw last outer border with 50% transparency
+        if (i == borderSize && i != 1)
+        {
+            painter->setOpacity(0.5);
+        }
+
         // top left
         painter->drawText(x-i, y-i, width, height, alignment, text);
         // top
@@ -185,6 +197,8 @@ static void drawTextBorder(QPainter *painter, int x, int y, int borderSize, int 
         // bottom right
         painter->drawText(x+i, y+i, width, height, alignment, text);
     }
+
+    painter->setOpacity(1);
 }
 
 struct DrawnPosition
@@ -424,8 +438,8 @@ const std::vector<char> PNGRenderer::render() const
             // Furigana on the right
             if (i == 0 && hasFurigana)
             {
-                x -= furiGlyphWidth * 1.5;
-                nextXAdjust = furiGlyphWidth * 1.5;
+                x -= int(furiGlyphWidth * 1.5);
+                nextXAdjust = int(furiGlyphWidth * 1.5);
             }
 
             // Furigana on the left
@@ -469,6 +483,60 @@ const std::vector<char> PNGRenderer::render() const
                 // reset painter to its previous state (saved by verticalConfigurePainter)
                 painter.restore();
                 bgPainter.restore();
+            }
+
+            // draw Furigana
+            if (hasFurigana)
+            {
+                // set furigana font
+                painter.setFont(fontFurigana);
+                bgPainter.setFont(fontFurigana);
+
+                for (auto&& f : furiganaPairs)
+                {
+                    // calculate starting positions for Furigana
+                    auto startX = drawnPositions.at(f.startPos).pos.x() + drawnPositions.at(f.startPos).pos.width() + 5;
+
+                    // center align vertically
+                    auto topY = drawnPositions.at(f.startPos).pos.y();
+                    auto bottomYPos = drawnPositions.at(f.startPos + f.length - 1).pos;
+                    auto bottomY = bottomYPos.y() + bottomYPos.height();
+                    auto centerHelper = bottomY - topY;
+                    auto startY = topY + (centerHelper / 2) - (((f.furigana.size() * furiLineHeight) - (f.furigana.size() * _furiganaLineSpaceReduction)) / 2);
+
+                    for (auto&& ch : splitIntoCharacters(f.furigana))
+                    {
+                        // draw on right
+                        if (i == 0)
+                        {
+                            // draw text outline and shadow
+                            bgPainter.setPen(QColor(_borderColor.c_str()));
+                            drawTextBorder(&bgPainter, startX, startY, _furiganaBorderSize, furiGlyphWidth, furiLineHeight, Qt::AlignCenter, ch);
+
+                            // draw main text
+                            painter.setPen(QColor(_furiganaFontColor.c_str()));
+                            painter.drawText(startX, startY, furiGlyphWidth, furiLineHeight, Qt::AlignCenter, ch);
+                        }
+
+                        // draw on left when multiple lines are present
+                        if (i == lines.size() - 1 && lines.size() != 1)
+                        {
+                            // move to left
+                            startX = drawnPositions.at(f.startPos).pos.x() - furiGlyphWidth - 5;
+
+                            // draw text outline and shadow
+                            bgPainter.setPen(QColor(_borderColor.c_str()));
+                            drawTextBorder(&bgPainter, startX, startY, _furiganaBorderSize, furiGlyphWidth, furiLineHeight, Qt::AlignCenter, ch);
+
+                            // draw main text
+                            painter.setPen(QColor(_furiganaFontColor.c_str()));
+                            painter.drawText(startX, startY, furiGlyphWidth, furiLineHeight, Qt::AlignCenter, ch);
+                        }
+
+                        // advance Y position
+                        startY += furiLineHeight - _furiganaLineSpaceReduction;
+                    }
+                }
             }
         }
 
