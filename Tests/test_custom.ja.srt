@@ -29,6 +29,7 @@
 00:00:24,691 --> 00:00:28,403 
 # test=should be removed
 # test=should be removed
+# font-size=3
 私の時は 姉ちゃんの
 お下がりだったのにな
 

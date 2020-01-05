@@ -24,7 +24,17 @@ public:
         MarginOverwrite,
         FontFamily,
         FontSize,
+        FontColor,
         HorizontalNumbers,
+        FuriganaSpacing,
+        FuriganaDistance,
+        FuriganaFontSize,
+        FuriganaFontColor,
+        LineSpaceReduction,
+        FuriganaLineSpaceReduction,
+        BorderColor,
+        BorderSize,
+        FuriganaBorderSize,
     };
 
     StyledSubtitleItem()
@@ -81,17 +91,26 @@ protected:
     {
         switch (property)
         {
-            case TextDirection:     return "text-direction";
-            case TextAlignment:     return "text-alignment";
-            case TextJustify:       return "text-justify";
-            case MarginBottom:      return "margin-bottom";
-            case MarginSide:        return "margin-side";
-            case MarginTop:         return "margin-top";
-            case MarginOverwrite:   return "margin-overwrite";
-            case FontFamily:        return "font-family";
-            case FontSize:          return "font-size";
-            case HorizontalNumbers: return "horizontal-numbers";
-            default: return {};
+            case TextDirection:         return "text-direction";
+            case TextAlignment:         return "text-alignment";
+            case TextJustify:           return "text-justify";
+            case MarginBottom:          return "margin-bottom";
+            case MarginSide:            return "margin-side";
+            case MarginTop:             return "margin-top";
+            case MarginOverwrite:       return "margin-overwrite";
+            case FontFamily:            return "font-family";
+            case FontSize:              return "font-size";
+            case FontColor:             return "font-color";
+            case HorizontalNumbers:     return "horizontal-numbers";
+            case FuriganaSpacing:       return "furigana-spacing";
+            case FuriganaDistance:      return "furigana-distance";
+            case FuriganaFontSize:      return "furigana-font-size";
+            case FuriganaFontColor:     return "furigana-font-color";
+            case LineSpaceReduction:    return "line-space-reduction";
+            case FuriganaLineSpaceReduction: return "furigana-line-space-reduction";
+            case BorderColor:           return "border-color";
+            case BorderSize:            return "border-size";
+            case FuriganaBorderSize:    return "furigana-border-size";
         }
     }
 

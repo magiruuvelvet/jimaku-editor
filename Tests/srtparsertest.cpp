@@ -69,9 +69,10 @@ bool parse_styled()
         subs.at(253).startTime() == 1262511 && subs.at(253).endTime() == 1264263;
 
     // validate styles
-    // TODO
     auto hintCheck =
-        subs.at(4).styleHints().at("test") == "should be removed";
+        subs.at(0).styleHints().at("font-size") == "42" &&   // overwritten by global hints (frame 0)
+        subs.at(4).styleHints().at("font-size") == "3" &&    // overwritten in subtitle frame
+        subs.at(4).styleHints().find("test") == subs.at(4).styleHints().end(); // must be removed (invalid property)
 
     return lengthCheck && linesCheck && subNoCheck && timestampCheck && hintCheck;
 }

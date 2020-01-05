@@ -13,26 +13,33 @@ namespace SrtParser {
 namespace {
 
 const style_hints_t default_hints = {
-    {"text-direction",          "horizontal"},
-    {"text-alignment",          "center"},
-    {"text-justify",            "center"},
-    {"margin-bottom",           "100"},
-    {"margin-side",             "100"},
-    {"margin-top",              "150"},
-    {"font-family",             "TakaoPGothic"}, // avoid empty string as default, TODO: figure out what font Netflix Japan is using and make it the default
-    {"font-size",               "48"},
-    {"font-color",              "#f1f1f1"},
-    {"horizontal-numbers",      "true"},
-    {"furigana-spacing",        "font"},
-    {"furigana-distance",       "unchanged"},
-    {"furigana-font-size",      "20"},
-    {"furigana-font-color",     "#f1f1f1"},
-    {"line-space-reduction",    "0"},
+    {"text-direction",              "horizontal"},
+    {"text-alignment",              "center"},
+    {"text-justify",                "center"},
+    {"margin-bottom",               "100"},
+    {"margin-side",                 "100"},
+    {"margin-top",                  "150"},
+    // avoid empty string as default, TODO: figure out what font Netflix Japan is using and make it the default
+    {"font-family",                 "TakaoPGothic"},
+    {"font-size",                   "48"},
+    {"font-color",                  "#f1f1f1"},
+    {"horizontal-numbers",          "true"},
+    {"furigana-spacing",            "font"},
+    {"furigana-distance",           "unchanged"},
+    {"furigana-font-size",          "20"},
+    {"furigana-font-color",         "#f1f1f1"},
+    {"line-space-reduction",        "0"},
     {"furigana-line-space-reduction", "0"},
-    {"border-color",            "#191919"},
-    {"border-size",             "4"},
-    {"furigana-border-size",    "2"},
-    // {margin-overwrite}
+    {"border-color",                "#191919"},
+    {"border-size",                 "4"},
+    {"furigana-border-size",        "2"},
+
+    // overwrite properties: are setting one of the above during parsing
+    // {"margin-overwrite"}
+};
+
+const style_hints_t validate_hints = {
+    {"margin-overwrite",            ""},
 };
 
 static std::pair<std::string, std::string> parse_hint(const std::string &line)
@@ -44,10 +51,18 @@ static std::pair<std::string, std::string> parse_hint(const std::string &line)
         return {};
     }
 
-    return {
-        line.substr(0, delim),
-        line.substr(delim + 1)
-    };
+    const auto property = line.substr(0, delim);
+    const auto value = line.substr(delim + 1);
+
+    // validate property
+    if (default_hints.find(property) == default_hints.end() && validate_hints.find(property) == validate_hints.end())
+    {
+        // invalid property, return empty pair
+        return {};
+    }
+
+    // return parsed and valid hint
+    return {property, value};
 }
 
 static std::string extract_hints(const SubtitleItem &sub, style_hints_t &target_hints)
