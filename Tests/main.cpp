@@ -78,5 +78,7 @@ int main(void)
     test("PngRenderer::render_simple", renderer_tests::render_simple, "vtest9.png", "{話|・}{せ|・}{る|・}", true);
     test("PngRenderer::render_simple", renderer_tests::render_simple, "vtest10.png", "♪ {旭丘|あさひがおか}", true);
 
+    test("PngRenderer::render_simple", renderer_tests::render_simple, "vtest11.png", " （あ）　「あ」　｛か｝\n　（あ） 「あ」＜か＞\nー あぁ──", true);
+
     return has_failed_tests ? 1 : 0;
 }

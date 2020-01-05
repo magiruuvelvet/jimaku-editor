@@ -11,8 +11,6 @@
 #include <QBuffer>
 #include <QRegularExpression>
 
-#include <QDebug>
-
 // TODO:
 //  -> furigana-spacing
 //  -> horizontal-numbers
@@ -189,25 +187,49 @@ static void drawTextBorder(QPainter *painter, int x, int y, int borderSize, int 
     }
 }
 
+struct DrawnPosition
+{
+    QRect pos;
+    bool halfwidth = false;
+};
+
 struct VerticalRenderingSettings
 {
     QPoint pos;
     QSize size;
 };
 
-// TODO: *** QPainter::rotate !!! (needs more handling to position the chars correctly)
-static VerticalRenderingSettings verticalConfigurePainter(QPainter *painter, QString ch, int glyphWidth, int glyphHeight)
+static VerticalRenderingSettings verticalConfigurePainter(QPainter *painter, QString ch, int glyphWidth, int glyphHeight, int lineSpaceReduction, const QSize &imageSize, const DrawnPosition &lastPosition)
 {
     painter->save();
 
+    // position offset
     QPoint pos{0, 0};
-    QSize size{0, 0};
 
-    if (ch.contains(QRegularExpression("（|）|「|」|ー")))
+    // new size
+    QSize size{glyphWidth, glyphHeight};
+
+    // character rotation
+    if (ch.contains(QRegularExpression("ー|（|）|「|」|｛|｝|＜|＞|─")))
     {
+        // TODO: +5 is hardcoded, but must be replaced by something else
+        auto realHeight = lastPosition.halfwidth ? lastPosition.pos.height() / 2 : lastPosition.pos.height();
+        auto p = QRect(
+            lastPosition.pos.left(),
+            lastPosition.pos.top() + glyphHeight - lineSpaceReduction + 5,
+            lastPosition.pos.width(),
+            realHeight
+        );
+
+        painter->translate(p.center());
         painter->rotate(90);
-        // literally only works for "ー" :(
-        pos = {-10, (glyphHeight * 2) + 35};
+        painter->translate(-p.center());
+    }
+
+    // ASCII white space, reduce height by half of glyph height
+    else if (ch == " ")
+    {
+        size = {0, (glyphHeight / 2)};
     }
 
     return {pos, size};
@@ -331,7 +353,7 @@ const std::vector<char> PNGRenderer::render() const
         size = QSize(size.height(), size.width());
 
         // fix image height to fit all Kanji
-        size.setHeight(((lineHeight + 2) * longestLineCount) - (_lineSpaceReduction * (lines.size() - 1)));
+        size.setHeight((lineHeight * longestLineCount) - (_lineSpaceReduction * (lines.size() - 1)));
     }
 
     // create in-memory image
@@ -395,13 +417,11 @@ const std::vector<char> PNGRenderer::render() const
                 nextXAdjust = furiGlyphWidth * 1.5;
             }
 
-            std::printf("x=%i\n", x);
-
             // Furigana on the left
             //  no X adjust from right needed
 
             // the position where QPainter has drawn the text (required to render Furigana later)
-            QList<QRect> drawnPositions;
+            QList<DrawnPosition> drawnPositions;
 
             // set main font
             painter.setFont(font);
@@ -411,22 +431,28 @@ const std::vector<char> PNGRenderer::render() const
             for (auto&& ch : splitIntoCharacters(lineWithoutFurigana))
             {
                 auto height = mainMetrics.boundingRect(ch).height();
-                std::printf("%s = %i\n", QString(ch).toUtf8().constData(), height);
 
-                auto bgSettings = verticalConfigurePainter(&bgPainter, ch, glyphWidth, height);
-                auto mainSettings = verticalConfigurePainter(&painter, ch, glyphWidth, height);
+                // get last drawn position
+                auto halfwidth = QChar(ch.at(0)) == QChar(0x20); // TODO: write function to handle halfwidth char detection
+                auto lastDrawnPosition = drawnPositions.empty() ?
+                    DrawnPosition{QRect(x, y - height + _lineSpaceReduction, glyphWidth, height), halfwidth} :
+                    drawnPositions.last();
+
+                // configure painter for vertical rendering
+                auto bgSettings = verticalConfigurePainter(&bgPainter, ch, glyphWidth, height, _lineSpaceReduction, size, lastDrawnPosition);
+                auto mainSettings = verticalConfigurePainter(&painter, ch, glyphWidth, height, _lineSpaceReduction, size, lastDrawnPosition);
 
                 // draw text outline and shadow
                 bgPainter.setPen(QColor(_borderColor.c_str()));
-                drawTextBorder(&bgPainter, x - mainSettings.pos.x(), y - mainSettings.pos.y(), _borderSize, glyphWidth, height, Qt::AlignCenter, ch);
+                drawTextBorder(&bgPainter, x - bgSettings.pos.x(), y - bgSettings.pos.y(), _borderSize, glyphWidth, bgSettings.size.height(), Qt::AlignCenter, ch);
 
                 // draw main text
                 QRect drawnPosition;
                 painter.setPen(QColor(_fontColor.c_str()));
-                painter.drawText(x - bgSettings.pos.x(), y - bgSettings.pos.y(), glyphWidth, height, Qt::AlignCenter, ch, &drawnPosition);
-                drawnPositions.append(drawnPosition);
+                painter.drawText(x - mainSettings.pos.x(), y - mainSettings.pos.y(), glyphWidth, mainSettings.size.height(), Qt::AlignCenter, ch, &drawnPosition);
+                drawnPositions.append({drawnPosition, halfwidth});
 
-                y += height - _lineSpaceReduction;
+                y += mainSettings.size.height() - _lineSpaceReduction;
                 ++chCounter;
 
                 // reset painter to its previous state (saved by verticalConfigurePainter)
