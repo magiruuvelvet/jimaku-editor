@@ -265,3 +265,14 @@ Input: `ここがウチの村\nのんびりのどかな所です`
 Renders into this:
 
 ![Rendering Example 4](.readme/rendering-example-4.png)
+
+
+#### 2020-01-05
+
+Vertical furigana implement and general vertical rendering improvements.
+
+Input: `（宮内{一穂|かずほ}）\nおばあちゃんが\n{買|か}ってくれたんだって`
+
+Renders into this:
+
+![Rendering Example 5](.readme/rendering-example-5.png)
