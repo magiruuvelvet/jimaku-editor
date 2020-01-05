@@ -8,9 +8,10 @@
  - [ ] rendering of PNG images
    - [x] basic layout and line spacing
    - [x] furigana (horizontal)
-   - [ ] furigana (vertical)
+   - [x] furigana (vertical)
    - [x] horizontal text
-   - [ ] vertical text
+   - [x] vertical text
+   - [ ] fix text border quality and appearance
  - [ ] transform PGS encoder into a library and fix memory leaks and possible segfaults (found some problems during my testing)
  - [ ] ...
 
