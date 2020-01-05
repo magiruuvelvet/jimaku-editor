@@ -12,6 +12,8 @@ namespace SrtParser {
 
 namespace {
 
+// 19 normal properties
+// 1 overwrite property
 const style_hints_t default_hints = {
     {"text-direction",              "horizontal"},
     {"text-alignment",              "center"},
@@ -145,6 +147,25 @@ std::vector<StyledSubtitleItem> parseStyled(const std::string &fileName)
         StyledSubtitleItem sub(unstyledSub);
         style_hints_t overwrite_hints = global_hints;
         sub.setText(extract_hints(unstyledSub, overwrite_hints));
+
+        // check for overwrite properties
+        if (overwrite_hints.find("margin-overwrite") != overwrite_hints.end())
+        {
+            const auto &text_alignment = overwrite_hints.at("text-alignment");
+            const auto margin_overwrite = overwrite_hints.at("margin-overwrite");
+
+            if (text_alignment == "horizontal")
+            {
+                overwrite_hints["margin-bottom"] = margin_overwrite;
+            }
+            else if (text_alignment == "vertical")
+            {
+                overwrite_hints["margin-side"] = margin_overwrite;
+            }
+
+            overwrite_hints.erase(overwrite_hints.find("margin-overwrite"));
+        }
+
         sub.setStyleHints(overwrite_hints);
         subtitles.emplace_back(sub);
     }
