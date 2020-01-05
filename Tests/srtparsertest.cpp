@@ -50,7 +50,7 @@ bool parse_styled()
     // validate lines
     auto linesCheck =
         subs.at(0).text() == "（鳥のさえずり）" &&
-        subs.at(1).text() == "（宮内(みやうち)れんげ）おおーっ！" &&
+        subs.at(1).text() == "（{宮内|みやうち}れんげ）おおーっ！" &&
         subs.at(4).text() == "私の時は 姉ちゃんの\nお下がりだったのにな" && // new line test and carriage return removal test
         subs.at(252).text() == "…で こっちは 縦笛";
 
