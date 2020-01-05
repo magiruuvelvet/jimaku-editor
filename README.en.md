@@ -96,7 +96,7 @@ adding the hints below the timestamp.
 
  - `margin-bottom`
 
-   Default bottom margin. Default is 100 (*may change once the implementation has started*).
+   Default bottom margin. Default is 150.
 
  - `margin-side`
 

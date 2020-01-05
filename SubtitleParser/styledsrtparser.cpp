@@ -18,7 +18,7 @@ const style_hints_t default_hints = {
     {"text-direction",              "horizontal"},
     {"text-alignment",              "center"},
     {"text-justify",                "center"},
-    {"margin-bottom",               "100"},
+    {"margin-bottom",               "150"},
     {"margin-side",                 "100"},
     {"margin-top",                  "150"},
     // avoid empty string as default, TODO: figure out what font Netflix Japan is using and make it the default
@@ -164,7 +164,7 @@ int StyledSubtitleItem::marginBottom() const
     try {
         return std::stoi(property(MarginBottom));
     } catch (...) {
-        return 100;
+        return 150;
     }
 }
 

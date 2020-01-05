@@ -70,7 +70,7 @@ bool parse_styled()
 
     // validate styles
     auto hintCheck =
-        subs.at(0).styleHints().at("font-size") == "42" &&   // overwritten by global hints (frame 0)
+        subs.at(0).styleHints().at("font-size") == "52" &&   // overwritten by global hints (frame 0)
         subs.at(4).styleHints().at("font-size") == "3" &&    // overwritten in subtitle frame
         subs.at(4).styleHints().find("test") == subs.at(4).styleHints().end(); // must be removed (invalid property)
 

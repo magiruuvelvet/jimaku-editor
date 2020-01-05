@@ -116,7 +116,7 @@ bool PGSFrameCreator::render(const std::string &_out_path) const
         // TODO: everything
         // just center for the moment
         x = (_width / 2) - (size.width / 2);
-        y = _height - size.height - 90;
+        y = _height - size.height - marginBottom;
 
 
         // write sub image to disk
