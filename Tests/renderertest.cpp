@@ -7,11 +7,12 @@ namespace renderer_tests {
 
 bool render_simple(const std::string &out_file, const std::string &text, bool vertical)
 {
-    PNGRenderer renderer(text, "Noto Sans CJK JP");
-    renderer.setTextJustify(PNGRenderer::TextJustify::Left);
-    renderer.setFuriganaDistance(PNGRenderer::FuriganaDistance::Narrow);
-    renderer.setLineSpaceReduction(27);
-    renderer.setFuriganaLineSpaceReduction(10);
+    PNGRenderer renderer(text, "TakaoPGothic");
+    //renderer.setTextJustify(PNGRenderer::TextJustify::Left);
+    //renderer.setFuriganaDistance(PNGRenderer::FuriganaDistance::Narrow);
+    //renderer.setLineSpaceReduction(27);
+    //renderer.setFuriganaLineSpaceReduction(10);
+    //renderer.setFuriganaLineSpaceReduction(-3);
 
     if (vertical)
     {

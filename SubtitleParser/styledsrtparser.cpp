@@ -19,7 +19,7 @@ const style_hints_t default_hints = {
     {"margin-bottom",           "100"},
     {"margin-side",             "100"},
     {"margin-top",              "150"},
-    {"font-family",             "Noto Sans CJK JP"}, // avoid empty string as default, TODO: figure out what font Netflix Japan is using and make it the default
+    {"font-family",             "TakaoPGothic"}, // avoid empty string as default, TODO: figure out what font Netflix Japan is using and make it the default
     {"font-size",               "48"},
     {"font-color",              "#f1f1f1"},
     {"horizontal-numbers",      "true"},

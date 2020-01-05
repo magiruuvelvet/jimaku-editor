@@ -109,6 +109,8 @@ adding the hints below the timestamp.
 
    The font family the renderer should use to produce PNG images.
 
+   The default font is `TakaoPGothic`.
+
  - `font-size`
 
    The size of the font in `pt`. Default is 48.

@@ -226,11 +226,10 @@ static VerticalRenderingSettings verticalConfigurePainter(QPainter *painter, QSt
     // character rotation
     if (ch.contains(QRegularExpression("ー|（|）|「|」|｛|｝|＜|＞|─")))
     {
-        // TODO: +5 is hardcoded, but must be replaced by something else
         auto realHeight = lastPosition.halfwidth ? lastPosition.pos.height() / 2 : lastPosition.pos.height();
         auto p = QRect(
             lastPosition.pos.left(),
-            lastPosition.pos.top() + glyphHeight - lineSpaceReduction + 5,
+            lastPosition.pos.top() + glyphHeight - lineSpaceReduction, // note: some fonts may require +5 ??
             lastPosition.pos.width(),
             realHeight
         );
@@ -264,10 +263,10 @@ PNGRenderer::PNGRenderer(const std::string &text, const std::string &fontFamily,
 {
     PNGRenderer();
 
-    // if no font was given, use the default system font according to Qt
+    // if no font was given, use the default according to specs
     if (_fontFamily.empty())
     {
-        _fontFamily = QFontDatabase::systemFont(QFontDatabase::GeneralFont).family().toUtf8().constData();
+        _fontFamily = "TakaoPGothic";
     }
 }
 
