@@ -83,17 +83,17 @@ public:
         return this->get_property_value(property_string(property));
     }
 
-    int fontSize() const;
-    int furiganaFontSize() const;
+    unsigned long fontSize() const;
+    unsigned long furiganaFontSize() const;
     int lineSpaceReduction() const;
     int furiganaLineSpaceReduction() const;
 
-    int borderSize() const;
-    int furiganaBorderSize() const;
+    unsigned long borderSize() const;
+    unsigned long furiganaBorderSize() const;
 
-    int marginBottom() const;
-    int marginSide() const;
-    int marginTop() const;
+    unsigned long marginBottom() const;
+    unsigned long marginSide() const;
+    unsigned long marginTop() const;
 
     bool isVertical() const;
 

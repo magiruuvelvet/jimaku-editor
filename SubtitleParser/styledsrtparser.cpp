@@ -105,19 +105,19 @@ static std::string extract_hints(const SubtitleItem &sub, style_hints_t &target_
 
 } // anonymous namespace
 
-int StyledSubtitleItem::fontSize() const
+unsigned long StyledSubtitleItem::fontSize() const
 {
     try {
-        return std::stoi(property(FontSize));
+        return std::stoul(property(FontSize));
     } catch (...) {
         return 48;
     }
 }
 
-int StyledSubtitleItem::furiganaFontSize() const
+unsigned long StyledSubtitleItem::furiganaFontSize() const
 {
     try {
-        return std::stoi(property(FuriganaFontSize));
+        return std::stoul(property(FuriganaFontSize));
     } catch (...) {
         return 20;
     }
@@ -141,46 +141,46 @@ int StyledSubtitleItem::furiganaLineSpaceReduction() const
     }
 }
 
-int StyledSubtitleItem::borderSize() const
+unsigned long StyledSubtitleItem::borderSize() const
 {
     try {
-        return std::stoi(property(BorderSize));
+        return std::stoul(property(BorderSize));
     } catch (...) {
         return 4;
     }
 }
 
-int StyledSubtitleItem::furiganaBorderSize() const
+unsigned long StyledSubtitleItem::furiganaBorderSize() const
 {
     try {
-        return std::stoi(property(FuriganaBorderSize));
+        return std::stoul(property(FuriganaBorderSize));
     } catch (...) {
         return 2;
     }
 }
 
-int StyledSubtitleItem::marginBottom() const
+unsigned long StyledSubtitleItem::marginBottom() const
 {
     try {
-        return std::stoi(property(MarginBottom));
+        return std::stoul(property(MarginBottom));
     } catch (...) {
         return 150;
     }
 }
 
-int StyledSubtitleItem::marginSide() const
+unsigned long StyledSubtitleItem::marginSide() const
 {
     try {
-        return std::stoi(property(MarginSide));
+        return std::stoul(property(MarginSide));
     } catch (...) {
         return 100;
     }
 }
 
-int StyledSubtitleItem::marginTop() const
+unsigned long StyledSubtitleItem::marginTop() const
 {
     try {
-        return std::stoi(property(MarginTop));
+        return std::stoul(property(MarginTop));
     } catch (...) {
         return 150;
     }

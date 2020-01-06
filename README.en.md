@@ -67,6 +67,8 @@ adding the hints below the timestamp.
 
 *This list is a work in progress!!*
 
+All numeric values can be either negative or positive, unless otherwise mentioned.
+
  - `text-direction`
 
    Possible values: `horizontal` (default), `vertical`
@@ -94,18 +96,26 @@ adding the hints below the timestamp.
    When the direction is vertical this adjusts the side margin (left/right),
    depending on the text alignment.
 
+   **Value can not be negative!**
+
  - `margin-bottom`
 
    Default bottom margin. Default is 150.
+
+   **Value can not be negative!**
 
  - `margin-side`
 
    Default side margin. Default is 100 (*may change once the implementation has started*).
 
+   **Value can not be negative!**
+
  - `margin-top`
 
    For vertical text only. Default top margin.
    Default is 150 (*may change once the implementation has started*).
+
+   **Value can not be negative!**
 
  - `font-family`
 
@@ -116,6 +126,8 @@ adding the hints below the timestamp.
  - `font-size`
 
    The size of the font in `pt`. Default is 48.
+
+   **Value can not be negative!**
 
  - `font-color`
 
@@ -135,6 +147,8 @@ adding the hints below the timestamp.
    The spacing between each Kana. Defaults to the font glyph spacing.
    The value for the font default is `font`. Otherwise a number in pixel.
 
+   Negative values decrease the spacing.
+
  - `furigana-distance`
 
    The distance between the Kanji and Furigana. This option is interesting together with
@@ -148,6 +162,8 @@ adding the hints below the timestamp.
  - `furigana-font-size`
 
    The size of the font in `pt` for Furigana. Default is 20.
+
+   **Value can not be negative!**
 
  - `furigana-font-color`
 
@@ -163,7 +179,9 @@ adding the hints below the timestamp.
 
    A seperate option for Furigana exists too.
 
-   The default value is 0.
+   The default value is 0 which means don't change the line spacing and use the font default.
+
+   Negative values increase the line spacing. Useful when the line spacing is too compact.
 
  - `border-color`
 
@@ -175,10 +193,14 @@ adding the hints below the timestamp.
    The border size in pixel for the main text.\
    Default is 4.
 
+   **Value can not be negative!**
+
  - `furigana-border-size`
 
    The border size in pixel for the Furigana.\
    Default is 2.
+
+   **Value can not be negative!**
 
 
 ## Furigana

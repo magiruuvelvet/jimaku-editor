@@ -162,7 +162,7 @@ static int getFuriganaDistanceValue(PNGRenderer::FuriganaDistance furiganaDistan
 }
 
 // QPainter can't do this apparently, so we need to brute force it instead :(
-static void drawTextBorder(QPainter *painter, int x, int y, int borderSize, int width, int height, int alignment, const QString &text)
+static void drawTextBorder(QPainter *painter, int x, int y, unsigned long borderSize, int width, int height, int alignment, const QString &text)
 {
     // don't do anything when border size is zero
     if (borderSize == 0)
@@ -170,13 +170,16 @@ static void drawTextBorder(QPainter *painter, int x, int y, int borderSize, int 
         return;
     }
 
-    for (auto i = 0; i < borderSize + 1; ++i)
+    for (auto b = 0U; b < borderSize + 1; ++b)
     {
         // draw last outer border with 50% transparency
-        if (i == borderSize && i != 1)
+        if (b == borderSize && b != 1)
         {
             painter->setOpacity(0.5);
         }
+
+        // make signed for Qt
+        const auto i = int(b);
 
         // top left
         painter->drawText(x-i, y-i, width, height, alignment, text);
@@ -260,7 +263,7 @@ PNGRenderer::PNGRenderer()
     init_qt_context();
 }
 
-PNGRenderer::PNGRenderer(const std::string &text, const std::string &fontFamily, int fontSize, int furiganaFontSize)
+PNGRenderer::PNGRenderer(const std::string &text, const std::string &fontFamily, unsigned long fontSize, unsigned long furiganaFontSize)
     : _text(text),
       _fontFamily(fontFamily),
       _fontSize(fontSize),
@@ -283,8 +286,8 @@ PNGRenderer::PNGRenderer(const std::string &text, const std::string &fontFamily,
 const std::vector<char> PNGRenderer::render(size_t *_size, pos_t *_pos) const
 {
     const QString text = QString::fromUtf8(_text.c_str());
-    const QFont font = QFont(_fontFamily.c_str(), _fontSize);
-    const QFont fontFurigana = QFont(_fontFamily.c_str(), _furiganaFontSize);
+    const QFont font = QFont(_fontFamily.c_str(), int(_fontSize));
+    const QFont fontFurigana = QFont(_fontFamily.c_str(), int(_furiganaFontSize));
 
     // split lines
     QStringList lines = text.split('\n', QString::KeepEmptyParts);
