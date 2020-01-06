@@ -173,6 +173,9 @@ private:
     std::string _borderColor = "#191919";
     unsigned long _borderSize = 4;
     unsigned long _furiganaBorderSize = 2;
+    // TODO: properties
+    double _gaussianBlurRadius = 10;
+    double _gaussianBlurSigma = 1;
 };
 
 #endif // PNGRENDERER_HPP

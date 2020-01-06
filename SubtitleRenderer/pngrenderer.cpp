@@ -681,13 +681,22 @@ const std::vector<char> PNGRenderer::render(size_t *_size, pos_t *_pos) const
         }
     }
 
-    // TODO: blur background image
-    // current function can't handle transparency correctly
-    //bgPainter.end();
-    //background = blurImage(&background);
+    // end painting on background for manipulations
+    bgPainter.end();
+
+    // apply gaussian blur on background
+    Magick::Image blurred(Magick::Blob(background.constBits(), std::size_t(size.width() * size.height() * 4)),
+                          Magick::Geometry(std::size_t(size.width()), std::size_t(size.height())), 8, "RGBA");
+    blurred.gaussianBlur(_gaussianBlurRadius, _gaussianBlurSigma);
+    //blurred.shadow(); // saved for later
+    Magick::Blob blurredData;
+    blurred.write(&blurredData, "RGBA", 8);
+    //background.loadFromData(blurredData.data(), blurredData.length(), "RGBA");
+    QImage bg(reinterpret_cast<const unsigned char*>(blurredData.data()), size.width(), size.height(), QImage::Format_RGBA8888_Premultiplied);
+    background = bg;
 
     // merge main image into background so that it is in the foreground
-    //bgPainter.begin(&background);
+    bgPainter.begin(&background);
     bgPainter.drawImage(0, 0, image);
 
     // reduce color count to be BDSup PGS compliant
