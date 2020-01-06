@@ -1,5 +1,7 @@
 #include "pngrenderer.hpp"
 
+#define MAGICKCORE_QUANTUM_DEPTH 8
+#define MAGICKCORE_HDRI_ENABLE 1
 #include <Magick++.h>
 
 #include <QGuiApplication>
@@ -694,7 +696,8 @@ const std::vector<char> PNGRenderer::render(size_t *_size, pos_t *_pos) const
     background.setColorCount(255);
 
     // Documentation: https://imagemagick.org/Magick++/Image++.html
-    Magick::Image reduced(Magick::Blob(background.constBits(), size.width() * size.height() * 4), Magick::Geometry(size.width(), size.height()), 8, "RGBA");
+    Magick::Image reduced(Magick::Blob(background.constBits(), std::size_t(size.width() * size.height() * 4)),
+                          Magick::Geometry(std::size_t(size.width()), std::size_t(size.height())), 8, "RGBA");
     reduced.magick("PNG");
     reduced.depth(8);
     reduced.quantizeColors(255);
