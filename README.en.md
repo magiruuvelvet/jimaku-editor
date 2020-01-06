@@ -5,6 +5,15 @@ An experimental work-in-progress subtitle editor with
 
 Examples and rendering tests available at [jimaku-editor-examples](https://github.com/magiruuvelvet/jimaku-editor-examples)
 
+## Disclaimer
+
+This subtitle editor is designed only for the Japanese language
+(Chinese works too, because font glyphs have the same width).
+Rendering other writing systems (like latin, cyrillic) is undefined
+and untested and may produce funny rendering results. If you plan
+to render non-Japanese text into PGS with this you are on your own,
+as I don't provide support for this. Good luck.
+
 ## Planned Features
 
  - Furigana
