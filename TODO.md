@@ -11,11 +11,14 @@
    - [x] furigana (vertical)
    - [x] horizontal text
    - [x] vertical text
-   - [ ] fix text border quality and appearance
-   - [ ] must reduce color palette to 255 colors using an algorithm (PGS compliance) **!!!**
+   - [x] fix text border quality and appearance
+   - [x] must reduce color palette to 255 colors using an algorithm (PGS compliance) **!!!**
          otherwise subtitles look extremely ugly once they are in PGS format,
          because the encoder just removes the colors (with a warning) instead of reducing them
+   - [ ] horizontal numbers in vertical text
+   - [ ] furigana spacing
  - [ ] transform PGS encoder into a library and fix memory leaks and possible segfaults (found some problems during my testing)
+   - [ ] fix seeking problems in ffmpeg (something is corrupt in the PGS file)
  - [ ] ...
 
 ...
