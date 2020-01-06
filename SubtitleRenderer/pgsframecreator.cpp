@@ -110,14 +110,27 @@ bool PGSFrameCreator::render(const std::string &_out_path) const
         const auto marginTop = sub.marginTop();
         const auto marginSide = sub.marginSide();
 
-
-        unsigned x = 0, y = 0;
+        // final coordinates of the subtitle image
+        unsigned long x = 0, y = 0;
 
         // TODO: everything
-        // just center for the moment
-        x = (_width / 2) - (size.width / 2);
-        y = _height - size.height - marginBottom;
 
+        // vertical placement
+        if (vertical)
+        {
+
+        }
+
+        // horizontal placement
+        else
+        {
+            if (alignment == "center")
+            {
+                x = (_width / 2) - (size.width / 2);
+                // align last main line above margin line and Furigana on bottom below margin
+                y = _height - size.height - marginBottom + (size.height - pos.y);
+            }
+        }
 
         // write sub image to disk
         const auto filename = std::to_string(frameNo) + ".png";
