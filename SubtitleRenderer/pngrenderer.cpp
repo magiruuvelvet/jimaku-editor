@@ -1,5 +1,7 @@
 #include "pngrenderer.hpp"
 
+#include <Magick++.h>
+
 #include <QGuiApplication>
 #include <QPaintDevice>
 #include <QPainter>
@@ -389,8 +391,8 @@ const std::vector<char> PNGRenderer::render(size_t *_size, pos_t *_pos) const
     }
 
     // create in-memory image
-    QImage image(size, QImage::Format_ARGB32);
-    QImage background(size, QImage::Format_ARGB32);
+    QImage image(size, QImage::Format_RGBA8888_Premultiplied);
+    QImage background(size, QImage::Format_RGBA8888_Premultiplied);
     image.fill(Qt::transparent);
     background.fill(Qt::transparent);
 
@@ -691,6 +693,16 @@ const std::vector<char> PNGRenderer::render(size_t *_size, pos_t *_pos) const
     bgPainter.end();
     background.setColorCount(255);
 
+    // Documentation: https://imagemagick.org/Magick++/Image++.html
+    Magick::Image reduced(Magick::Blob(background.constBits(), size.width() * size.height() * 4), Magick::Geometry(size.width(), size.height()), 8, "RGBA");
+    reduced.magick("PNG");
+    reduced.depth(8);
+    reduced.quantizeColors(255);
+    reduced.quantize();
+    Magick::Blob reducedData;
+    //reduced.write(&reducedData, "RGBA", 8);
+    reduced.write(&reducedData);
+
     // set image size when given
     if (_size)
     {
@@ -698,19 +710,7 @@ const std::vector<char> PNGRenderer::render(size_t *_size, pos_t *_pos) const
         _size->height = unsigned(size.height());
     }
 
-    // write PNG data and return it
-    QByteArray png_data;
-    QBuffer png_data_buf(&png_data);
-    png_data_buf.open(QIODevice::WriteOnly);
-
-    background.save(&png_data_buf, "PNG");
-
-    // convert Qt data to STL
-    std::vector<char> png_data_no_qt;
-    for (auto&& d : png_data)
-    {
-        png_data_no_qt.emplace_back(d);
-    }
-
-    return png_data_no_qt;
+    // return PNG data
+    const auto ptr = reinterpret_cast<const char*>(reducedData.data());
+    return std::vector<char>(ptr, ptr + reducedData.length());
 }

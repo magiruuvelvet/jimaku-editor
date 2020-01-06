@@ -4,6 +4,12 @@ message(STATUS "\nConfiguring target ${CURRENT_TARGET}...")
 
 CreateTarget(${CURRENT_TARGET} STATIC SubtitleRenderer 17)
 
+# pkg-config
+find_package(PkgConfig REQUIRED)
+if (NOT PKG_CONFIG_FOUND)
+    message(FATAL_ERROR "pkg-config executable not found on your system!")
+endif()
+
 # Find Qt Framework
 message(STATUS "Finding Qt...")
 find_package(Qt5Core REQUIRED)
@@ -17,9 +23,16 @@ add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x060000)
 # Qt: disable some features
 add_definitions(-DQT_NO_FOREACH)
 
+# find ImageMagick C++ library
+pkg_check_modules(MAGICKPP REQUIRED Magick++)
+message(STATUS "Magick++ library: ${IMAGICKPP_LIBRARIES}")
+message(STATUS "Magick++ include directory: ${MAGICKPP_INCLUDE_DIRS}")
+
 set(SUBTITLERENDERER_INCLUDE_DIR "${CURRENT_TARGET_DIR}")
 set(SUBTITLERENDERER_INCLUDE_DIR "${CURRENT_TARGET_DIR}" PARENT_SCOPE)
 message(STATUS "${CURRENT_TARGET} include directory: ${SUBTITLERENDERER_INCLUDE_DIR}")
+
+target_include_directories(${CURRENT_TARGET} PRIVATE ${MAGICKPP_INCLUDE_DIRS})
 
 target_link_libraries(${CURRENT_TARGET}
 PUBLIC
@@ -27,6 +40,7 @@ PUBLIC
     Qt5::Gui
 PRIVATE
     SubtitleParserInterface
+    ${MAGICKPP_LIBRARIES}
 )
 
 add_library(SubtitleRendererInterface INTERFACE)
