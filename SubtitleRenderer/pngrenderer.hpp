@@ -41,7 +41,7 @@ public:
 
     // the starting position of the subtitle frame when aligning it inside a PGS frame
     // Furigana are ignored when calculating the starting position, only main characters are respected
-    // horizontal == (bottom) left most main char, depending on the text justification
+    // horizontal == (bottom) left most main char, depending on the text justification (x,y = glyph bottom left)
     // vertical == top right most main char (x,y == glyph top right)
     struct pos_t
     {
