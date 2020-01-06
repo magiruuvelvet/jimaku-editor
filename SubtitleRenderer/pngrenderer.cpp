@@ -228,7 +228,7 @@ static VerticalRenderingSettings verticalConfigurePainter(QPainter *painter, QSt
     QSize size{glyphWidth, glyphHeight};
 
     // character rotation
-    if (ch.contains(QRegularExpression("ー|（|）|「|」|｛|｝|＜|＞|─|〜")))
+    if (ch.contains(QRegularExpression("ー|（|）|「|」|｛|｝|＜|＞|─|〜|～")))
     {
         auto realHeight = lastPosition.halfwidth ? lastPosition.pos.height() / 2 : lastPosition.pos.height();
         auto p = QRect(
@@ -603,9 +603,9 @@ const std::vector<char> PNGRenderer::render(size_t *_size, pos_t *_pos) const
                     _pos->x = unsigned(_x < 0 ? 0: _x);
                 }
 
-                if (_pos->y == 0)
+                if (_pos->y == 0 && i == lines.size() - 1)
                 {
-                    auto _y = drawnPosition.y();
+                    auto _y = drawnPosition.y() + drawnPosition.height();
                     _pos->y = unsigned(_y < 0 ? 0: _y);
                 }
             }
