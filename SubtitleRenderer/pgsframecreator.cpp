@@ -66,6 +66,7 @@ bool PGSFrameCreator::render(const std::string &_out_path) const
 
     // render empty image for first subtitle frame (work around a PGS encoder bug)
     PNGRenderer renderer;
+    //renderer.setReduceColorPalette(false);
     const auto first_image = renderer.render();
     write(_out_path + "/" + "0.png", first_image);
     stream << 0 << ' ' << 0 << ' ' << 0 << ' ' << "0.png" << '\n';
