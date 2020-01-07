@@ -113,23 +113,48 @@ bool PGSFrameCreator::render(const std::string &_out_path) const
         // final coordinates of the subtitle image
         unsigned long x = 0, y = 0;
 
-        // TODO: everything
-
         // vertical placement
         if (vertical)
         {
+            if (alignment == "right")
+            {
+                // align right main line directly at margin line and Furigana on right on the right side of the margin
+                x = _width - size.width - marginSide + (size.width - pos.x);
+            }
+            else if (alignment == "left")
+            {
+                x = marginSide;
+            }
+            else
+            {
+                // TODO: log warning
+            }
 
+            y = marginTop;
         }
 
         // horizontal placement
         else
         {
-            if (alignment == "center")
+            if (alignment == "left")
+            {
+                x = marginSide;
+            }
+            else if (alignment == "center")
             {
                 x = (_width / 2) - (size.width / 2);
-                // align last main line above margin line and Furigana on bottom below margin
-                y = _height - size.height - marginBottom + (size.height - pos.y);
             }
+            else if (alignment == "right")
+            {
+                x = _width - marginSide - size.width;
+            }
+            else
+            {
+                // TODO: log warning
+            }
+
+            // align last main line above margin line and Furigana on bottom below margin
+            y = _height - size.height - marginBottom + (size.height - pos.y);
         }
 
         // write sub image to disk

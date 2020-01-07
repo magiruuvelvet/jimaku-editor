@@ -235,7 +235,7 @@ static VerticalRenderingSettings verticalConfigurePainter(QPainter *painter, QSt
     QSize size{glyphWidth, glyphHeight};
 
     // character rotation
-    if (ch.contains(QRegularExpression("ー|（|）|「|」|｛|｝|＜|＞|─|〜|～")))
+    if (ch.contains(QRegularExpression("ー|（|）|「|」|｛|｝|＜|＞|─|〜|～|…")))
     {
         auto realHeight = lastPosition.halfwidth ? lastPosition.pos.height() / 2 : lastPosition.pos.height();
         auto p = QRect(
