@@ -15,6 +15,8 @@ class StyledSubtitleItem : public SubtitleItem
 public:
     enum Properties
     {
+        Width,
+        Height,
         TextDirection,
         TextAlignment,
         TextJustify,
@@ -83,6 +85,10 @@ public:
         return this->get_property_value(property_string(property));
     }
 
+    // video dimensions
+    unsigned width() const;
+    unsigned height() const;
+
     unsigned long fontSize() const;
     unsigned long furiganaFontSize() const;
     int lineSpaceReduction() const;
@@ -105,6 +111,8 @@ protected:
     {
         switch (property)
         {
+            case Width:                 return "width";
+            case Height:                return "height";
             case TextDirection:         return "text-direction";
             case TextAlignment:         return "text-alignment";
             case TextJustify:           return "text-justify";

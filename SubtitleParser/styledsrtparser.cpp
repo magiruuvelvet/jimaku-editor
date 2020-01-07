@@ -15,6 +15,11 @@ namespace {
 // 19 normal properties
 // 1 overwrite property
 const style_hints_t default_hints = {
+
+    // video dimensions (required for frame positioning in PGS)
+    {"width",                       "1920"},
+    {"height",                      "1080"},
+
     {"text-direction",              "horizontal"},
     {"text-alignment",              "center"},
     {"text-justify",                "center"},
@@ -104,6 +109,24 @@ static std::string extract_hints(const SubtitleItem &sub, style_hints_t &target_
 }
 
 } // anonymous namespace
+
+unsigned StyledSubtitleItem::width() const
+{
+    try {
+        return unsigned(std::stoul(property(Width)));
+    } catch (...) {
+        return 1920;
+    }
+}
+
+unsigned StyledSubtitleItem::height() const
+{
+    try {
+        return unsigned(std::stoul(property(Height)));
+    } catch (...) {
+        return 1080;
+    }
+}
 
 unsigned long StyledSubtitleItem::fontSize() const
 {
