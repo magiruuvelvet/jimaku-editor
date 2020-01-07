@@ -115,14 +115,14 @@ All numeric values can be either negative or positive, unless otherwise mentione
 
  - `margin-side`
 
-   Default side margin. Default is 100 (*may change once the implementation has started*).
+   Default side margin. Default is 130.
 
    **Value can not be negative!**
 
  - `margin-top`
 
    For vertical text only. Default top margin.
-   Default is 150 (*may change once the implementation has started*).
+   Default is 90.
 
    **Value can not be negative!**
 
@@ -134,7 +134,7 @@ All numeric values can be either negative or positive, unless otherwise mentione
 
  - `font-size`
 
-   The size of the font in `pt`. Default is 48.
+   The size of the font in `pt`. Default is 46.
 
    **Value can not be negative!**
 
@@ -200,7 +200,7 @@ All numeric values can be either negative or positive, unless otherwise mentione
  - `border-size`
 
    The border size in pixel for the main text.\
-   Default is 4.
+   Default is 3.
 
    **Value can not be negative!**
 

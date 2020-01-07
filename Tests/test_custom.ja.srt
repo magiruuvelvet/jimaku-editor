@@ -1,18 +1,16 @@
 ﻿0
 00:00:00,000 --> 00:00:00,000 
-# font-family=TakaoPGothic
-# font-size=52
-# furigana-font-size=23
+# text-direction=vertical
+# line-space-reduction=2
+# furigana-line-space-reduction=1
 
 1
 00:00:01,626 --> 00:00:08,383 
 # test=should be removed
-　
 （{鳥|とり}のさえずり）
 
 2
 00:00:16,599 --> 00:00:18,935 
-# margin-overwrite=10
 （{宮内|みやうち}れんげ）おおーっ！
 
 3
@@ -27,18 +25,18 @@
 
 5
 00:00:24,691 --> 00:00:28,403 
-# test=should be removed
-# test=should be removed
-# font-size=3
+# text-alignment=left
 私の時は 姉ちゃんの
 お下がりだったのにな
 
 6
 00:00:28,528 --> 00:00:29,654 
+# text-alignment=left
 ほお
 
 7
 00:00:29,946 --> 00:00:32,032 
+# text-alignment=left
 あっちの姿見で見てきたら？
 
 8

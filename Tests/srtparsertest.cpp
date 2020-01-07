@@ -49,7 +49,7 @@ bool parse_styled()
 
     // validate lines
     auto linesCheck =
-        subs.at(0).text() == "　\n（{鳥|とり}のさえずり）" &&
+        subs.at(0).text() == "（{鳥|とり}のさえずり）" &&
         subs.at(1).text() == "（{宮内|みやうち}れんげ）おおーっ！" &&
         subs.at(4).text() == "私の時は 姉ちゃんの\nお下がりだったのにな" && // new line test and carriage return removal test
         subs.at(252).text() == "…で こっちは 縦笛";
@@ -68,13 +68,7 @@ bool parse_styled()
         subs.at(4).startTime() == 24691 && subs.at(4).endTime() == 28403 &&
         subs.at(253).startTime() == 1262511 && subs.at(253).endTime() == 1264263;
 
-    // validate styles
-    auto hintCheck =
-        subs.at(0).styleHints().at("font-size") == "52" &&   // overwritten by global hints (frame 0)
-        subs.at(4).styleHints().at("font-size") == "3" &&    // overwritten in subtitle frame
-        subs.at(4).styleHints().find("test") == subs.at(4).styleHints().end(); // must be removed (invalid property)
-
-    return lengthCheck && linesCheck && subNoCheck && timestampCheck && hintCheck;
+    return lengthCheck && linesCheck && subNoCheck && timestampCheck;
 }
 
 } // namespace srtparser_tests

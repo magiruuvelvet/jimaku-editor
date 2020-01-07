@@ -162,7 +162,7 @@ private:
     bool _vertical = false;
     std::string _text;
     std::string _fontFamily;
-    unsigned long _fontSize = 48;
+    unsigned long _fontSize = 46;
     std::string _fontColor = "#f1f1f1";
     unsigned long _furiganaFontSize = 20;
     std::string _furiganaFontColor = "#f1f1f1";
@@ -171,11 +171,11 @@ private:
     TextJustify _textJustify = TextJustify::Center;
     FuriganaDistance _furiganaDistance = FuriganaDistance::Unchanged;
     std::string _borderColor = "#191919";
-    unsigned long _borderSize = 4;
+    unsigned long _borderSize = 3;
     unsigned long _furiganaBorderSize = 2;
     // TODO: properties
     double _gaussianBlurRadius = 10;
-    double _gaussianBlurSigma = 1;
+    double _gaussianBlurSigma = 0.8;
 };
 
 #endif // PNGRENDERER_HPP

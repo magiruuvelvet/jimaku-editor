@@ -19,11 +19,11 @@ const style_hints_t default_hints = {
     {"text-alignment",              "center"},
     {"text-justify",                "center"},
     {"margin-bottom",               "150"},
-    {"margin-side",                 "100"},
-    {"margin-top",                  "150"},
+    {"margin-side",                 "130"},
+    {"margin-top",                  "90"},
     // avoid empty string as default, TODO: figure out what font Netflix Japan is using and make it the default
     {"font-family",                 "TakaoPGothic"},
-    {"font-size",                   "48"},
+    {"font-size",                   "46"},
     {"font-color",                  "#f1f1f1"},
     {"horizontal-numbers",          "true"},
     {"furigana-spacing",            "font"},
@@ -33,7 +33,7 @@ const style_hints_t default_hints = {
     {"line-space-reduction",        "0"},
     {"furigana-line-space-reduction", "0"},
     {"border-color",                "#191919"},
-    {"border-size",                 "4"},
+    {"border-size",                 "3"},
     {"furigana-border-size",        "2"},
 
     // overwrite properties: are setting one of the above during parsing
@@ -110,7 +110,7 @@ unsigned long StyledSubtitleItem::fontSize() const
     try {
         return std::stoul(property(FontSize));
     } catch (...) {
-        return 48;
+        return 46;
     }
 }
 
@@ -146,7 +146,7 @@ unsigned long StyledSubtitleItem::borderSize() const
     try {
         return std::stoul(property(BorderSize));
     } catch (...) {
-        return 4;
+        return 3;
     }
 }
 
@@ -173,7 +173,7 @@ unsigned long StyledSubtitleItem::marginSide() const
     try {
         return std::stoul(property(MarginSide));
     } catch (...) {
-        return 100;
+        return 130;
     }
 }
 
@@ -182,7 +182,7 @@ unsigned long StyledSubtitleItem::marginTop() const
     try {
         return std::stoul(property(MarginTop));
     } catch (...) {
-        return 150;
+        return 90;
     }
 }
 
