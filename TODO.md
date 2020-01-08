@@ -17,8 +17,10 @@
          because the encoder just removes the colors (with a warning) instead of reducing them
    - [ ] horizontal numbers in vertical text
    - [ ] furigana spacing
- - [ ] transform PGS encoder into a library and fix memory leaks and possible segfaults (found some problems during my testing)
-   - [ ] fix seeking problems in ffmpeg (something is corrupt in the PGS file)
+ - [x] ~~transform PGS encoder into a library and fix memory leaks and possible segfaults (found some problems during my testing)~~ new encoder in use
+   - [x] fix seeking problems in ffmpeg (something is corrupt in the PGS file)
+   - [x] new encoder warns on complex and invalid image data and print an error message
+ - [ ] handle overlapping subtitle frames (log a warning)
  - [ ] ...
 
 ...
