@@ -156,11 +156,6 @@ public:
         _furiganaBorderSize = furiganaBorderSize;
     }
 
-    inline void setReduceColorPalette(bool reduceColorPalette)
-    {
-        _reduceColorPalette = reduceColorPalette;
-    }
-
     const std::vector<char> render(size_t *size = nullptr, pos_t *pos  = nullptr) const;
 
 private:
@@ -181,7 +176,7 @@ private:
     // TODO: properties
     double _gaussianBlurRadius = 10;
     double _gaussianBlurSigma = 0.8;
-    bool _reduceColorPalette = true;
+    unsigned _colorLimit = 64;
 };
 
 #endif // PNGRENDERER_HPP

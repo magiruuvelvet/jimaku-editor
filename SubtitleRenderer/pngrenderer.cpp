@@ -691,7 +691,6 @@ const std::vector<char> PNGRenderer::render(size_t *_size, pos_t *_pos) const
     //blurred.shadow(); // saved for later
     Magick::Blob blurredData;
     blurred.write(&blurredData, "RGBA", 8);
-    //background.loadFromData(blurredData.data(), blurredData.length(), "RGBA");
     QImage bg(reinterpret_cast<const unsigned char*>(blurredData.data()), size.width(), size.height(), QImage::Format_RGBA8888_Premultiplied);
     background = bg;
 
@@ -709,13 +708,14 @@ const std::vector<char> PNGRenderer::render(size_t *_size, pos_t *_pos) const
                           Magick::Geometry(std::size_t(size.width()), std::size_t(size.height())), 8, "RGBA");
     reduced.magick("PNG");
     reduced.depth(8);
-    if (_reduceColorPalette)
-    {
-        reduced.quantizeColors(128); // max 255 allowed colors in PGSSUP palette, but reduce to 128 colors
-        reduced.quantize();          // further optimize color palette to a bare minimum
-    }
+
+    // max 255 allowed colors in PGSSUP palette, but reduce to configurable limit of colors
+    reduced.quantizeColors(_colorLimit);
+
+    // further optimize color palette to a bare minimum
+    reduced.quantize();
+
     Magick::Blob reducedData;
-    //reduced.write(&reducedData, "RGBA", 8);
     reduced.write(&reducedData);
 
     // set image size when given

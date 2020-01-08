@@ -19,6 +19,9 @@ set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}"
 # Set C++ standard macro
 include(SetCppStandard)
 
+# Set C standard macro
+include(SetCStandard)
+
 # Target creation macro
 include(CreateTarget)
 

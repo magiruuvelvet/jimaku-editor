@@ -45,7 +45,7 @@ bool render_pgs_frames()
 
     const auto out_path = std::string{UNIT_TEST_TEMPORARY_DIR} + "/pgs";
 
-    PGSFrameCreator fc(subs);
+    PGSFrameCreator fc(subs, subs.at(0).width(), subs.at(0).height());
 
     return fc.render(out_path);
 }

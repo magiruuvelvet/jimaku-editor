@@ -6,7 +6,6 @@ CreateTarget(${CURRENT_TARGET} EXECUTABLE unit-tests 17)
 
 target_link_libraries(${CURRENT_TARGET}
 PRIVATE
-    PGSEncoderInterface
     SubtitleParserInterface
     SubtitleRendererInterface
 )

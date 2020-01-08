@@ -2,10 +2,17 @@ include(SetCppStandard)
 
 macro(CreateTarget CMakeTargetName Type OutputName CppVer)
     # grep files from current directory
-    file(GLOB_RECURSE SourceList
-        "*.cpp"
-        "*.hpp"
-    )
+    if (NOT ${CppVer} EQUAL 0)
+        file(GLOB_RECURSE SourceList
+            "*.cpp"
+            "*.hpp"
+        )
+    else()
+        file(GLOB_RECURSE SourceList
+            "*.c"
+            "*.h"
+        )
+    endif()
 
     # create target
     if (${Type} STREQUAL "EXECUTABLE")
@@ -22,9 +29,14 @@ macro(CreateTarget CMakeTargetName Type OutputName CppVer)
     set_target_properties(${CMakeTargetName} PROPERTIES PREFIX "")
     set_target_properties(${CMakeTargetName} PROPERTIES OUTPUT_NAME "${OutputName}")
 
-    # sets the required C++ version on the target
-    SetCppStandard(${CMakeTargetName} ${CppVer})
-    set_target_properties(${CMakeTargetName} PROPERTIES LINKER_LANGUAGE CXX)
+    if (NOT ${CppVer} EQUAL 0)
+        # sets the required C++ version on the target
+        SetCppStandard(${CMakeTargetName} ${CppVer})
+        set_target_properties(${CMakeTargetName} PROPERTIES LINKER_LANGUAGE CXX)
+    else()
+        SetCStandard(${CMakeTargetName} 11)
+        set_target_properties(${CMakeTargetName} PROPERTIES LINKER_LANGUAGE C)
+    endif()
 
     # add current directory to include paths of the target
     target_include_directories(${CMakeTargetName} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
