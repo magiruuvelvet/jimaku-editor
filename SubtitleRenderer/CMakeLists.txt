@@ -4,12 +4,6 @@ message(STATUS "\nConfiguring target ${CURRENT_TARGET}...")
 
 CreateTarget(${CURRENT_TARGET} STATIC SubtitleRenderer 17)
 
-# pkg-config
-find_package(PkgConfig REQUIRED)
-if (NOT PKG_CONFIG_FOUND)
-    message(FATAL_ERROR "pkg-config executable not found on your system!")
-endif()
-
 # Find Qt Framework
 message(STATUS "Finding Qt...")
 find_package(Qt5Core REQUIRED)

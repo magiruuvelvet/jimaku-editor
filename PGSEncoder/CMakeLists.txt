@@ -4,9 +4,21 @@ message(STATUS "\nConfiguring target ${CURRENT_TARGET}...")
 
 CreateTarget(${CURRENT_TARGET} STATIC PGSEncoder 17)
 
+# find libpng
+pkg_check_modules(LIBPNG REQUIRED libpng)
+message(STATUS "libpng library: ${LIBPNG_LIBRARIES}")
+message(STATUS "libpng include directory: ${LIBPNG_INCLUDE_DIRS}")
+
 set(PGSENCODER_INCLUDE_DIR "${CURRENT_TARGET_DIR}")
 set(PGSENCODER_INCLUDE_DIR "${CURRENT_TARGET_DIR}" PARENT_SCOPE)
 message(STATUS "${CURRENT_TARGET} include directory: ${PGSENCODER_INCLUDE_DIR}")
+
+target_include_directories(${CURRENT_TARGET} PRIVATE ${LIBPNG_INCLUDE_DIRS})
+
+target_link_libraries(${CURRENT_TARGET}
+PRIVATE
+    ${LIBPNG_LIBRARIES}
+)
 
 add_library(PGSEncoderInterface INTERFACE)
 target_include_directories(PGSEncoderInterface INTERFACE "${PGSENCODER_INCLUDE_DIR}")

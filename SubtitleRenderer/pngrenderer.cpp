@@ -709,12 +709,10 @@ const std::vector<char> PNGRenderer::render(size_t *_size, pos_t *_pos) const
                           Magick::Geometry(std::size_t(size.width()), std::size_t(size.height())), 8, "RGBA");
     reduced.magick("PNG");
     reduced.depth(8);
-    reduced.colorSpace(Magick::YCbCrColorspace);
-    reduced.colorSpaceType(Magick::YCbCrColorspace);
     if (_reduceColorPalette)
     {
-        reduced.quantizeColors(250); // 255 allowed colors in PGSSUP palette
-        reduced.quantize();
+        reduced.quantizeColors(128); // max 255 allowed colors in PGSSUP palette, but reduce to 128 colors
+        reduced.quantize();          // further optimize color palette to a bare minimum
     }
     Magick::Blob reducedData;
     //reduced.write(&reducedData, "RGBA", 8);
