@@ -176,6 +176,8 @@ All numeric values can be either negative or positive, unless otherwise mentione
    The color of the Furigana font in HTML format with leading `#`.\
    Default is `#f1f1f1`.
 
+   Recommended colors: `#e6e6e6`, `#d9d9d9`
+
  - `line-space-reduction`, `furigana-line-space-reduction`
 
    A value in pixel how much the spacing between lines in multi-line
@@ -188,6 +190,8 @@ All numeric values can be either negative or positive, unless otherwise mentione
    The default value is 0 which means don't change the line spacing and use the font default.
 
    Negative values increase the line spacing. Useful when the line spacing is too compact.
+
+   Recommended value for "Noto Sans CJK" and "Source Han Sans": 27
 
  - `border-color`
 
