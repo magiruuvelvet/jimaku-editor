@@ -32,7 +32,7 @@ bool render_simple(const std::string &out_file, const std::string &text, bool ve
 
     // write png to disk
     std::ofstream file(png_file, std::ios::binary);
-    file.write(png.data(), png.size());
+    file.write(png.data(), unsigned(png.size()));
     file.close();
 
     return !png.empty();
@@ -47,7 +47,7 @@ bool render_pgs_frames()
 
     PGSFrameCreator fc(subs, subs.at(0).width(), subs.at(0).height());
 
-    return fc.render(out_path);
+    return fc.render(out_path) == PGSFrameCreator::Success;
 }
 
 } // namespace renderer_tests
