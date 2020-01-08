@@ -138,6 +138,8 @@ All numeric values can be either negative or positive, unless otherwise mentione
    The color of the font in HTML format with leading `#`.\
    Default is `#f1f1f1`.
 
+   Recommended colors: `#e6e6e6`, `#d9d9d9`
+
  - `horizontal-numbers`
 
    This property only applies when `vertical` text direction is used.
