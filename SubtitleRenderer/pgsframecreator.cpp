@@ -2,31 +2,44 @@
 #include "pngrenderer.hpp"
 
 #include <fstream>
+#include <sstream>
+#include <iomanip>
 
 #include <QFile>
 #include <QFileInfo>
 #include <QDir>
 #include <QTextStream>
 
-#include <QImage>
-#include <QPainter>
-
 using SrtParser::StyledSubtitleItem;
 
 namespace {
 
-static SrtParser::timestamp_t pgsTimestamp(SrtParser::timestamp_t ms)
-{
-    // PGS timestamps have an accuracy of 90 kHz
-    return ms * 90;
-}
-
 static void write(const std::string &filename, const std::vector<char> &data)
 {
-    // write png to disk
+    // write data to disk
     std::ofstream file(filename, std::ios::binary);
-    file.write(data.data(), data.size());
+    file.write(data.data(), unsigned(data.size()));
     file.close();
+}
+
+static std::string format_duration(SrtParser::timestamp_t _ms)
+{
+    std::chrono::milliseconds ms(_ms);
+
+    using namespace std::chrono;
+    auto secs = duration_cast<seconds>(ms);
+    ms -= duration_cast<milliseconds>(secs);
+    auto mins = duration_cast<minutes>(secs);
+    secs -= duration_cast<seconds>(mins);
+    auto hour = duration_cast<hours>(mins);
+    mins -= duration_cast<minutes>(hour);
+
+    std::stringstream ss;
+    ss << std::setfill('0') << std::setw(2) << hour.count() << ":";
+    ss << std::setfill('0') << std::setw(2) << mins.count() << ":";
+    ss << std::setfill('0') << std::setw(2) << secs.count() << ".";
+    ss << std::setfill('0') << std::setw(3) << ms.count();
+    return ss.str();
 }
 
 } // anonymous namespace
@@ -55,21 +68,21 @@ bool PGSFrameCreator::render(const std::string &_out_path) const
         }
     }
 
-    // create and open timing file
-    QFile timing_file(out_path + "/pgs.script");
-    if (!timing_file.open(QIODevice::WriteOnly | QIODevice::Truncate))
+    // create and open definition_file file
+    QFile definition_file(out_path + "/pgs.xml");
+    if (!definition_file.open(QIODevice::WriteOnly | QIODevice::Truncate))
     {
         return false;
     }
 
-    QTextStream stream(&timing_file);
+    QTextStream stream(&definition_file);
 
-    // render empty image for first subtitle frame (work around a PGS encoder bug)
-    PNGRenderer renderer;
-    //renderer.setReduceColorPalette(false);
-    const auto first_image = renderer.render();
-    write(_out_path + "/" + "0.png", first_image);
-    stream << 0 << ' ' << 0 << ' ' << 0 << ' ' << "0.png" << '\n';
+    // write command to run as xml comment
+    stream << "<!-- command: pgssup -s " << _width << "x" << _height << " pgs.xml out.sup -->\n";
+
+    // open xml segment
+    stream << "<pgssup defaultoffset=\"0,0\">\n";
+    stream.flush();
 
     // start processing all subtitles
     unsigned frameNo = 1;
@@ -99,10 +112,6 @@ bool PGSFrameCreator::render(const std::string &_out_path) const
         PNGRenderer::size_t size;
         PNGRenderer::pos_t pos;
         const auto sub_image = renderer.render(&size, &pos);
-
-        // create frame
-        //QImage frame(int(_width), int(_height), QImage::Format_ARGB32);
-        //frame.fill(Qt::transparent);
 
         // H: left, center (default), right    V: right (default), left
         const auto alignment = sub.property(StyledSubtitleItem::TextAlignment);
@@ -162,15 +171,26 @@ bool PGSFrameCreator::render(const std::string &_out_path) const
         const auto filename = std::to_string(frameNo) + ".png";
         write(_out_path + "/" + filename, sub_image);
 
-        // update timing file
-        //   >>> timestamp x y filename
-        stream << pgsTimestamp(sub.startTime()) << ' ' << x << ' ' << y << ' ' << filename.c_str() << '\n';
-        stream << pgsTimestamp(sub.endTime()) << ' ' << 0 << ' ' << 0 << ' ' << "clean" << '\n';
+        // format time and write subtitle frame information to definition file
+        auto start = format_duration(sub.startTime());
+        auto end = format_duration(sub.endTime());
+
+        stream << "    " <<
+            "<subtitle " <<
+                "starttime=\"" << start.c_str() << "\" " <<
+                "endtime=\"" << end.c_str() << "\" " <<
+                "offset=\"" << x << ',' << y << "\" " <<
+                "image=\"" << frameNo << ".png\" />\n";
+        stream.flush();
 
         ++frameNo;
     }
 
-    // close timing file
-    timing_file.close();
+    // close xml segment
+    stream << "</pgssup>\n";
+    stream.flush();
+
+    // close definition file
+    definition_file.close();
     return true;
 }
