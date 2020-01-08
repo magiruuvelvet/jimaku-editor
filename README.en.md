@@ -26,11 +26,11 @@ as I don't provide support for this. Good luck.
    overcome the limitations of text-based subtitles when it comes to the
    above features. (SRT/ASS/etc. don't support complex text layouts)
 
+ - CLI Interface
+
 #### ToDo Features
 
  - Horizontal numbers in vertical text
-
- - CLI Interface
 
  - **LONG TERM**: GUI?
 

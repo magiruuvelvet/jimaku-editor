@@ -21,6 +21,6 @@
    - [x] fix seeking problems in ffmpeg (something is corrupt in the PGS file)
    - [x] new encoder warns on complex and invalid image data and print an error message
  - [ ] handle overlapping subtitle frames (log a warning)
- - [ ] ...
-
-...
+ - [x] command line interface
+ - [ ] write user guide and documentation
+ - [ ] optimize code now that prototyping is done
