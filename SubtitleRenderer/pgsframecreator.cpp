@@ -1,6 +1,7 @@
 #include "pgsframecreator.hpp"
 #include "pngrenderer.hpp"
 
+#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <iomanip>
@@ -55,7 +56,7 @@ PGSFrameCreator::PGSFrameCreator(const std::vector<SrtParser::StyledSubtitleItem
 {
 }
 
-bool PGSFrameCreator::render(const std::string &_out_path) const
+bool PGSFrameCreator::render(const std::string &_out_path, bool verbose) const
 {
     // check if out path exists and create it
     auto out_path = QString::fromUtf8(_out_path.c_str());
@@ -88,6 +89,8 @@ bool PGSFrameCreator::render(const std::string &_out_path) const
     unsigned frameNo = 1;
     for (auto&& sub : _subtitles)
     {
+        std::cout << "Rendering frame " << frameNo << "... ";
+
         // setup renderer
         PNGRenderer renderer(sub.text(), sub.property(StyledSubtitleItem::FontFamily),
                              sub.fontSize(), sub.furiganaFontSize());
@@ -108,10 +111,21 @@ bool PGSFrameCreator::render(const std::string &_out_path) const
         renderer.setBorderSize(sub.borderSize());
         renderer.setFuriganaBorderSize(sub.furiganaBorderSize());
 
+        if (verbose)
+        {
+            std::endl(std::cout);
+
+            for (auto&& hint : sub.styleHints())
+            {
+                std::cout << " " << hint.first << " = " << hint.second << std::endl;
+            }
+        }
+
         // render subtitle image
         PNGRenderer::size_t size;
         PNGRenderer::pos_t pos;
-        const auto sub_image = renderer.render(&size, &pos);
+        unsigned long color_count;
+        const auto sub_image = renderer.render(&size, &pos, &color_count);
 
         // H: left, center (default), right    V: right (default), left
         const auto alignment = sub.property(StyledSubtitleItem::TextAlignment);
@@ -167,9 +181,39 @@ bool PGSFrameCreator::render(const std::string &_out_path) const
             y = _height - size.height - marginBottom + (size.height - pos.y);
         }
 
+        if (verbose)
+        {
+            std::cout << " rendered image size = " << size.width << "x" << size.height << std::endl;
+            std::cout << " calculated position = " << pos.x << "x" << pos.y << std::endl;
+        }
+
         // write sub image to disk
         const auto filename = std::to_string(frameNo) + ".png";
         write(_out_path + "/" + filename, sub_image);
+
+        // write color count report with optimal warning
+        if (color_count <= 255)
+        {
+            if (verbose)
+            {
+                std::cout << " unique colors = " << color_count << std::endl;
+            }
+            else
+            {
+                std::cout << "done [" << color_count << " unique colors in image]" << std::endl;
+            }
+        }
+        else
+        {
+            if (verbose)
+            {
+                std::cout << " unique colors = " << color_count << " (warning: exceeded limit of 255 allowed colors)" << std::endl;
+            }
+            else
+            {
+                std::cout << "done [warning: " << color_count << " unique colors in image of 255 max allowed]" << std::endl;
+            }
+        }
 
         // format time and write subtitle frame information to definition file
         auto start = format_duration(sub.startTime());
