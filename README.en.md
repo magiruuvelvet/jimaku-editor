@@ -14,30 +14,25 @@ and untested and may produce funny rendering results. If you plan
 to render non-Japanese text into PGS with this you are on your own,
 as I don't provide support for this. Good luck.
 
-## Planned Features
+## Features
 
  - Furigana
 
  - Vertical writing (top to bottom)
 
- - Horizontal numbers in vertical text
-
- - Boutens
+ - Boutens (just `・` rendered as Furigana or another appropriate symbol)
 
  - Rendering the finished subtitle to PGS (Presentation Graphic Stream) to
    overcome the limitations of text-based subtitles when it comes to the
    above features. (SRT/ASS/etc. don't support complex text layouts)
 
-   There is already a working open source PGS encoder I'm planning to use
-   for this project. I tested it and it works great and the PGS files are
-   compatible with ffmpeg and ffmpeg-based media players :)
+#### ToDo Features
 
-   --> [drouarb/PGSEncoder](https://github.com/drouarb/PGSEncoder)
+ - Horizontal numbers in vertical text
 
- - Parse SRT files for Japanese subtitles (many of them can be found on the Internet)\
-   Many existing subtitles can be made pretty and probably styled that way, without
-   starting over from scratch.
+ - CLI Interface
 
+ - **LONG TERM**: GUI?
 
 ## How does it work?
 
