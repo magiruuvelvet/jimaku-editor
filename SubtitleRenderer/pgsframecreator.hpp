@@ -13,7 +13,14 @@ public:
     PGSFrameCreator(const std::vector<SrtParser::StyledSubtitleItem> &subtitles, unsigned videoWidth = 1920, unsigned videoHeight = 1080);
     ~PGSFrameCreator() = default;
 
-    bool render(const std::string &out_path, bool verbose = false) const;
+    enum ErrorCode
+    {
+        Success = 0,
+        DirectoyNotCreated,
+        FileNotCreated,
+    };
+
+    ErrorCode render(const std::string &out_path, bool verbose = false) const;
 
 private:
     std::vector<SrtParser::StyledSubtitleItem> _subtitles;

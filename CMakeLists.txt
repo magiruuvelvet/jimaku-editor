@@ -90,6 +90,9 @@ add_subdirectory(SubtitleParser)
 add_subdirectory(SubtitleRenderer)
 add_subdirectory(PGSEncoder)
 
+# User Interface
+add_subdirectory(CLI)
+
 # ユニットテスト
 option(ENABLE_TESTS "Build the unit tests" ON)
 if (ENABLE_TESTS)

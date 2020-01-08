@@ -56,16 +56,21 @@ PGSFrameCreator::PGSFrameCreator(const std::vector<SrtParser::StyledSubtitleItem
 {
 }
 
-bool PGSFrameCreator::render(const std::string &_out_path, bool verbose) const
+PGSFrameCreator::ErrorCode PGSFrameCreator::render(const std::string &_out_path, bool verbose) const
 {
     // check if out path exists and create it
     auto out_path = QString::fromUtf8(_out_path.c_str());
+    auto relative_path = QFileInfo(out_path).isRelative();
+    if (relative_path)
+    {
+        out_path.prepend(QDir::currentPath() + "/");
+    }
     QDir out(QString::fromUtf8(_out_path.c_str()));
     if (!out.exists())
     {
         if (!QDir::root().mkpath(out_path))
         {
-            return false;
+            return DirectoyNotCreated;
         }
     }
 
@@ -73,7 +78,7 @@ bool PGSFrameCreator::render(const std::string &_out_path, bool verbose) const
     QFile definition_file(out_path + "/pgs.xml");
     if (!definition_file.open(QIODevice::WriteOnly | QIODevice::Truncate))
     {
-        return false;
+        return FileNotCreated;
     }
 
     QTextStream stream(&definition_file);
@@ -239,5 +244,5 @@ bool PGSFrameCreator::render(const std::string &_out_path, bool verbose) const
 
     // close definition file
     definition_file.close();
-    return true;
+    return Success;
 }

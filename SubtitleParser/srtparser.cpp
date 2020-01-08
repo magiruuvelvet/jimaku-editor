@@ -6,6 +6,8 @@
 #include <fstream>
 #include <sstream>
 
+#include <filesystem>
+
 namespace SrtParser {
 
 namespace {
@@ -44,12 +46,23 @@ static void skip_utf8_bom(std::ifstream &fs)
 
 } // anonymous namespace
 
-std::vector<SubtitleItem> parse(const std::string &fileName)
+std::vector<SubtitleItem> parse(const std::string &fileName, bool *error, std::string *exception)
 {
     std::vector<SubtitleItem> subtitles;
 
+    // check if file exists before attempting to read it
+    if (!(std::filesystem::exists(fileName) && std::filesystem::is_regular_file(fileName)))
+    {
+        if (error)
+        {
+            (*error) = true;
+        }
+
+        return {};
+    }
+
     // read file and ignore BOM when present (causing parsing issues with std::getline)
-    std::ifstream infile(fileName);
+    std::ifstream infile(fileName, std::ios::in);
     skip_utf8_bom(infile);
 
     std::string line, start, end, completeLine = "", timeLine = "";
@@ -62,54 +75,77 @@ std::vector<SubtitleItem> parse(const std::string &fileName)
      * turn > 1 -> Add string to completeLine
      */
 
-    while (std::getline(infile, line))
+    try
     {
-        // remove carriage return line breaks from line (only keep line feeds)
-        line.erase(std::remove(line.begin(), line.end(), '\r'), line.end());
-
-        if (!line.empty())
+        while (std::getline(infile, line))
         {
-            if (!turn)
+            // remove carriage return line breaks from line (only keep line feeds)
+            line.erase(std::remove(line.begin(), line.end(), '\r'), line.end());
+
+            if (!line.empty())
             {
-                subNo = std::stoull(line);
+                if (!turn)
+                {
+                    subNo = std::stoull(line);
+
+                    turn++;
+                    continue;
+                }
+
+                if (line.find("-->") != std::string::npos)
+                {
+                    timeLine += line;
+
+                    std::vector<std::string> srtTime;
+                    srtTime = split(timeLine, ' ', srtTime);
+                    start = srtTime[0];
+                    end = srtTime[2];
+                }
+                else
+                {
+                    if (completeLine != "")
+                    {
+                        // preserve line breaks
+                        completeLine += "\n";
+                    }
+
+                    completeLine += line;
+                }
 
                 turn++;
-                continue;
-            }
-
-            if (line.find("-->") != std::string::npos)
-            {
-                timeLine += line;
-
-                std::vector<std::string> srtTime;
-                srtTime = split(timeLine, ' ', srtTime);
-                start = srtTime[0];
-                end = srtTime[2];
             }
             else
             {
-                if (completeLine != "")
-                {
-                    // preserve line breaks
-                    completeLine += "\n";
-                }
-
-                completeLine += line;
+                turn = 0;
+                subtitles.emplace_back(SubtitleItem(subNo, start, end, completeLine));
+                completeLine = timeLine = "";
             }
 
-            turn++;
-        }
-        else
-        {
-            turn = 0;
-            subtitles.emplace_back(SubtitleItem(subNo, start, end, completeLine));
-            completeLine = timeLine = "";
+            if (infile.eof())
+            {
+                subtitles.emplace_back(SubtitleItem(subNo, start, end, completeLine));
+            }
         }
 
-        if (infile.eof())
+    }
+    catch (std::exception &e)
+    {
+        if (error)
         {
-            subtitles.emplace_back(SubtitleItem(subNo, start, end, completeLine));
+            (*error) = true;
         }
+
+        if (exception)
+        {
+            (*exception) = e.what();
+        }
+
+        return {};
+    }
+
+    if (error)
+    {
+        (*error) = false;
     }
 
     return subtitles;

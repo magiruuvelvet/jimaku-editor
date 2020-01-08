@@ -115,7 +115,7 @@ private:
     std::string _endTimeString;
 };
 
-std::vector<SubtitleItem> parse(const std::string &fileName);
+std::vector<SubtitleItem> parse(const std::string &fileName, bool *error = nullptr, std::string *exception = nullptr);
 
 } // namespace SrtParser
 

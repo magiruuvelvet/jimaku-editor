@@ -1,9 +1,6 @@
 #include "styledsrtparser.hpp"
 
-//#ifdef DEBUG_BUILD
-//#include <iostream>
-//#endif
-
+#include <iostream>
 #include <string>
 #include <sstream>
 #include <vector>
@@ -260,12 +257,18 @@ const std::string StyledSubtitleItem::get_property_value(const std::string &prop
     return {};
 }
 
-std::vector<StyledSubtitleItem> parseStyled(const std::string &fileName)
+std::vector<StyledSubtitleItem> parseStyled(const std::string &fileName, bool *error, std::string *exception)
 {
-    auto subs = parse(fileName);
+    auto subs = parse(fileName, error, exception);
 
+    // global style hint is mandatory
     if (subs.empty())
     {
+        if (error)
+        {
+            (*error) = true;
+        }
+
         return {};
     }
 
