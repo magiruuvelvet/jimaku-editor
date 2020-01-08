@@ -156,7 +156,7 @@ public:
         _furiganaBorderSize = furiganaBorderSize;
     }
 
-    const std::vector<char> render(size_t *size = nullptr, pos_t *pos  = nullptr) const;
+    const std::vector<char> render(size_t *size = nullptr, pos_t *pos  = nullptr, unsigned long *color_count = nullptr) const;
 
 private:
     bool _vertical = false;

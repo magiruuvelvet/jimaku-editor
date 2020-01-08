@@ -282,12 +282,7 @@ PNGRenderer::PNGRenderer(const std::string &text, const std::string &fontFamily,
     }
 }
 
-//
-// first draft and experiments to test rendering capabilities of Qt
-// first result for horizontal text rendering is looking good :)
-//
-//
-const std::vector<char> PNGRenderer::render(size_t *_size, pos_t *_pos) const
+const std::vector<char> PNGRenderer::render(size_t *_size, pos_t *_pos, unsigned long *color_count) const
 {
     const QString text = QString::fromUtf8(_text.c_str());
     const QFont font = QFont(_fontFamily.c_str(), int(_fontSize));
@@ -723,6 +718,12 @@ const std::vector<char> PNGRenderer::render(size_t *_size, pos_t *_pos) const
     {
         _size->width = unsigned(size.width());
         _size->height = unsigned(size.height());
+    }
+
+    // set color count when given
+    if (color_count)
+    {
+        (*color_count) = reduced.colorMapSize();
     }
 
     // return PNG data
