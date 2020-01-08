@@ -469,11 +469,11 @@ int main(int argc, char *argv[])
 		
 		starttime = h1 * 3600000 + m1 * 60000 + s1 * 1000 + ms1;
 		endtime = h2 * 3600000 + m2 * 60000 + s2 * 1000 + ms2;
-		starttime *= 90.090;
+        starttime *= 90; //.090;
 		time1 = starttime - 5832;
 		time2 = starttime - 90;
 		time3 = starttime - 5643;
-		endtime *= 90.090;
+        endtime *= 90; //.090;
 		time4 = endtime - 90;
 		
 		// 0x16
