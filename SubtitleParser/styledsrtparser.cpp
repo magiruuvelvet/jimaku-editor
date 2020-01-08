@@ -40,6 +40,9 @@ const style_hints_t default_hints = {
     {"border-color",                "#191919"},
     {"border-size",                 "3"},
     {"furigana-border-size",        "2"},
+    {"blur-radius",                 "10"},
+    {"blur-sigma",                  "0.5"},
+    {"color-limit",                 "64"},
 
     // overwrite properties: are setting one of the above during parsing
     // {"margin-overwrite"}
@@ -206,6 +209,33 @@ unsigned long StyledSubtitleItem::marginTop() const
         return std::stoul(property(MarginTop));
     } catch (...) {
         return 90;
+    }
+}
+
+double StyledSubtitleItem::blurRadius() const
+{
+    try {
+        return unsigned(std::stod(property(BlurRadius)));
+    } catch (...) {
+        return 10;
+    }
+}
+
+double StyledSubtitleItem::blurSigma() const
+{
+    try {
+        return unsigned(std::stod(property(BlurSigma)));
+    } catch (...) {
+        return 0.5;
+    }
+}
+
+unsigned StyledSubtitleItem::colorLimit() const
+{
+    try {
+        return unsigned(std::stoul(property(ColorLimit)));
+    } catch (...) {
+        return 64;
     }
 }
 

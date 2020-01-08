@@ -206,6 +206,26 @@ All numeric values can be either negative or positive, unless otherwise mentione
 
    **Value can not be negative!**
 
+ - `blur-radius`
+
+   Gaussian blur radius. Value can have decimal places.
+
+   Default is 10
+
+ - `blur-sigma`
+
+   Gaussian blur sigma. Value can have decimal places.
+
+   Default is 0.5
+
+ - `color-limit`
+
+   The maximum number of colors in the subtitle image.
+   The default is 64 colors. The maximum count of unique
+   colors a PGS subtitle palette segment can have is 255.
+   The encoder throws an error if more than 255 colors
+   were calculated during processing the pixel data.
+
 
 ## Furigana
 

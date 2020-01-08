@@ -156,6 +156,21 @@ public:
         _furiganaBorderSize = furiganaBorderSize;
     }
 
+    inline void setBlurRadius(double blurRadius)
+    {
+        _gaussianBlurRadius = blurRadius;
+    }
+
+    inline void setBlurSigma(double blurSigma)
+    {
+        _gaussianBlurSigma = blurSigma;
+    }
+
+    inline void setColorLimit(unsigned colorLimit)
+    {
+        _colorLimit = colorLimit;
+    }
+
     const std::vector<char> render(size_t *size = nullptr, pos_t *pos  = nullptr, unsigned long *color_count = nullptr) const;
 
 private:
@@ -173,9 +188,8 @@ private:
     std::string _borderColor = "#191919";
     unsigned long _borderSize = 3;
     unsigned long _furiganaBorderSize = 2;
-    // TODO: properties
     double _gaussianBlurRadius = 10;
-    double _gaussianBlurSigma = 0.8;
+    double _gaussianBlurSigma = 0.5;
     unsigned _colorLimit = 64;
 };
 

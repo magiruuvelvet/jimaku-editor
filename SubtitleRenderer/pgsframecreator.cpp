@@ -94,6 +94,7 @@ bool PGSFrameCreator::render(const std::string &_out_path, bool verbose) const
         // setup renderer
         PNGRenderer renderer(sub.text(), sub.property(StyledSubtitleItem::FontFamily),
                              sub.fontSize(), sub.furiganaFontSize());
+        renderer.setColorLimit(sub.colorLimit());
 
         // text direction and justification
         renderer.setVertical(sub.isVertical());
@@ -110,6 +111,8 @@ bool PGSFrameCreator::render(const std::string &_out_path, bool verbose) const
         renderer.setBorderColor(sub.property(StyledSubtitleItem::BorderColor));
         renderer.setBorderSize(sub.borderSize());
         renderer.setFuriganaBorderSize(sub.furiganaBorderSize());
+        renderer.setBlurRadius(sub.blurRadius());
+        renderer.setBlurSigma(sub.blurSigma());
 
         if (verbose)
         {

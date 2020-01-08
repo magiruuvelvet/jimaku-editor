@@ -37,6 +37,9 @@ public:
         BorderColor,
         BorderSize,
         FuriganaBorderSize,
+        BlurRadius,
+        BlurSigma,
+        ColorLimit,
     };
 
     StyledSubtitleItem()
@@ -101,6 +104,11 @@ public:
     unsigned long marginSide() const;
     unsigned long marginTop() const;
 
+    double blurRadius() const;
+    double blurSigma() const;
+
+    unsigned colorLimit() const;
+
     bool isVertical() const;
 
 protected:
@@ -133,6 +141,9 @@ protected:
             case BorderColor:           return "border-color";
             case BorderSize:            return "border-size";
             case FuriganaBorderSize:    return "furigana-border-size";
+            case BlurRadius:            return "blur-radius";
+            case BlurSigma:             return "blur-sigma";
+            case ColorLimit:            return "color-limit";
         }
     }
 
