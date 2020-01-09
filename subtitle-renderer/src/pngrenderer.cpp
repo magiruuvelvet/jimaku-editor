@@ -709,13 +709,14 @@ const std::vector<char> PNGRenderer::render(size_t *_size, pos_t *_pos, unsigned
     // trim useless transparent border
     // allows more text to be stored into the 0xffff bytes limited PGS frame
     // needs recalculation of x,y pos for correct image placement
-
-    // crop image from top and bottom
     auto cropFromTop = cropDetectionRow(&reduced, true);
     auto cropFromBottom = cropDetectionRow(&reduced, false);
-    reduced.crop(Magick::Geometry(reduced.size().width(),
+    auto cropFromLeft = cropDetectionCol(&reduced, true);
+    auto cropFromRight = cropDetectionCol(&reduced, false);
+    reduced.crop(Magick::Geometry(reduced.size().width() - (cropFromLeft + cropFromRight),
                                   reduced.size().height() - (cropFromTop + cropFromBottom),
-                                  0, cropFromTop));
+                                  cropFromLeft, cropFromTop));
+
     // adjust y position
     if (_pos)
     {
@@ -729,12 +730,6 @@ const std::vector<char> PNGRenderer::render(size_t *_size, pos_t *_pos, unsigned
         }
     }
 
-    // crop image from left and right
-    auto cropFromLeft = cropDetectionCol(&reduced, true);
-    auto cropFromRight = cropDetectionCol(&reduced, false);
-    reduced.crop(Magick::Geometry(reduced.size().width() - (cropFromLeft + cropFromRight),
-                                  reduced.size().height(),
-                                  cropFromLeft, cropFromTop)); // note: cropping commands seem to be combined by ImageMagick :thinking:
     // adjust x position
     if (_pos)
     {
