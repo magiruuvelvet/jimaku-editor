@@ -713,15 +713,15 @@ const std::vector<char> PNGRenderer::render(size_t *_size, pos_t *_pos, unsigned
 
         if (fromTop)
         {
-            for (auto row = 0; row < size.height(); ++row)
+            for (auto row = 0U; row < reduced.size().height(); ++row)
             {
                 bool quit = false;
 
                 // image width
-                const auto quant = reduced.getConstPixels(0, row, unsigned(size.width()), 1);
+                const auto quant = reduced.getConstPixels(0, row, reduced.size().width(), 1);
 
                 // pixel count (RGBA => width*4)
-                for (auto col = 0; col < size.width() * 4; ++col)
+                for (auto col = 0U; col < reduced.size().width() * 4; ++col)
                 {
                     if (quant[col] > 0)
                     {
@@ -740,15 +740,15 @@ const std::vector<char> PNGRenderer::render(size_t *_size, pos_t *_pos, unsigned
         }
         else
         {
-            for (auto row = size.height(); row != 0; --row)
+            for (auto row = reduced.size().height(); row != 0; --row)
             {
                 bool quit = false;
 
                 // image width
-                const auto quant = reduced.getConstPixels(0, row, unsigned(size.width()), 1);
+                const auto quant = reduced.getConstPixels(0, row, reduced.size().width(), 1);
 
                 // pixel count (RGBA => width*4)
-                for (auto col = 0; col < size.width() * 4; ++col)
+                for (auto col = 0U; col < reduced.size().width() * 4; ++col)
                 {
                     if (quant[col] > 0)
                     {
@@ -772,8 +772,8 @@ const std::vector<char> PNGRenderer::render(size_t *_size, pos_t *_pos, unsigned
     // crop image from top and bottom
     auto cropFromTop = cropDetection(true);
     auto cropFromBottom = cropDetection(false);
-    reduced.crop(Magick::Geometry(unsigned(size.width()),
-                                  unsigned(size.height()) - (cropFromTop + cropFromBottom),
+    reduced.crop(Magick::Geometry(reduced.size().width(),
+                                  reduced.size().height() - (cropFromTop + cropFromBottom),
                                   0, cropFromTop));
 
     // adjust y position
@@ -804,8 +804,8 @@ const std::vector<char> PNGRenderer::render(size_t *_size, pos_t *_pos, unsigned
     // set image size when given
     if (_size)
     {
-        _size->width = unsigned(size.width());
-        _size->height = unsigned(size.height());
+        _size->width = unsigned(reduced.size().width());
+        _size->height = unsigned(reduced.size().height());
     }
 
     // set color count when given
