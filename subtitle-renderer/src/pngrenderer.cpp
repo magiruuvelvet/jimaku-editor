@@ -704,11 +704,99 @@ const std::vector<char> PNGRenderer::render(size_t *_size, pos_t *_pos, unsigned
     reduced.magick("PNG");
     reduced.depth(8);
 
+    // trim useless transparent border
+    // allows more text to be stored into the 0xffff bytes limited PGS frame
+    // needs recalculation of x,y pos for correct image placement
+
+    auto cropDetection = [&](bool fromTop) {
+        unsigned emptyRows = 0;
+
+        if (fromTop)
+        {
+            for (auto row = 0; row < size.height(); ++row)
+            {
+                bool quit = false;
+
+                // image width
+                const auto quant = reduced.getConstPixels(0, row, unsigned(size.width()), 1);
+
+                // pixel count (RGBA => width*4)
+                for (auto col = 0; col < size.width() * 4; ++col)
+                {
+                    if (quant[col] > 0)
+                    {
+                        quit = true;
+                        break;
+                    }
+                }
+
+                if (quit)
+                {
+                    break;
+                }
+
+                ++emptyRows;
+            }
+        }
+        else
+        {
+            for (auto row = size.height(); row != 0; --row)
+            {
+                bool quit = false;
+
+                // image width
+                const auto quant = reduced.getConstPixels(0, row, unsigned(size.width()), 1);
+
+                // pixel count (RGBA => width*4)
+                for (auto col = 0; col < size.width() * 4; ++col)
+                {
+                    if (quant[col] > 0)
+                    {
+                        quit = true;
+                        break;
+                    }
+                }
+
+                if (quit)
+                {
+                    break;
+                }
+
+                ++emptyRows;
+            }
+        }
+
+        return emptyRows;
+    };
+
+    // crop image from top and bottom
+    auto cropFromTop = cropDetection(true);
+    auto cropFromBottom = cropDetection(false);
+    reduced.crop(Magick::Geometry(unsigned(size.width()),
+                                  unsigned(size.height()) - (cropFromTop + cropFromBottom),
+                                  0, cropFromTop));
+
+    // adjust y position
+    if (_pos)
+    {
+        if (_pos->y >= cropFromTop)
+        {
+            _pos->y -= cropFromTop;
+        }
+        else
+        {
+            _pos->y = 0;
+        }
+    }
+
     // max 255 allowed colors in PGSSUP palette, but reduce to configurable limit of colors
     reduced.quantizeColors(_colorLimit);
 
     // further optimize color palette to a bare minimum
     reduced.quantize();
+
+    // strip useless data (reduces size of PNG data)
+    reduced.strip();
 
     Magick::Blob reducedData;
     reduced.write(&reducedData);
