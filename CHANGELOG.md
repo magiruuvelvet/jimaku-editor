@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.1-beta
+
+ - reduce image size to a bare minimum, this allows more
+   opaque data inside a single PGS subtitle frame
+
 ## 0.8-beta
 
  - initial release with command line interface
