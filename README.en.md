@@ -1,7 +1,9 @@
 # 字幕エーディタ (Subtitle Editor)
 
-An experimental work-in-progress subtitle editor with
+A work-in-progress subtitle editor with
 **first class** Japanese language support.
+
+Already functional for many use cases.
 
 Examples and rendering tests available at [jimaku-editor-examples](https://github.com/magiruuvelvet/jimaku-editor-examples)
 
