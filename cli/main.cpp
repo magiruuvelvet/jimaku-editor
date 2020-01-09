@@ -12,6 +12,8 @@ int main(int argc, char **argv)
     // copy argc, cxxopts modifies this and argv
     int orig_argc = argc;
 
+    std::cout << "jimaku-renderer " << version::get() << std::endl;
+
     cxxopts::Options options("jimaku-renderer", "Subtitle renderer for CJK subtitles");
 
     // required options
@@ -26,7 +28,7 @@ int main(int argc, char **argv)
       ;
 
     // misc options
-    options.add_options()
+    options.add_options("help options")
       ("h,help",       "Show this help")
       ("version",      "Show application version")
       ;
