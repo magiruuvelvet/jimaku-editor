@@ -4,6 +4,8 @@
 #define MAGICKCORE_HDRI_ENABLE 1
 #include <Magick++.h>
 
+#include "helpers.hpp"
+
 #include <QGuiApplication>
 #include <QPaintDevice>
 #include <QPainter>
@@ -708,74 +710,12 @@ const std::vector<char> PNGRenderer::render(size_t *_size, pos_t *_pos, unsigned
     // allows more text to be stored into the 0xffff bytes limited PGS frame
     // needs recalculation of x,y pos for correct image placement
 
-    auto cropDetection = [&](bool fromTop) {
-        unsigned emptyRows = 0;
-
-        if (fromTop)
-        {
-            for (auto row = 0U; row < reduced.size().height(); ++row)
-            {
-                bool quit = false;
-
-                // image width
-                const auto quant = reduced.getConstPixels(0, row, reduced.size().width(), 1);
-
-                // pixel count (RGBA => width*4)
-                for (auto col = 0U; col < reduced.size().width() * 4; ++col)
-                {
-                    if (quant[col] > 0)
-                    {
-                        quit = true;
-                        break;
-                    }
-                }
-
-                if (quit)
-                {
-                    break;
-                }
-
-                ++emptyRows;
-            }
-        }
-        else
-        {
-            for (auto row = reduced.size().height(); row != 0; --row)
-            {
-                bool quit = false;
-
-                // image width
-                const auto quant = reduced.getConstPixels(0, row, reduced.size().width(), 1);
-
-                // pixel count (RGBA => width*4)
-                for (auto col = 0U; col < reduced.size().width() * 4; ++col)
-                {
-                    if (quant[col] > 0)
-                    {
-                        quit = true;
-                        break;
-                    }
-                }
-
-                if (quit)
-                {
-                    break;
-                }
-
-                ++emptyRows;
-            }
-        }
-
-        return emptyRows;
-    };
-
     // crop image from top and bottom
-    auto cropFromTop = cropDetection(true);
-    auto cropFromBottom = cropDetection(false);
+    auto cropFromTop = cropDetectionRow(&reduced, true);
+    auto cropFromBottom = cropDetectionRow(&reduced, false);
     reduced.crop(Magick::Geometry(reduced.size().width(),
                                   reduced.size().height() - (cropFromTop + cropFromBottom),
                                   0, cropFromTop));
-
     // adjust y position
     if (_pos)
     {
@@ -786,6 +726,25 @@ const std::vector<char> PNGRenderer::render(size_t *_size, pos_t *_pos, unsigned
         else
         {
             _pos->y = 0;
+        }
+    }
+
+    // crop image from left and right
+    auto cropFromLeft = cropDetectionCol(&reduced, true);
+    auto cropFromRight = cropDetectionCol(&reduced, false);
+    reduced.crop(Magick::Geometry(reduced.size().width() - (cropFromLeft + cropFromRight),
+                                  reduced.size().height(),
+                                  cropFromLeft, cropFromTop)); // note: cropping commands seem to be combined by ImageMagick :thinking:
+    // adjust x position
+    if (_pos)
+    {
+        if (_pos->x >= cropFromLeft)
+        {
+            _pos->x -= cropFromLeft;
+        }
+        else
+        {
+            _pos->x = 0;
         }
     }
 
