@@ -151,7 +151,14 @@ PGSFrameCreator::ErrorCode PGSFrameCreator::render(const std::string &_out_path,
             if (alignment == "right")
             {
                 // align right main line directly at margin line and Furigana on right on the right side of the margin
-                x = _width - size.width - marginSide + (size.width - pos.x);
+                if (verbose)
+                {
+                    std::cout << " x = ";
+                    std::cout << _width << "-" << size.width << "-" << marginSide << "+" << "(" << size.width << "-" << pos.x << ")" << std::endl;
+                }
+
+                // last calculation must happen in signed to prevent underflow
+                x = _width - size.width - marginSide + ((long long) size.width - (long long) pos.x);
             }
             else if (alignment == "left")
             {
@@ -159,7 +166,7 @@ PGSFrameCreator::ErrorCode PGSFrameCreator::render(const std::string &_out_path,
             }
             else
             {
-                // TODO: log warning
+                std::cout << "warning: unknown alignment: " << alignment << std::endl;
             }
 
             y = marginTop;
@@ -182,17 +189,25 @@ PGSFrameCreator::ErrorCode PGSFrameCreator::render(const std::string &_out_path,
             }
             else
             {
-                // TODO: log warning
+                std::cout << "warning: unknown alignment: " << alignment << std::endl;
             }
 
             // align last main line above margin line and Furigana on bottom below margin
-            y = _height - size.height - marginBottom + (size.height - pos.y);
+            if (verbose)
+            {
+                std::cout << " y = ";
+                std::cout << _height << "-" << size.height << "-" << marginBottom << "+" << "(" << size.height << "-" << pos.y << ")" << std::endl;
+            }
+
+            // last calculation must happen in signed to prevent underflow
+            y = _height - size.height - marginBottom + ((long long) size.height - (long long) pos.y);
         }
 
         if (verbose)
         {
             std::cout << " rendered image size = " << size.width << "x" << size.height << std::endl;
-            std::cout << " calculated position = " << pos.x << "x" << pos.y << std::endl;
+            std::cout << " calculated position offset = " << pos.x << "x" << pos.y << std::endl;
+            std::cout << " calculated image position = " << x << "x" << y << std::endl;
         }
 
         // write sub image to disk
