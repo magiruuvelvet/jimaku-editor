@@ -135,6 +135,8 @@ PGSFrameCreator::ErrorCode PGSFrameCreator::render(const std::string &_out_path,
         unsigned long color_count;
         const auto sub_image = renderer.render(&size, &pos, &color_count);
 
+        const auto size_as_8bit_pal = size.width * size.height;
+
         // H: left, center (default), right    V: right (default), left
         const auto alignment = sub.property(StyledSubtitleItem::TextAlignment);
         const bool vertical = sub.isVertical();
@@ -205,7 +207,7 @@ PGSFrameCreator::ErrorCode PGSFrameCreator::render(const std::string &_out_path,
 
         if (verbose)
         {
-            std::cout << " rendered image size = " << size.width << "x" << size.height << std::endl;
+            std::cout << " rendered image size = " << size.width << "x" << size.height << " (" << size_as_8bit_pal << " bytes in PGS)" << std::endl;
             std::cout << " calculated position offset = " << pos.x << "x" << pos.y << std::endl;
             std::cout << " calculated image position = " << x << "x" << y << std::endl;
         }
@@ -236,6 +238,12 @@ PGSFrameCreator::ErrorCode PGSFrameCreator::render(const std::string &_out_path,
             {
                 std::cout << "done [warning: " << color_count << " unique colors in image of 255 max allowed]" << std::endl;
             }
+        }
+
+        // print a warning when image size exceeds the maximum length a PGS frame can store
+        if (size_as_8bit_pal > 0xFFFF)
+        {
+            std::cout << "warning: frame " << frameNo << " exceeds the maximum allowed " << 0xFFFF << " bytes by " << size_as_8bit_pal - 0xFFFF << " bytes" << std::endl;
         }
 
         // format time and write subtitle frame information to definition file
