@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.2-beta
+
+ - fix integer underflow when calculating the subtitle position
+
 ## 0.8.1-beta
 
  - reduce image size to a bare minimum, this allows more
