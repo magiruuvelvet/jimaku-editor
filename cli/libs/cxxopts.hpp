@@ -39,6 +39,9 @@ THE SOFTWARE.
 #include <unordered_set>
 #include <vector>
 
+#include "ordered_map.hpp"
+#include "ordered_set.hpp"
+
 #ifdef __cpp_lib_optional
 #include <optional>
 #define CXXOPTS_HAS_OPTIONAL
@@ -1421,7 +1424,7 @@ namespace cxxopts
     std::unordered_set<std::string> m_positional_set;
 
     //mapping from groups to help options
-    std::map<std::string, HelpGroupDetails> m_help;
+    tsl::ordered_map<std::string, HelpGroupDetails> m_help;
   };
 
   class OptionAdder
@@ -2068,7 +2071,7 @@ Options::help_one_group(const std::string& g) const
 
   if (!g.empty())
   {
-    result += toLocalString(" " + g + " options:\n");
+    result += toLocalString(" " + g + ":\n");
   }
 
   for (const auto& o : group->second.options)

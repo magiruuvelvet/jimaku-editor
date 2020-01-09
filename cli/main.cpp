@@ -2,7 +2,7 @@
 
 #include <config/version.hpp>
 
-#include "cxxopts.hpp"
+#include "libs/cxxopts.hpp"
 
 #include <srtparser/styledsrtparser.hpp>
 #include <renderer/pgsframecreator.hpp>
@@ -14,12 +14,21 @@ int main(int argc, char **argv)
 
     cxxopts::Options options("jimaku-renderer", "Subtitle renderer for CJK subtitles");
 
+    // required options
+    options.add_options("required options")
+      ("f,srt-file",   "Input styled SRT file", cxxopts::value<std::string>())
+      ("o,output-dir", "Target directory to write rendered subtitles too", cxxopts::value<std::string>())
+      ;
+
+    // debug options
+    options.add_options("debug options")
+      ("v,verbose",    "Enable verbose output")
+      ;
+
+    // misc options
     options.add_options()
       ("h,help",       "Show this help")
       ("version",      "Show application version")
-      ("v,verbose",    "Enable verbose output")
-      ("f,srt-file",   "Input styled SRT file", cxxopts::value<std::string>())
-      ("o,output-dir", "Target directory to write rendered subtitles too", cxxopts::value<std::string>())
       ;
 
     // hack to not put the entire program logic into a try catch block
