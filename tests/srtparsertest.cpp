@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include <srtparser.hpp>
-#include <styledsrtparser.hpp>
+#include <srtparser/srtparser.hpp>
+#include <srtparser/styledsrtparser.hpp>
 
 namespace srtparser_tests {
 

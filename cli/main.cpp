@@ -1,17 +1,22 @@
 #include <iostream>
 
+#include <config/version.hpp>
+
 #include "cxxopts.hpp"
 
-#include <styledsrtparser.hpp>
-#include <pgsframecreator.hpp>
+#include <srtparser/styledsrtparser.hpp>
+#include <renderer/pgsframecreator.hpp>
 
 int main(int argc, char **argv)
 {
+    // copy argc, cxxopts modifies this and argv
     int orig_argc = argc;
+
     cxxopts::Options options("jimaku-renderer", "Subtitle renderer for CJK subtitles");
 
     options.add_options()
       ("h,help",       "Show this help")
+      ("version",      "Show application version")
       ("v,verbose",    "Enable verbose output")
       ("f,srt-file",   "Input styled SRT file", cxxopts::value<std::string>())
       ("o,output-dir", "Target directory to write rendered subtitles too", cxxopts::value<std::string>())
@@ -29,6 +34,13 @@ int main(int argc, char **argv)
     }
 
     const auto &result = result_scope_helper.at(0);
+
+    // show version
+    if (result["version"].as<bool>())
+    {
+        std::cout << version::get() << std::endl;
+        return 0;
+    }
 
     // show help text
     if (result["help"].as<bool>() || orig_argc == 1)

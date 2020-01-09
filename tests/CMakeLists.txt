@@ -1,4 +1,4 @@
-set(CURRENT_TARGET "UnitTests")
+set(CURRENT_TARGET "unit-tests")
 
 message(STATUS "\nConfiguring target ${CURRENT_TARGET}...")
 
@@ -9,11 +9,6 @@ PRIVATE
     SubtitleParserInterface
     SubtitleRendererInterface
 )
-
-# target_include_directories(${CURRENT_TARGET}
-# PRIVATE
-#     "${PROJECT_SOURCE_DIR}/Libs/bandit"
-# )
 
 set(UNIT_TEST_CURRENT_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 set(UNIT_TEST_TEMPORARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/tmp")

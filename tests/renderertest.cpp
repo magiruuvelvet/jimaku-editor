@@ -1,8 +1,8 @@
 #include <iostream>
 #include <fstream>
 
-#include <pngrenderer.hpp>
-#include <pgsframecreator.hpp>
+#include <renderer/pngrenderer.hpp>
+#include <renderer/pgsframecreator.hpp>
 
 namespace renderer_tests {
 

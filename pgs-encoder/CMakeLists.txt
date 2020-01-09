@@ -1,8 +1,8 @@
-set(CURRENT_TARGET "PGSEncoder")
+set(CURRENT_TARGET "pgs-encoder")
 
 message(STATUS "\nConfiguring target ${CURRENT_TARGET}...")
 
-CreateTarget(${CURRENT_TARGET} EXECUTABLE PGSEncoder 0)
+CreateTarget(${CURRENT_TARGET} EXECUTABLE pgs-encoder 0)
 
 # find libpng
 pkg_check_modules(LIBPNG REQUIRED libpng)
@@ -22,11 +22,12 @@ PRIVATE
     ${LIBPNG_LIBRARIES}
 )
 
+# update version file on changes
+if (INCLUDE_GIT_TRACKING)
+    add_dependencies(${CURRENT_TARGET} check_git_repository)
+endif()
+
 set_target_properties(${CURRENT_TARGET} PROPERTIES PREFIX "")
 set_target_properties(${CURRENT_TARGET} PROPERTIES OUTPUT_NAME "pgssup")
-
-#add_library(PGSEncoderInterface INTERFACE)
-#target_include_directories(PGSEncoderInterface INTERFACE "${PGSENCODER_INCLUDE_DIR}")
-#target_link_libraries(PGSEncoderInterface INTERFACE PGSEncoder)
 
 message(STATUS "Configured target ${CURRENT_TARGET}.\n")
