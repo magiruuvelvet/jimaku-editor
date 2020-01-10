@@ -83,6 +83,7 @@ int main(void)
 
     // pgs
     test("PgsFrameCreator::render", renderer_tests::render_pgs_frames);
+    test("PgsFrameCreator::render_with_command", renderer_tests::render_pgs_frames_with_command);
 
     return has_failed_tests ? 1 : 0;
 }

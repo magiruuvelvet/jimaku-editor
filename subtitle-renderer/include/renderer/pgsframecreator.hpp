@@ -13,6 +13,8 @@ public:
     PGSFrameCreator(const std::vector<SrtParser::StyledSubtitleItem> &subtitles, unsigned videoWidth = 1920, unsigned videoHeight = 1080);
     ~PGSFrameCreator() = default;
 
+    void setCommand(const std::string &command);
+
     enum ErrorCode
     {
         Success = 0,
@@ -26,6 +28,9 @@ private:
     std::vector<SrtParser::StyledSubtitleItem> _subtitles;
     unsigned _width = 1920;
     unsigned _height = 1080;
+
+    std::string _command;
+    std::vector<std::string> _args_template;
 };
 
 #endif // PGSFRAMECREATOR_HPP

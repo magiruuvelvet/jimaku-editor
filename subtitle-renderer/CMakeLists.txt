@@ -36,6 +36,7 @@ PUBLIC
 PRIVATE
     SubtitleParserInterface
     ${MAGICKPP_LIBRARIES}
+    reprocxx
 )
 
 # update version file on changes

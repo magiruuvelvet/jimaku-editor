@@ -108,6 +108,11 @@ if (NOT PKG_CONFIG_FOUND)
     message(FATAL_ERROR "pkg-config executable not found on your system!")
 endif()
 
+# Dependencies
+message(STATUS "\n>>> START configure deps")
+add_subdirectory(libs)
+message(STATUS ">>> END configure deps\n")
+
 # コンフィグレーション
 add_subdirectory(config)
 

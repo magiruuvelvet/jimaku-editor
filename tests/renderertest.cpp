@@ -51,4 +51,19 @@ bool render_pgs_frames()
     return fc.render(out_path) == PGSFrameCreator::Success;
 }
 
+bool render_pgs_frames_with_command()
+{
+    const auto srt_file = std::string{UNIT_TEST_CURRENT_DIR} + "/test_short.ja.srt";
+    const auto subs = SrtParser::parseStyled(srt_file);
+
+    const auto out_path = std::string{UNIT_TEST_TEMPORARY_DIR} + "/pgs_command";
+
+    PGSFrameCreator fc(subs, subs.at(0).width(), subs.at(0).height());
+
+    // run optipng on all rendered png files
+    fc.setCommand("optipng -strip all -zc1 -zm1 -zs0 -f0 %f");
+
+    return fc.render(out_path) == PGSFrameCreator::Success;
+}
+
 } // namespace renderer_tests
