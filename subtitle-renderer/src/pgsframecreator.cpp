@@ -406,6 +406,12 @@ void PGSFrameCreator::setCommand(const std::string &command)
 
     // create arguments template for reproc (just split at whitespace, this is not a shell interpreter)
     _args_template.clear();
+
+    if (_command.empty())
+    {
+        return;
+    }
+
     std::istringstream splitter(_command);
     std::string arg;
     while (std::getline(splitter, arg, ' '))
@@ -415,6 +421,20 @@ void PGSFrameCreator::setCommand(const std::string &command)
         {
             _args_template.emplace_back(arg);
         }
+    }
+
+    // check for unsafe commands
+    // TODO: this list can be extended, but forbid some dangerous ones for now
+    const auto &cmd = _args_template.at(0);
+    if (
+        cmd == "rm" ||      // remove file
+        cmd == "mv" ||      // move file
+        cmd == "del" ||     // maybe some rm alias, but an actual command in PATH
+        cmd == "rmdir" ||   // remove directory
+        cmd == "find"       // the find command which can -exec commands
+    ) {
+        _command.clear();
+        _args_template.clear();
     }
 }
 
