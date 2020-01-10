@@ -1,0 +1,3 @@
+[submodule "libs/reproc"]
+	path = libs/reproc
+	url = https://github.com/DaanDeMeyer/reproc
