@@ -417,3 +417,13 @@ void PGSFrameCreator::setCommand(const std::string &command)
         }
     }
 }
+
+const std::string PGSFrameCreator::commandTemplate() const
+{
+    std::string cmd;
+    for (auto&& arg : _args_template)
+    {
+        cmd += arg + " ";
+    }
+    return cmd.erase(cmd.size(), cmd.size() - 2);
+}

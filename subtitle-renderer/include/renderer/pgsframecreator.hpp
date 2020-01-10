@@ -15,6 +15,8 @@ public:
 
     void setCommand(const std::string &command);
 
+    const std::string commandTemplate() const;
+
     enum ErrorCode
     {
         Success = 0,

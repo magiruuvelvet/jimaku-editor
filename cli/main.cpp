@@ -22,6 +22,11 @@ int main(int argc, char **argv)
       ("o,output-dir", "Target directory to write rendered subtitles too", cxxopts::value<std::string>())
       ;
 
+    // optimal options
+    options.add_options("optimal options")
+      ("command",      "Run a command on all PNG files (file placeholder is %f)", cxxopts::value<std::string>())
+      ;
+
     // debug options
     options.add_options("debug options")
       ("v,verbose",    "Enable verbose output")
@@ -63,6 +68,7 @@ int main(int argc, char **argv)
     bool isVerbose = result.count("verbose") == 1 && result["verbose"].as<bool>();
     bool hasSrt = result.count("srt-file") == 1;
     bool hasOutDir = result.count("output-dir") == 1;
+    bool hasCommand = result.count("command") == 1;
 
     if (!hasSrt)
     {
@@ -100,12 +106,20 @@ int main(int argc, char **argv)
         return 1;
     }
 
+    const std::string command = hasCommand ? result["command"].as<std::string>() : "";
+
     // create batch renderer
     std::cout << "initializing renderer..." << std::endl;
     PGSFrameCreator pgs(subtitles, subtitles.at(0).width(), subtitles.at(1).height());
+    pgs.setCommand(command);
 
     const auto out_path = result["output-dir"].as<std::string>();
     std::cout << "frames will be written to: " << out_path << std::endl;
+
+    if (!command.empty())
+    {
+        std::cout << "command to run on all frames: " << pgs.commandTemplate() << std::endl;
+    }
 
     // start rendering
     auto status = pgs.render(out_path, isVerbose);
