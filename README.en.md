@@ -217,12 +217,14 @@ All numeric values can be either negative or positive, unless otherwise mentione
  - `blur-radius`
 
    Gaussian blur radius. Value can have decimal places.
+   Blur is only applied to the background / text border.
 
    Default is 10
 
  - `blur-sigma`
 
    Gaussian blur sigma. Value can have decimal places.
+   Blur is only applied to the background / text border.
 
    Default is 0.5
 
