@@ -23,10 +23,11 @@ bool render_simple(const std::string &out_file, const std::string &text, bool ve
 
     PNGRenderer::size_t size;
     PNGRenderer::pos_t pos;
+    unsigned long color_count;
 
-    const auto png = renderer.render(&size, &pos);
+    const auto png = renderer.render(&size, &pos, &color_count);
 
-    std::printf("[%s] %ux%u @ %ux%u\n", out_file.c_str(), size.width, size.height, pos.x, pos.y);
+    std::printf("[%s] %ux%u @ %ux%u [%lu]\n", out_file.c_str(), size.width, size.height, pos.x, pos.y, color_count);
 
     const auto png_file = std::string{UNIT_TEST_TEMPORARY_DIR} + "/" + out_file;
 
