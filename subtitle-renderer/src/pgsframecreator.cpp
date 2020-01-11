@@ -398,6 +398,7 @@ PGSFrameCreator::ErrorCode PGSFrameCreator::render(const std::string &_out_path,
 void PGSFrameCreator::setCommand(const std::string &command)
 {
     _command = command;
+    _command_contains_dangerous = false;
 
     // skip trimming when already empty
     if (_command.empty())
@@ -434,19 +435,29 @@ void PGSFrameCreator::setCommand(const std::string &command)
         cmd == "mv" ||      // move file
         cmd == "del" ||     // maybe some rm alias, but an actual command in PATH
         cmd == "rmdir" ||   // remove directory
-        cmd == "find"       // the find command which can -exec commands
+        cmd == "find" ||    // the find command which can -exec commands
+        cmd == "%f"         // the placeholder can not be executed
     ) {
         _command.clear();
         _args_template.clear();
+        _command_contains_dangerous = true;
     }
 }
 
-const std::string PGSFrameCreator::commandTemplate() const
+const std::string PGSFrameCreator::commandTemplate(bool *is_dangerous) const
 {
     std::string cmd;
     for (auto&& arg : _args_template)
     {
         cmd += arg + " ";
     }
-    return cmd.erase(cmd.size(), cmd.size() - 2);
+    if (is_dangerous)
+    {
+        (*is_dangerous) = _command_contains_dangerous;
+    }
+    if (!cmd.empty())
+    {
+        cmd.erase(cmd.size(), cmd.size() - 2);
+    }
+    return cmd;
 }

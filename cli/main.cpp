@@ -116,9 +116,19 @@ int main(int argc, char **argv)
     const auto out_path = result["output-dir"].as<std::string>();
     std::cout << "frames will be written to: " << out_path << std::endl;
 
-    if (!command.empty())
+    bool command_is_dangerous = false;
+    const auto final_command = pgs.commandTemplate(&command_is_dangerous);
+    if (!final_command.empty())
     {
-        std::cout << "command to run on all frames: " << pgs.commandTemplate() << std::endl;
+        if (command_is_dangerous)
+        {
+            std::cout << "command is considered dangerous and was disabled" << std::endl;
+            std::cout << "command is: " << final_command << std::endl;
+        }
+        else
+        {
+            std::cout << "command to run on all frames: " << final_command << std::endl;
+        }
     }
 
     // start rendering

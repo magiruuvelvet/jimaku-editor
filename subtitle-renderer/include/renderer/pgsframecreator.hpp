@@ -15,7 +15,7 @@ public:
 
     void setCommand(const std::string &command);
 
-    const std::string commandTemplate() const;
+    const std::string commandTemplate(bool *is_dangerous = nullptr) const;
 
     enum ErrorCode
     {
@@ -33,6 +33,7 @@ private:
 
     std::string _command;
     std::vector<std::string> _args_template;
+    bool _command_contains_dangerous = false;
 };
 
 #endif // PGSFRAMECREATOR_HPP
