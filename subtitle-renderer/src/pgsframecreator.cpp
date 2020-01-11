@@ -113,7 +113,8 @@ PGSFrameCreator::ErrorCode PGSFrameCreator::render(const std::string &_out_path,
     QTextStream stream(&definition_file);
 
     // write command to run as xml comment
-    stream << "<!-- command: pgssup -s " << _width << "x" << _height << " pgs.xml out.sup -->\n";
+    const std::string pgssup_command = "pgssup -s " + std::to_string(_width) + "x" + std::to_string(_height) + " pgs.xml out.sup";
+    stream << "<!-- command: " << pgssup_command.c_str() << " -->\n";
 
     // open xml segment
     stream << "<pgssup defaultoffset=\"0,0\">\n";
@@ -123,7 +124,7 @@ PGSFrameCreator::ErrorCode PGSFrameCreator::render(const std::string &_out_path,
     unsigned frameNo = 1;
     for (auto&& sub : _subtitles)
     {
-        std::cout << "Rendering frame " << frameNo << "... ";
+        std::cout << "Rendering frame " << frameNo << "/" << _subtitles.size() << "... ";
 
         // setup renderer
         PNGRenderer renderer(sub.text(), sub.property(StyledSubtitleItem::FontFamily),
@@ -386,6 +387,8 @@ PGSFrameCreator::ErrorCode PGSFrameCreator::render(const std::string &_out_path,
     // close xml segment
     stream << "</pgssup>\n";
     stream.flush();
+
+    std::cout << "all frames rendered, now you can run: " << pgssup_command << std::endl;
 
     // close definition file
     definition_file.close();

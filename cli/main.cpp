@@ -135,7 +135,5 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    std::cout << "all frames rendered" << std::endl;
-
     return 0;
 }
