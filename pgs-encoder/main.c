@@ -255,9 +255,8 @@ int main(int argc, char *argv[])
     long starttime;
     long endtime;
     char pngfile[128];
-    long time1, time2, time3, time4;
     char b1, b2, b3, b4;
-    char supdata[67000];
+    char *supdata = NULL;
     int c;
     c = 0;
     char *writer;
@@ -463,9 +462,16 @@ int main(int argc, char *argv[])
         return(1);
     }
 
+    // initial reserved size of a display set
+    size_t dssize;
+    dssize = 67000;
+
     // iterate over all subtitles
     for (i = 0; i < c; i++)
     {
+        // must be resized when writing image data
+        supdata = (char*) malloc(dssize);
+
         supt = 0;
         palette_c = 0;
         sscanf(starttimec[i], "%2d:%2d:%2d.%3d", &h1, &m1, &s1, &ms1);
@@ -588,6 +594,7 @@ int main(int argc, char *argv[])
         if (!png_ptr)
         {
             printf("Error: file \"%s\" could not be opened\n", pngfile);
+            free(supdata);
             return(1);
         }
         info_ptr = png_create_info_struct(png_ptr);
@@ -595,6 +602,7 @@ int main(int argc, char *argv[])
         {
             png_destroy_read_struct(&png_ptr, (png_infopp)NULL, (png_infopp)NULL);
             printf("Error: file \"%s\" could not be opened\n", pngfile);
+            free(supdata);
             return(1);
         }
         end_info = png_create_info_struct(png_ptr);
@@ -602,6 +610,7 @@ int main(int argc, char *argv[])
         {
             png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
             printf("Error: file \"%s\" could not be opened\n", pngfile);
+            free(supdata);
             return(1);
         }
         getabsolutepath(pngfile, path);
@@ -609,17 +618,20 @@ int main(int argc, char *argv[])
         if (pngf == NULL)
         {
             printf("Error: file \"%s\" could not be opened\n", path);
+            free(supdata);
             return(1);
         }
         if (fread(pngheader, 1, 8, pngf) < 8)
         {
             printf("Error: file \"%s\" is not PNG format\n", path);
+            free(supdata);
             return(1);
         }
         is_png = !png_sig_cmp(pngheader, 0, 8);
         if (!is_png)
         {
             printf("Error: file \"%s\" is not PNG format\n", path);
+            free(supdata);
             return(1);
         }
         png_init_io(png_ptr, pngf);
@@ -754,6 +766,7 @@ int main(int argc, char *argv[])
                     if (palette_c == 256)
                     {
                         printf("Error: the png file \"%s\" has more than 256 colors\n", pngfile);
+                        free(supdata);
                         return(1);
                     }
                     palette_r[palette_c] = pixel[y][x * 4];
@@ -768,6 +781,7 @@ int main(int argc, char *argv[])
         if (aflag == 1 && palette_c == 256)
         {
             printf("Error: the png file \"%s\" has more than 256 colors\n", pngfile);
+            free(supdata);
             return(1);
         }
         printf("Info: the png file \"%s\" has %d color(s); size: %dx%d\n", pngfile, palette_c, (int)png_w, (int)png_h);
@@ -863,8 +877,8 @@ int main(int argc, char *argv[])
         supdata[supt + 16] = 0xc0;
 
         // object data length (24-bit)
-        // size is set later, but only last 2 bytes
-        // TODO: fix this and make use of all 3 bytes for larger subtitle images
+        // size is set later
+        // supt + 17, 18 and 19
         supdata[supt + 17] = 0x00;
 
         // image width
@@ -1032,23 +1046,22 @@ int main(int argc, char *argv[])
         }
         bmplength = supt - bmplength + 11;
 
-        // FIXME: can be actually larger
         if (bmplength > 65535)
         {
             printf("Error: subtitle picture is very complicated. (%d byte)\n", bmplength);
             printf("       It should be less than 65537 bytes.\n");
+            free(supdata);
             return(1);
         }
 
-        // set segment size (FIXME: check if this is wrong,
-        //                          because segment size is 16-bit and object data length can be 24-bit)
+        // set segment size
         inttobyte(bmplength, &b1, &b2);
         supdata[bmplengthtarget] = b1;
         supdata[bmplengthtarget + 1] = b2;
 
         // set object data length (last 2 bytes)
         inttobyte(bmplength - 7, &b1, &b2);
-        supdata[bmplengthtarget + 7] = b1;
+        supdata[bmplengthtarget + 7] = b1; // + 6 is first byte
         supdata[bmplengthtarget + 8] = b2;
 
         // end of segment
@@ -1225,6 +1238,7 @@ int main(int argc, char *argv[])
 
         // append display set to PGS file
         writtenbyte = fwrite(supdata, sizeof(char), supt, fp);
+        free(supdata);
 
         printf("Info: subtitle %d was included (%d bytes, bitmap: %d bytes)...\n", i + 1, writtenbyte, bmplength - 7);
         printf("\n");
