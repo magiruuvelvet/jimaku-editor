@@ -279,3 +279,8 @@ try myself. This editor might work for Chinese in the future too.
 
 Recommended article for interested people:
 [Implementing Japanese subtitles on Netflix](https://medium.com/netflix-techblog/implementing-japanese-subtitles-on-netflix-c165fbe61989)
+
+
+## Documentation
+
+[English](./doc/DOCUMENTATION.en.md)
