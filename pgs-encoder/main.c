@@ -530,7 +530,8 @@ int main(int argc, char *argv[])
         supdata[supt + 15] = b1;
         supdata[supt + 16] = b2;
 
-        supdata[supt + 17] = 0x40; // frame rate
+        // frame rate (always 0x10, can be ignored)
+        supdata[supt + 17] = 0x10;
 
         // composition number (16-bit)
         inttobyte(composition_number, &b1, &b2);
