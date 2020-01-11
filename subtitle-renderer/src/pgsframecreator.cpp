@@ -321,8 +321,8 @@ PGSFrameCreator::ErrorCode PGSFrameCreator::render(const std::string &_out_path,
             // check if file placeholder was present
             if (!got_file_placeholder)
             {
-                std::cout << "warning: command is missing the png file path" << std::endl;
-                continue;
+                // append png file path as last argument
+                args.emplace_back(full_file_path);
             }
 
             // create process and options
