@@ -190,7 +190,7 @@ private:
     unsigned long _furiganaBorderSize = 2;
     double _gaussianBlurRadius = 10;
     double _gaussianBlurSigma = 0.5;
-    unsigned _colorLimit = 64;
+    unsigned _colorLimit = 40;
 };
 
 #endif // PNGRENDERER_HPP

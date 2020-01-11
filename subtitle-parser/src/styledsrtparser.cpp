@@ -39,7 +39,7 @@ const style_hints_t default_hints = {
     {"furigana-border-size",        "2"},
     {"blur-radius",                 "10"},
     {"blur-sigma",                  "0.5"},
-    {"color-limit",                 "64"},
+    {"color-limit",                 "40"},
 
     // overwrite properties: are setting one of the above during parsing
     // {"margin-overwrite"}
@@ -232,7 +232,7 @@ unsigned StyledSubtitleItem::colorLimit() const
     try {
         return unsigned(std::stoul(property(ColorLimit)));
     } catch (...) {
-        return 64;
+        return 40;
     }
 }
 
