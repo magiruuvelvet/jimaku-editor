@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.8.3-beta
+
+ - add warning when image size is too big (has mismatches)
+ - add user command support using reproc++
+ - add protection against dangerous commands
+ - minor ux improvement in cli interface
+
 ## 0.8.2-beta
 
  - fix integer underflow when calculating the subtitle position
