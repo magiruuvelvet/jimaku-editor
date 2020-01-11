@@ -6,10 +6,10 @@
 
 1. About this application
 2. Subtitle Format
-3. Rendering Subtiltes
+3. Rendering Subtiltes\
  3.1. Color Palette and Image Size
-4. External Commands
- 4.1. Placeholders
+4. External Commands\
+ 4.1. Placeholders\
  4.2. Useful post processing commands
 
 # 1. About this application
@@ -18,7 +18,7 @@ This application aims to be a high quality **open-source** picture-based
 subtitle renderer with first class Japanese language support.
 
 Many (all?) text-based subtitle formats, which are actually implemented in
-open-source media players don't support complex layouts. They are limited
+open-source media players don't support complex text layouts. They are limited
 to horizontal writing from left to right and top to bottom. This is a problem
 for Japanese subtitles, because you can't correctly display Furigana or make
 use of vertical writing from top to bottom and right to left. Having this
