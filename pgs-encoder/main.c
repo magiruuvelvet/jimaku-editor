@@ -463,6 +463,9 @@ int main(int argc, char *argv[])
         return(1);
     }
 
+    int composition_number;
+    composition_number = 0;
+
     // iterate over all subtitles
     for (i = 0; i < c; i++)
     {
@@ -516,7 +519,7 @@ int main(int argc, char *argv[])
         supdata[supt + 9] = 0x00;
 
         supdata[supt + 10] = 0x16; // PCS segment type
-        supdata[supt + 11] = 0x00;
+        supdata[supt + 11] = 0x00; // segment size (16-bit)
         supdata[supt + 12] = 0x13;
 
         // video dimensions
@@ -527,24 +530,40 @@ int main(int argc, char *argv[])
         supdata[supt + 15] = b1;
         supdata[supt + 16] = b2;
 
-        supdata[supt + 17] = 0x40;
-        supdata[supt + 18] = 0x00;
-        supdata[supt + 19] = 0x00;
+        supdata[supt + 17] = 0x40; // frame rate
+
+        // composition number (16-bit)
+        inttobyte(composition_number, &b1, &b2);
+        supdata[supt + 18] = b1;
+        supdata[supt + 19] = b2;
+
+        // composition state (0x00: normal; 0x40: acquisition point; 0x80: epoch start)
         supdata[supt + 20] = 0x80;
+
+        // palette update flag (0x00: false, 0x80: true)
         supdata[supt + 21] = 0x00;
+
+        // palette id
         supdata[supt + 22] = 0x00;
+
+        // number of composition objects (8-bit)
         supdata[supt + 23] = 0x01;
+
+        // object id (16-bit)
         supdata[supt + 24] = 0x00;
         supdata[supt + 25] = 0x00;
+
+        // window id (8-bit)
         supdata[supt + 26] = 0x00;
 
+        // object cropped flag (8-bit)
         if (onoff != 0)
         {
-            supdata[supt + 27] = 0x40; // forced flag
+            supdata[supt + 27] = 0x40; // force display
         }
         else
         {
-            supdata[supt + 27] = 0x00; // default flag
+            supdata[supt + 27] = 0x00; // off
         }
 
         // image position
@@ -554,6 +573,8 @@ int main(int argc, char *argv[])
         inttobyte(offsety, &b1, &b2);
         supdata[supt + 30] = b1;
         supdata[supt + 31] = b2;
+
+        // end of segment (19 bytes long) [0x0013]
 
         supt += 32;
 
@@ -1085,9 +1106,16 @@ int main(int argc, char *argv[])
         supdata[supt + 12] = 0x00;
         supt += 13;
 
+        // clean up pixel buffers
         free(pixel);
         free(bmbuff);
+
+        // increase composition number
+        ++composition_number;
+
+        // append display set to PGS file
         writtenbyte = fwrite(supdata, sizeof(char), supt, fp);
+
         printf("Info: subtitle %d was included (%d bytes, bitmap: %d bytes)...\n", i + 1, writtenbyte, bmplength - 7);
         printf("\n");
     }
