@@ -499,6 +499,9 @@ int main(int argc, char *argv[])
         endtime *= 90;
         time4 = endtime - 90;
 
+        // header of each segment
+        // 0x5047 (PG)
+
         // 0x16 (PCS)
         supdata[supt] = 0x50;
         supdata[supt + 1] = 0x47;
@@ -515,12 +518,15 @@ int main(int argc, char *argv[])
         supdata[supt + 10] = 0x16; // PCS segment type
         supdata[supt + 11] = 0x00;
         supdata[supt + 12] = 0x13;
+
+        // video dimensions
         inttobyte(width, &b1, &b2);
         supdata[supt + 13] = b1;
         supdata[supt + 14] = b2;
         inttobyte(height, &b1, &b2);
         supdata[supt + 15] = b1;
         supdata[supt + 16] = b2;
+
         supdata[supt + 17] = 0x40;
         supdata[supt + 18] = 0x00;
         supdata[supt + 19] = 0x00;
@@ -531,6 +537,7 @@ int main(int argc, char *argv[])
         supdata[supt + 24] = 0x00;
         supdata[supt + 25] = 0x00;
         supdata[supt + 26] = 0x00;
+
         if (onoff != 0)
         {
             supdata[supt + 27] = 0x40; // forced flag
@@ -539,12 +546,15 @@ int main(int argc, char *argv[])
         {
             supdata[supt + 27] = 0x00; // default flag
         }
+
+        // image position
         inttobyte(offsetx, &b1, &b2);
         supdata[supt + 28] = b1;
         supdata[supt + 29] = b2;
         inttobyte(offsety, &b1, &b2);
         supdata[supt + 30] = b1;
         supdata[supt + 31] = b2;
+
         supt += 32;
 
         // PNG
@@ -620,8 +630,8 @@ int main(int argc, char *argv[])
         }
         unsigned char *bmbuff;
         unsigned char **pixel;
-        bmbuff = (unsigned char *)malloc(png_w * png_h * 4);
-        pixel = (unsigned char **)malloc(png_w * png_h * 4);
+        bmbuff = (unsigned char*) malloc(png_w * png_h * 4);
+        pixel = (unsigned char**) malloc(png_w * png_h * 4);
         for (j = 0; j < png_h; j++)
         {
             pixel[j] = bmbuff + png_w * 4 * j;
@@ -650,18 +660,23 @@ int main(int argc, char *argv[])
         supdata[supt + 12] = 0x0A;
         supdata[supt + 13] = 0x01;
         supdata[supt + 14] = 0x00;
+
+        // window position
         inttobyte(offsetx, &b1, &b2);
         supdata[supt + 15] = b1;
         supdata[supt + 16] = b2;
         inttobyte(offsety, &b1, &b2);
         supdata[supt + 17] = b1;
         supdata[supt + 18] = b2;
+
+        // window dimensions
         inttobyte(png_w, &b1, &b2);
         supdata[supt + 19] = b1;
         supdata[supt + 20] = b2;
         inttobyte(png_h, &b1, &b2);
         supdata[supt + 21] = b1;
         supdata[supt + 22] = b2;
+
         supt += 23;
         palette_c = 0;
         aflag = 0;
