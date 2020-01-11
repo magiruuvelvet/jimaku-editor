@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.4-beta
+
+**PGS Encoder**
+ - fix exit status codes to report errors correctly
+ - remove decoding timestamps, in practice those times are always zero
+
 ## 0.8.3-beta
 
  - add warning when image size is too big (has mismatches)
