@@ -463,9 +463,6 @@ int main(int argc, char *argv[])
         return(1);
     }
 
-    int composition_number;
-    composition_number = 0;
-
     // iterate over all subtitles
     for (i = 0; i < c; i++)
     {
@@ -518,8 +515,11 @@ int main(int argc, char *argv[])
         supdata[supt + 8] = 0x00;
         supdata[supt + 9] = 0x00;
 
-        supdata[supt + 10] = 0x16; // PCS segment type
-        supdata[supt + 11] = 0x00; // segment size (16-bit)
+        // PCS segment type
+        supdata[supt + 10] = 0x16;
+
+        // segment size (16-bit)
+        supdata[supt + 11] = 0x00;
         supdata[supt + 12] = 0x13;
 
         // video dimensions
@@ -534,14 +534,18 @@ int main(int argc, char *argv[])
         supdata[supt + 17] = 0x10;
 
         // composition number (16-bit)
-        inttobyte(composition_number, &b1, &b2);
-        supdata[supt + 18] = b1;
-        supdata[supt + 19] = b2;
+        supdata[supt + 18] = 0x00;
+        supdata[supt + 19] = 0x00;
 
-        // composition state (0x00: normal; 0x40: acquisition point; 0x80: epoch start)
+        // composition state
+        // 0x00: normal
+        // 0x40: acquisition point
+        // 0x80: epoch start
         supdata[supt + 20] = 0x80;
 
-        // palette update flag (0x00: false, 0x80: true)
+        // palette update flag
+        // 0x00: false
+        // 0x80: true
         supdata[supt + 21] = 0x00;
 
         // palette id
@@ -681,10 +685,17 @@ int main(int argc, char *argv[])
         supdata[supt + 8] = 0x00;
         supdata[supt + 9] = 0x00;
 
-        supdata[supt + 10] = 0x17; // WDS segment type
+        // WDS segment type
+        supdata[supt + 10] = 0x17;
+
+        // segment size (16-bit)
         supdata[supt + 11] = 0x00;
         supdata[supt + 12] = 0x0A;
+
+        // number of windows
         supdata[supt + 13] = 0x01;
+
+        // window id
         supdata[supt + 14] = 0x00;
 
         // window position
@@ -702,6 +713,8 @@ int main(int argc, char *argv[])
         inttobyte(png_h, &b1, &b2);
         supdata[supt + 21] = b1;
         supdata[supt + 22] = b2;
+
+        // end of segment (10 bytes long) [0x000A]
 
         supt += 23;
         palette_c = 0;
@@ -776,12 +789,20 @@ int main(int argc, char *argv[])
         supdata[supt + 8] = 0x00;
         supdata[supt + 9] = 0x00;
 
-        supdata[supt + 10] = 0x14; // PDS segment type
+        // PDS segment type
+        supdata[supt + 10] = 0x14;
+
+        // segment size (16-bit)
         inttobyte(palette_c * 5 + 2, &b1, &b2);
         supdata[supt + 11] = b1;
         supdata[supt + 12] = b2;
+
+        // palette id
         supdata[supt + 13] = 0x00;
+
+        // palette version number
         supdata[supt + 14] = 0x00;
+
         supt += 15;
         for (j = 0; j < palette_c; j++)
         {
@@ -789,13 +810,20 @@ int main(int argc, char *argv[])
             Y = 0.299 * (double) palette_r[j] + 0.587 * (double) palette_g[j] + 0.114 * (double) palette_b[j];
             Cr = 0.5 * (double) palette_r[j] - 0.419 * (double) palette_g[j] - 0.081 * (double) palette_b[j];
             Cb = -0.169 * (double) palette_r[j] - 0.332 * (double) palette_g[j] + 0.5 * (double) palette_b[j];
+
+            // palette entry id
             supdata[supt] = j;
-            supdata[supt + 1] = Y;
-            supdata[supt + 2] = Cr + 128;
-            supdata[supt + 3] = Cb + 128;
-            supdata[supt + 4] = palette_a[j];
+
+            supdata[supt + 1] = Y;             // luminance
+            supdata[supt + 2] = Cr + 128;      // color difference red
+            supdata[supt + 3] = Cb + 128;      // color difference blue
+            supdata[supt + 4] = palette_a[j];  // transparency
+
+            // move to next palette entry
             supt += 5;
         }
+
+        // end of segment
 
         // 0x15 (ODS)
         supdata[supt] = 0x50;
@@ -814,21 +842,45 @@ int main(int argc, char *argv[])
         supdata[supt + 8] = 0x00;
         supdata[supt + 9] = 0x00;
 
-        supdata[supt + 10] = 0x15; // ODS segment type
+        // ODS segment type
+        supdata[supt + 10] = 0x15;
+
+        // segment size is set later
+        // supt + 11 and 12
         bmplengthtarget = supt + 11;
+
+        // object id (16-bit)
         supdata[supt + 13] = 0x00;
         supdata[supt + 14] = 0x00;
+
+        // object version number
         supdata[supt + 15] = 0x00;
+
+        // last in sequence flag
+        // 0x40: last in sequence
+        // 0x80: first in sequence
+        // 0xC0: first and last in sequence (0x40 | 0x80)
         supdata[supt + 16] = 0xc0;
+
+        // object data length (24-bit)
+        // size is set later, but only last 2 bytes
+        // TODO: fix this and make use of all 3 bytes for larger subtitle images
         supdata[supt + 17] = 0x00;
+
+        // image width
         inttobyte(png_w, &b1, &b2);
         supdata[supt + 20] = b1;
         supdata[supt + 21] = b2;
+
+        // image height
         inttobyte(png_h, &b1, &b2);
         supdata[supt + 22] = b1;
         supdata[supt + 23] = b2;
+
+        // object data (variable length)
         supt += 24;
         bmplength = supt;
+
         for (y = 0; y < png_h; y++)
         {
             colorseqcount = 1;
@@ -979,18 +1031,27 @@ int main(int argc, char *argv[])
             supt += 2;
         }
         bmplength = supt - bmplength + 11;
+
+        // FIXME: can be actually larger
         if (bmplength > 65535)
         {
             printf("Error: subtitle picture is very complicated. (%d byte)\n", bmplength);
             printf("       It should be less than 65537 bytes.\n");
             return(1);
         }
+
+        // set segment size (FIXME: check if this is wrong,
+        //                          because segment size is 16-bit and object data length can be 24-bit)
         inttobyte(bmplength, &b1, &b2);
         supdata[bmplengthtarget] = b1;
         supdata[bmplengthtarget + 1] = b2;
+
+        // set object data length (last 2 bytes)
         inttobyte(bmplength - 7, &b1, &b2);
         supdata[bmplengthtarget + 7] = b1;
         supdata[bmplengthtarget + 8] = b2;
+
+        // end of segment
 
         // 0x80 (END)
         supdata[supt] = 0x50;
@@ -1009,16 +1070,22 @@ int main(int argc, char *argv[])
         supdata[supt + 8] = 0x00;
         supdata[supt + 9] = 0x00;
 
-        supdata[supt + 10] = 0x80; // END segment type
+        // END segment type
+        supdata[supt + 10] = 0x80;
+
+        // segment size of END is always zero
         supdata[supt + 11] = 0x00;
         supdata[supt + 12] = 0x00;
+
         supt += 13;
+
+        // end of segment
 
         // 0x16 (PCS)
         supdata[supt] = 0x50;
         supdata[supt + 1] = 0x47;
 
-        // end time
+        // end time (start time, but screen is cleared)
         longtobyte(endtime, &b1, &b2, &b3, &b4);
         supdata[supt + 2] = b1;
         supdata[supt + 3] = b2;
@@ -1031,29 +1098,54 @@ int main(int argc, char *argv[])
         supdata[supt + 8] = 0x00;
         supdata[supt + 9] = 0x00;
 
-        supdata[supt + 10] = 0x16; // PCS segment type
+        // PCS segment type
+        supdata[supt + 10] = 0x16;
+
+        // segment size (16-bit)
         supdata[supt + 11] = 0x00;
         supdata[supt + 12] = 0x0b;
+
+        // video dimensions
         inttobyte(width, &b1, &b2);
         supdata[supt + 13] = b1;
         supdata[supt + 14] = b2;
         inttobyte(height, &b1, &b2);
         supdata[supt + 15] = b1;
         supdata[supt + 16] = b2;
-        supdata[supt + 17] = 0x40;
+
+        // frame rate (always 0x10, can be ignored)
+        supdata[supt + 17] = 0x10;
+
+        // composition number (16-bit)
         supdata[supt + 18] = 0x00;
         supdata[supt + 19] = 0x01;
+
+        // composition state
+        // 0x00: normal
+        // 0x40: acquisition point
+        // 0x80: epoch start
         supdata[supt + 20] = 0x00;
+
+        // palette update flag
+        // 0x00: false
+        // 0x80: true
         supdata[supt + 21] = 0x00;
+
+        // palette id
         supdata[supt + 22] = 0x00;
+
+        // number of composition objects (8-bit)
         supdata[supt + 23] = 0x00;
+
         supt += 24;
+
+        // end of segment
 
         // 0x17 (WDS)
         supdata[supt] = 0x50;
         supdata[supt + 1] = 0x47;
 
-        // end time
+        // end time (start time, but screen is cleared)
         longtobyte(endtime, &b1, &b2, &b3, &b4);
         supdata[supt + 2] = b1;
         supdata[supt + 3] = b2;
@@ -1066,30 +1158,44 @@ int main(int argc, char *argv[])
         supdata[supt + 8] = 0x00;
         supdata[supt + 9] = 0x00;
 
-        supdata[supt + 10] = 0x17; // WDS segment type
+        // WDS segment type
+        supdata[supt + 10] = 0x17;
+
+        // segment size
         supdata[supt + 11] = 0x00;
         supdata[supt + 12] = 0x0a;
+
+        // number of windows
         supdata[supt + 13] = 0x01;
+
+        // window id
         supdata[supt + 14] = 0x00;
+
+        // window position
         inttobyte(offsetx, &b1, &b2);
         supdata[supt + 15] = b1;
         supdata[supt + 16] = b2;
         inttobyte(offsety, &b1, &b2);
         supdata[supt + 17] = b1;
         supdata[supt + 18] = b2;
+
+        // window dimensions
         inttobyte(png_w, &b1, &b2);
         supdata[supt + 19] = b1;
         supdata[supt + 20] = b2;
         inttobyte(png_h, &b1, &b2);
         supdata[supt + 21] = b1;
         supdata[supt + 22] = b2;
+
         supt += 23;
+
+        // end of segment
 
         // 0x80 (END)
         supdata[supt] = 0x50;
         supdata[supt + 1] = 0x47;
 
-        // end time
+        // end time (start time, but screen is cleared)
         longtobyte(endtime, &b1, &b2, &b3, &b4);
         supdata[supt + 2] = b1;
         supdata[supt + 3] = b2;
@@ -1102,17 +1208,20 @@ int main(int argc, char *argv[])
         supdata[supt + 8] = 0x00;
         supdata[supt + 9] = 0x00;
 
-        supdata[supt + 10] = 0x80; // END segment type
+        // END segment type
+        supdata[supt + 10] = 0x80;
+
+        // segment size
         supdata[supt + 11] = 0x00;
         supdata[supt + 12] = 0x00;
+
         supt += 13;
+
+        // end of segment
 
         // clean up pixel buffers
         free(pixel);
         free(bmbuff);
-
-        // increase composition number
-        ++composition_number;
 
         // append display set to PGS file
         writtenbyte = fwrite(supdata, sizeof(char), supt, fp);
