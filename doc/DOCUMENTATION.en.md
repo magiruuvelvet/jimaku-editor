@@ -68,7 +68,7 @@ seeking issues in most players.
 
 The renderer supports executing external commands on every rendered
 PNG file to easily integrate your custom post processing steps.
-By default no command is ran. They must be explicitly specified so
+By default no command is run, they must be explicitly specified so
 the renderer knows about them.
 
 The command is specified using the `--command "command arg1 arg2"`
