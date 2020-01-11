@@ -177,7 +177,7 @@ int main(int argc, char *argv[])
 				if(width == 0 || height == 0)
 				{
 					printf("Error: video size failed\n");
-					return(0);
+					return(1);
 				}
 			}
 			else if(strcmp(argv[i], "-h") == 0)
@@ -188,7 +188,7 @@ int main(int argc, char *argv[])
 			else
 			{
 				printf("Error: unknown option: %s\n", argv[i]);
-				return(0);
+				return(1);
 			}
 		}
 	}
@@ -200,10 +200,15 @@ int main(int argc, char *argv[])
 	if(argc == 2)
 	{
 		if(strcmp(argv[1], "-h") == 0)
+		{
 			help();
+			return(0);
+		}
 		else
+		{
 			printf("Error: syntax error\n");
-		return(0);
+			return(1);
+		}
 	}
 	sprintf(xmlpath, "%s", argv[argc - 2]);
 	sprintf(outpath, "%s", argv[argc - 1]);
@@ -215,7 +220,7 @@ int main(int argc, char *argv[])
 	if (fp == NULL)
 	{
 		printf("Error: xml file \"%s\" opening faild\n", path);
-		return(0);
+		return(1);
 	}
 	fseek(fp, 0, SEEK_END);
 	fsize = ftell(fp);
@@ -283,7 +288,7 @@ int main(int argc, char *argv[])
 				else
 				{
 					printf("Error: the pgssup tag should be in the root\n");
-					return(0);
+					return(1);
 				}
 			}
 			sprintf(q, "<subtitle");
@@ -297,7 +302,7 @@ int main(int argc, char *argv[])
 				else
 				{
 					printf("Error: the subtitle tag should be in the pgssup tag\n");
-					return(0);
+					return(1);
 				}
 				c++;
 			}
@@ -312,7 +317,7 @@ int main(int argc, char *argv[])
 				else
 				{
 					printf("Error: XML syntax is wrong\n");
-					return(0);
+					return(1);
 				}
 			}
 			sprintf(q, "</pgssup>");
@@ -326,14 +331,14 @@ int main(int argc, char *argv[])
 				else
 				{
 					printf("Error: XML syntax is wrong\n");
-					return(0);
+					return(1);
 				}
 			}
 			if(!knowntag)
 			{
-                // NOTE (magiruuvelvet): quick patch to not die on XML comments
-                // printf("Error: unknown tag\n");
-                // return(0);
+				// NOTE (magiruuvelvet): quick patch to not die on XML comments
+				// printf("Error: unknown tag\n");
+				// return(1);
 			}
 		}
 		if(xml[i - 1] == 0x22 && tagquo == 1 && jumpquo == 0)
@@ -399,12 +404,12 @@ int main(int argc, char *argv[])
 	if(tagtype != 0)
 	{
 		printf("Error: XML is not valid\n");
-		return(0);
+		return(1);
 	}
 	if(tagquo != 0)
 	{
 		printf("Error: XML is not valid\n");
-		return(0);
+		return(1);
 	}
 	printf("Info: loading xml completed\n");
 	printf("\n");
@@ -440,7 +445,7 @@ int main(int argc, char *argv[])
 	if (fp == NULL)
 	{
 		printf("Error: the sup file \"%s\" could not be opened\n", path);
-		return(0);
+		return(1);
 	}
 	for(i = 0; i < c; i++)
 	{
@@ -525,39 +530,39 @@ int main(int argc, char *argv[])
 		if (!png_ptr)
 		{
 			printf("Error: file \"%s\" could not be opened\n", pngfile);
-			return(0);
+			return(1);
 		}
 		info_ptr = png_create_info_struct(png_ptr);
 		if (!info_ptr)
 		{
 			png_destroy_read_struct(&png_ptr, (png_infopp)NULL, (png_infopp)NULL);
 			printf("Error: file \"%s\" could not be opened\n", pngfile);
-			return(0);
+			return(1);
 		}
 		end_info = png_create_info_struct(png_ptr);
 		if (!end_info)
 		{
 			png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
 			printf("Error: file \"%s\" could not be opened\n", pngfile);
-			return(0);
+            return(1);
 		}
 		getabsolutepath(pngfile, path);
 		pngf = fopen(path, "rb");
 		if(pngf == NULL)
 		{
 			printf("Error: file \"%s\" could not be opened\n", path);
-			return(0);
+			return(1);
 		}
 		if(fread(pngheader, 1, 8, pngf) < 8)
 		{
 			printf("Error: file \"%s\" is not PNG format\n", path);
-			return(0);
+			return(1);
 		}
 		is_png = !png_sig_cmp(pngheader, 0, 8);
 		if(!is_png)
 		{
 			printf("Error: file \"%s\" is not PNG format\n", path);
-			return(0);
+			return(1);
 		}
 		png_init_io(png_ptr, pngf);
 		png_set_sig_bytes(png_ptr, 8); 
@@ -657,7 +662,7 @@ int main(int argc, char *argv[])
 					if(palette_c == 256)
 					{
 						printf("Error: the png file \"%s\" has more than 256 colors\n", pngfile);
-						return(0);
+						return(1);
 					}
 					palette_r[palette_c] = pixel[y][x * 4];
 					palette_g[palette_c] = pixel[y][x * 4 + 1];
@@ -670,7 +675,7 @@ int main(int argc, char *argv[])
 		if(aflag == 1 && palette_c == 256)
 		{
 			printf("Error: the png file \"%s\" has more than 256 colors\n", pngfile);
-			return(0);
+			return(1);
 		}
 		printf("Info: the png file \"%s\" has %d color(s); size: %dx%d\n", pngfile, palette_c, (int)png_w, (int)png_h);
 		// 0x14
@@ -882,7 +887,7 @@ int main(int argc, char *argv[])
 		{
 			printf("Error: subtitle picture is very complicated. (%d byte)\n", bmplength);
 			printf("       It should be less than 65537 bytes.\n");
-			return(0);
+			return(1);
 		}
 		inttobyte(bmplength, &b1, &b2);
 		supdata[bmplengthtarget] = b1;
