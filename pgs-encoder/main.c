@@ -489,15 +489,11 @@ int main(int argc, char *argv[])
             printf("Info: including subtitle %d... (%d:%02d:%02d.%03d - %d:%02d:%02d.%03d)\n", i + 1, h1, m1, s1, ms1, h2, m2, s2, ms2);
         }
 
-        // calculate several times
+        // calculate timestamps
         starttime = h1 * 3600000 + m1 * 60000 + s1 * 1000 + ms1;
         endtime = h2 * 3600000 + m2 * 60000 + s2 * 1000 + ms2;
         starttime *= 90;
-        time1 = starttime - 5832;
-        time2 = starttime - 90;
-        time3 = starttime - 5643;
         endtime *= 90;
-        time4 = endtime - 90;
 
         // header of each segment
         // 0x5047 (PG)
@@ -505,16 +501,20 @@ int main(int argc, char *argv[])
         // 0x16 (PCS)
         supdata[supt] = 0x50;
         supdata[supt + 1] = 0x47;
+
+        // start time
         longtobyte(starttime, &b1, &b2, &b3, &b4);
         supdata[supt + 2] = b1;
         supdata[supt + 3] = b2;
         supdata[supt + 4] = b3;
         supdata[supt + 5] = b4;
-        longtobyte(time1, &b1, &b2, &b3, &b4);
-        supdata[supt + 6] = b1;
-        supdata[supt + 7] = b2;
-        supdata[supt + 8] = b3;
-        supdata[supt + 9] = b4;
+
+        // decoding time
+        supdata[supt + 6] = 0x00;
+        supdata[supt + 7] = 0x00;
+        supdata[supt + 8] = 0x00;
+        supdata[supt + 9] = 0x00;
+
         supdata[supt + 10] = 0x16; // PCS segment type
         supdata[supt + 11] = 0x00;
         supdata[supt + 12] = 0x13;
@@ -645,16 +645,20 @@ int main(int argc, char *argv[])
         // 0x17 (WDS)
         supdata[supt] = 0x50;
         supdata[supt + 1] = 0x47;
-        longtobyte(time2, &b1, &b2, &b3, &b4);
+
+        // start time
+        longtobyte(starttime, &b1, &b2, &b3, &b4);
         supdata[supt + 2] = b1;
         supdata[supt + 3] = b2;
         supdata[supt + 4] = b3;
         supdata[supt + 5] = b4;
-        longtobyte(time1, &b1, &b2, &b3, &b4);
-        supdata[supt + 6] = b1;
-        supdata[supt + 7] = b2;
-        supdata[supt + 8] = b3;
-        supdata[supt + 9] = b4;
+
+        // decoding time
+        supdata[supt + 6] = 0x00;
+        supdata[supt + 7] = 0x00;
+        supdata[supt + 8] = 0x00;
+        supdata[supt + 9] = 0x00;
+
         supdata[supt + 10] = 0x17; // WDS segment type
         supdata[supt + 11] = 0x00;
         supdata[supt + 12] = 0x0A;
@@ -736,15 +740,20 @@ int main(int argc, char *argv[])
         // 0x14 (PDS)
         supdata[supt] = 0x50;
         supdata[supt + 1] = 0x47;
-        longtobyte(time1, &b1, &b2, &b3, &b4);
+
+        // start time
+        longtobyte(starttime, &b1, &b2, &b3, &b4);
         supdata[supt + 2] = b1;
         supdata[supt + 3] = b2;
         supdata[supt + 4] = b3;
         supdata[supt + 5] = b4;
+
+        // decoding time
         supdata[supt + 6] = 0x00;
         supdata[supt + 7] = 0x00;
         supdata[supt + 8] = 0x00;
         supdata[supt + 9] = 0x00;
+
         supdata[supt + 10] = 0x14; // PDS segment type
         inttobyte(palette_c * 5 + 2, &b1, &b2);
         supdata[supt + 11] = b1;
@@ -769,16 +778,20 @@ int main(int argc, char *argv[])
         // 0x15 (ODS)
         supdata[supt] = 0x50;
         supdata[supt + 1] = 0x47;
-        longtobyte(time3, &b1, &b2, &b3, &b4);
+
+        // start time
+        longtobyte(starttime, &b1, &b2, &b3, &b4);
         supdata[supt + 2] = b1;
         supdata[supt + 3] = b2;
         supdata[supt + 4] = b3;
         supdata[supt + 5] = b4;
-        longtobyte(time1, &b1, &b2, &b3, &b4);
-        supdata[supt + 6] = b1;
-        supdata[supt + 7] = b2;
-        supdata[supt + 8] = b3;
-        supdata[supt + 9] = b4;
+
+        // decoding time
+        supdata[supt + 6] = 0x00;
+        supdata[supt + 7] = 0x00;
+        supdata[supt + 8] = 0x00;
+        supdata[supt + 9] = 0x00;
+
         supdata[supt + 10] = 0x15; // ODS segment type
         bmplengthtarget = supt + 11;
         supdata[supt + 13] = 0x00;
@@ -960,15 +973,20 @@ int main(int argc, char *argv[])
         // 0x80 (END)
         supdata[supt] = 0x50;
         supdata[supt + 1] = 0x47;
-        longtobyte(time3, &b1, &b2, &b3, &b4);
+
+        // start time
+        longtobyte(starttime, &b1, &b2, &b3, &b4);
         supdata[supt + 2] = b1;
         supdata[supt + 3] = b2;
         supdata[supt + 4] = b3;
         supdata[supt + 5] = b4;
+
+        // decoding time
         supdata[supt + 6] = 0x00;
         supdata[supt + 7] = 0x00;
         supdata[supt + 8] = 0x00;
         supdata[supt + 9] = 0x00;
+
         supdata[supt + 10] = 0x80; // END segment type
         supdata[supt + 11] = 0x00;
         supdata[supt + 12] = 0x00;
@@ -977,16 +995,20 @@ int main(int argc, char *argv[])
         // 0x16 (PCS)
         supdata[supt] = 0x50;
         supdata[supt + 1] = 0x47;
+
+        // end time
         longtobyte(endtime, &b1, &b2, &b3, &b4);
         supdata[supt + 2] = b1;
         supdata[supt + 3] = b2;
         supdata[supt + 4] = b3;
         supdata[supt + 5] = b4;
-        longtobyte(time4, &b1, &b2, &b3, &b4);
-        supdata[supt + 6] = b1;
-        supdata[supt + 7] = b2;
-        supdata[supt + 8] = b3;
-        supdata[supt + 9] = b4;
+
+        // decoding time
+        supdata[supt + 6] = 0x00;
+        supdata[supt + 7] = 0x00;
+        supdata[supt + 8] = 0x00;
+        supdata[supt + 9] = 0x00;
+
         supdata[supt + 10] = 0x16; // PCS segment type
         supdata[supt + 11] = 0x00;
         supdata[supt + 12] = 0x0b;
@@ -1008,15 +1030,20 @@ int main(int argc, char *argv[])
         // 0x17 (WDS)
         supdata[supt] = 0x50;
         supdata[supt + 1] = 0x47;
-        longtobyte(time4, &b1, &b2, &b3, &b4);
+
+        // end time
+        longtobyte(endtime, &b1, &b2, &b3, &b4);
         supdata[supt + 2] = b1;
         supdata[supt + 3] = b2;
         supdata[supt + 4] = b3;
         supdata[supt + 5] = b4;
+
+        // decoding time
         supdata[supt + 6] = 0x00;
         supdata[supt + 7] = 0x00;
         supdata[supt + 8] = 0x00;
         supdata[supt + 9] = 0x00;
+
         supdata[supt + 10] = 0x17; // WDS segment type
         supdata[supt + 11] = 0x00;
         supdata[supt + 12] = 0x0a;
@@ -1039,15 +1066,20 @@ int main(int argc, char *argv[])
         // 0x80 (END)
         supdata[supt] = 0x50;
         supdata[supt + 1] = 0x47;
-        longtobyte(time4, &b1, &b2, &b3, &b4);
+
+        // end time
+        longtobyte(endtime, &b1, &b2, &b3, &b4);
         supdata[supt + 2] = b1;
         supdata[supt + 3] = b2;
         supdata[supt + 4] = b3;
         supdata[supt + 5] = b4;
+
+        // decoding time
         supdata[supt + 6] = 0x00;
         supdata[supt + 7] = 0x00;
         supdata[supt + 8] = 0x00;
         supdata[supt + 9] = 0x00;
+
         supdata[supt + 10] = 0x80; // END segment type
         supdata[supt + 11] = 0x00;
         supdata[supt + 12] = 0x00;
