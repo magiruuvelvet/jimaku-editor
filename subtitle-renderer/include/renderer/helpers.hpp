@@ -15,7 +15,7 @@ unsigned cropDetectionRow(Magick::Image *image, bool fromTop);
 unsigned cropDetectionCol(Magick::Image *image, bool fromLeft);
 
 // counts unique colors in the image and creates a sorted palette from low to high
-std::vector<unsigned char> createPalette(const std::vector<unsigned char> &rgba, unsigned long width, unsigned long height);
-std::vector<unsigned char> createPalette(const unsigned char *rgba, unsigned long width, unsigned long height);
+const std::vector<unsigned char> createPalette(const std::vector<unsigned char> &rgba, unsigned long width, unsigned long height);
+const std::vector<unsigned char> createPalette(const unsigned char *rgba, unsigned long width, unsigned long height);
 
 #endif // SUBTITLE_RENDERER_HELPERS_HPP

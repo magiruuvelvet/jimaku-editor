@@ -4,6 +4,8 @@
 #define MAGICKCORE_HDRI_ENABLE 1
 #include <Magick++.h>
 
+#include "libs/lodepng/lodepng.hpp"
+
 #include "helpers.hpp"
 
 #include <QGuiApplication>
@@ -703,7 +705,7 @@ const std::vector<char> PNGRenderer::render(size_t *_size, pos_t *_pos, unsigned
     // Documentation: https://imagemagick.org/Magick++/Image++.html
     Magick::Image reduced(Magick::Blob(background.constBits(), std::size_t(size.width() * size.height() * 4)),
                           Magick::Geometry(std::size_t(size.width()), std::size_t(size.height())), 8, "RGBA");
-    reduced.magick("PNG");
+    reduced.magick("RGBA");
     reduced.depth(8);
 
     // trim useless transparent border
@@ -752,8 +754,19 @@ const std::vector<char> PNGRenderer::render(size_t *_size, pos_t *_pos, unsigned
     // strip useless data (reduces size of PNG data)
     reduced.strip();
 
+    // extract raw RGBA data from ImageMagick wrapped image
     Magick::Blob reducedData;
-    reduced.write(&reducedData);
+    reduced.write(&reducedData, "RGBA", 8);
+
+    // count colors and create palette
+    const auto pal = createPalette(reinterpret_cast<const unsigned char*>(reducedData.data()), reduced.size().width(), reduced.size().height());
+
+    // lodepng is deleting things is should not delete, this is making std::vector<> unhappy :(
+    unsigned char *pal_in = (unsigned char*) std::malloc(pal.size());
+    unsigned char *pal_out = (unsigned char*) std::malloc(pal.size());
+    std::memcpy(pal_in, pal.data(), pal.size());
+    std::memcpy(pal_out, pal.data(), pal.size());
+    // the above mess is deleted by lodepng
 
     // set image size when given
     if (_size)
@@ -765,10 +778,81 @@ const std::vector<char> PNGRenderer::render(size_t *_size, pos_t *_pos, unsigned
     // set color count when given
     if (color_count)
     {
-        (*color_count) = reduced.colorMapSize();
+        // (*color_count) = reduced.colorMapSize(); <-- inaccurate color count (1~3 colors off)
+        (*color_count) = pal.size() / 4;
     }
 
-    // return PNG data
-    const auto ptr = reinterpret_cast<const char*>(reducedData.data());
-    return std::vector<char>(ptr, ptr + reducedData.length());
+    // input color mode
+    LodePNGColorMode input_mode;
+    input_mode.bitdepth = 8;
+    input_mode.colortype = LCT_RGBA;
+
+    // output color mode
+    LodePNGColorMode output_mode;
+    output_mode.bitdepth = 8;
+    output_mode.colortype = LCT_PALETTE;
+    output_mode.palette = const_cast<unsigned char*>(pal.data());
+    output_mode.palettesize = pal.size() / 4;
+    auto out_bpp = lodepng_get_bpp(&output_mode);
+
+    // allocate output buffer
+    auto lode_out_size = (reduced.size().width() * reduced.size().height() * out_bpp + 7) / 8;
+    unsigned char *lode_out = (unsigned char*) std::malloc(lode_out_size);
+
+    // convert to palette mode
+    auto res = lodepng_convert(lode_out, reinterpret_cast<const unsigned char*>(reducedData.data()),
+                               &output_mode, &input_mode, reduced.size().width(), reduced.size().height());
+
+    // check for conversion errors
+    if (res != 0)
+    {
+        std::printf("\nLodePNG error: %s\n", lodepng_error_text(res));
+
+        // return ImageMagick PNG instead of Indexed PNG on error
+        // note: ImageMagick can't handle semi-transparent pixels in 8-bit colormap PNG images
+
+        Magick::Blob imageMagickPNG;
+        reduced.write(&imageMagickPNG, "PNG", 8);
+
+        const auto ptr = reinterpret_cast<const char*>(imageMagickPNG.data());
+        return std::vector<char>(ptr, ptr + imageMagickPNG.length());
+    }
+
+    // encode 8-bit colormap PNG
+    std::vector<unsigned char> png;
+
+    // input pixel data
+    lodepng::State state;
+    state.info_raw.palette = pal_in;
+    state.info_raw.palettesize = pal.size() / 4;
+    state.info_raw.bitdepth = 8;
+    state.info_raw.colortype = LCT_PALETTE;
+
+    // output png config
+    state.info_png.color.palette = pal_out;
+    state.info_png.color.palettesize = pal.size() / 4;
+    state.info_png.color.bitdepth = 8;
+    state.info_png.color.colortype = LCT_PALETTE;
+
+    res = lodepng::encode(png, lode_out, reduced.size().width(), reduced.size().height(), state);
+
+    // free output buffer
+    std::free(lode_out);
+
+    if (res != 0)
+    {
+        std::printf("\nLodePNG error: %s\n", lodepng_error_text(res));
+
+        // return ImageMagick PNG instead of Indexed PNG on error
+        // note: ImageMagick can't handle semi-transparent pixels in 8-bit colormap PNG images
+
+        Magick::Blob imageMagickPNG;
+        reduced.write(&imageMagickPNG, "PNG", 8);
+
+        const auto ptr = reinterpret_cast<const char*>(imageMagickPNG.data());
+        return std::vector<char>(ptr, ptr + imageMagickPNG.length());
+    }
+
+    // return indexed 8-bit colormap PNG data
+    return std::vector<char>(png.data(), png.data() + png.size());
 }

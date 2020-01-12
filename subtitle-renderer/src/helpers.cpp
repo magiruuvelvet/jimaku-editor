@@ -130,7 +130,7 @@ unsigned cropDetectionCol(Magick::Image *image, bool fromLeft)
     return emptyCols;
 }
 
-std::vector<unsigned char> createPalette(const std::vector<unsigned char> &rgba, unsigned long width, unsigned long height)
+const std::vector<unsigned char> createPalette(const std::vector<unsigned char> &rgba, unsigned long width, unsigned long height)
 {
     std::vector<std::uint32_t> colors;
 
@@ -175,8 +175,8 @@ std::vector<unsigned char> createPalette(const std::vector<unsigned char> &rgba,
     return palette;
 }
 
-std::vector<unsigned char> createPalette(const unsigned char *rgba, unsigned long width, unsigned long height)
+const std::vector<unsigned char> createPalette(const unsigned char *rgba, unsigned long width, unsigned long height)
 {
-    std::vector<unsigned char> data(rgba, rgba + (width * height * 4));
+    const std::vector<unsigned char> data(rgba, rgba + (width * height * 4));
     return createPalette(data, width, height);
 }
