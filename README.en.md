@@ -281,6 +281,31 @@ Recommended article for interested people:
 [Implementing Japanese subtitles on Netflix](https://medium.com/netflix-techblog/implementing-japanese-subtitles-on-netflix-c165fbe61989)
 
 
+## External Dependencies
+
+External dependencies must be installed to build and use this application.
+Additionally some portable libraries are embedded and not mentioned in
+this list.
+
+**Parser**
+
+ - *(none)*
+
+**Renderer**
+
+ - QtGui 5.9+ for drawing the subtitle images from scratch\
+   *program can not render without a working GUI (X11, Wayland)*\
+   APIs used: `QPainter`, `QImage`, `QFont`, `QFontMetrics`
+
+ - Magick++ (ImageMagick C++ API) for post-processing of the pixel data\
+   Image Quantization to reduce colors (~1200 colors reduced to below 255)\
+   QPainter in anti-aliased mode is producing so many colors
+
+**PGS Encoder**
+
+ - libpng
+
+
 ## Documentation
 
 [English](./doc/DOCUMENTATION.en.md)
