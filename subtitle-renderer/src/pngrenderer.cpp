@@ -751,7 +751,7 @@ const std::vector<char> PNGRenderer::render(size_t *_size, pos_t *_pos, unsigned
     // further optimize color palette to a bare minimum
     reduced.quantize();
 
-    // strip useless data (reduces size of PNG data)
+    // strip useless data
     reduced.strip();
 
     // extract raw RGBA data from ImageMagick wrapped image
@@ -833,6 +833,14 @@ const std::vector<char> PNGRenderer::render(size_t *_size, pos_t *_pos, unsigned
     state.info_png.color.palettesize = pal.size() / 4;
     state.info_png.color.bitdepth = 8;
     state.info_png.color.colortype = LCT_PALETTE;
+
+    // disable compression for speed, file size is width * height + palette + png sections
+    state.encoder.zlibsettings.btype = 0;
+    state.encoder.zlibsettings.use_lz77 = 0;
+    state.encoder.zlibsettings.windowsize = 8;
+    state.encoder.zlibsettings.nicematch = 8;
+    state.encoder.zlibsettings.minmatch = 0;
+    state.encoder.zlibsettings.lazymatching = 0;
 
     res = lodepng::encode(png, lode_out, reduced.size().width(), reduced.size().height(), state);
 
