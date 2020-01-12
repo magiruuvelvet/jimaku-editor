@@ -73,19 +73,22 @@ bool parse_styled()
 
 bool parse_styled_external_hints()
 {
-    const auto srt_file = std::string{UNIT_TEST_CURRENT_DIR} + "/test.ja.srt";
+    const auto srt_file = std::string{UNIT_TEST_CURRENT_DIR} + "/test_custom.ja.srt";
 
     const std::string hints =
 "0\n"
 "00:00:00,000 --> 00:00:00,000\n"
-"# text-direction=vertical\n"
+"# text-direction=horizontal\n"
 "# line-space-reduction=2\n"
-"# furigana-line-space-reduction=1\n"
+"# furigana-line-space-reduction=2\n"
 "\n";
 
     const auto subs = SrtParser::parseStyledWithExternalHints(srt_file, hints);
 
-    return subs.size() == 270 && subs.at(0).furiganaLineSpaceReduction() == 1;
+    return
+        subs.size() == 270 &&
+        subs.at(0).furiganaLineSpaceReduction() == 2 &&
+        subs.at(0).property(SrtParser::StyledSubtitleItem::TextDirection) == "horizontal";
 }
 
 } // namespace srtparser_tests

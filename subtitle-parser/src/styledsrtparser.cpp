@@ -358,6 +358,15 @@ std::vector<StyledSubtitleItem> parseStyledWithExternalHints(const std::string &
         return {};
     }
 
+    // remove embedded hints when present
+    if (subs.size() > 0)
+    {
+        if (subs.at(0).subNumber() == 0)
+        {
+            subs.erase(subs.begin());
+        }
+    }
+
     // prepend to parsed subtitles
     subs.insert(subs.begin(), hints.begin(), hints.end());
 
