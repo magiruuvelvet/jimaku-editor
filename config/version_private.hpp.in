@@ -13,7 +13,7 @@
 namespace version
 {
     // current project version
-    const std::string version = "0.8.4";
+    const std::string version = "0.8.5";
     const std::string channel = "beta";
 
     // git version information
