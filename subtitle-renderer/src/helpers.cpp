@@ -1,5 +1,7 @@
 #include "helpers.hpp"
 
+#include <algorithm>
+
 #define MAGICKCORE_QUANTUM_DEPTH 8
 #define MAGICKCORE_HDRI_ENABLE 1
 #include <Magick++.h>
@@ -126,4 +128,55 @@ unsigned cropDetectionCol(Magick::Image *image, bool fromLeft)
     }
 
     return emptyCols;
+}
+
+std::vector<unsigned char> createPalette(const std::vector<unsigned char> &rgba, unsigned long width, unsigned long height)
+{
+    std::vector<std::uint32_t> colors;
+
+    // scan all pixels
+    for (auto i = 0U; i < width * height * 4; i += 4)
+    {
+        // push entire pixel into palette
+        std::uint32_t pixel = (
+            ((std::uint8_t) rgba[i] << 24) |
+            ((std::uint8_t) rgba[i + 1] << 16) |
+            ((std::uint8_t) rgba[i + 2] << 8) |
+            ((std::uint8_t) rgba[i + 3])
+        );
+        colors.emplace_back(pixel);
+    }
+
+    // sort colors from low to high
+    std::sort(colors.begin(), colors.end(), [](auto&& left, auto&& right) {
+        return left < right;
+    });
+
+    // remove duplicates
+    auto last = std::unique(colors.begin(), colors.end());
+    colors.erase(last, colors.end());
+
+    // create palette
+    std::vector<unsigned char> palette;
+
+    for (auto&& color : colors)
+    {
+        auto r = ((color >> 24) & 0xff);
+        auto g = ((color >> 16) & 0xff);
+        auto b = ((color >> 8) & 0xff);
+        auto a = color & 0xff;
+
+        palette.emplace_back(r);
+        palette.emplace_back(g);
+        palette.emplace_back(b);
+        palette.emplace_back(a);
+    }
+
+    return palette;
+}
+
+std::vector<unsigned char> createPalette(const unsigned char *rgba, unsigned long width, unsigned long height)
+{
+    std::vector<unsigned char> data(rgba, rgba + (width * height * 4));
+    return createPalette(data, width, height);
 }
