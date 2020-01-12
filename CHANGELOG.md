@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.8.5-beta
+
+**PGS Encoder**
+- set unused framerate bit to 0x10 (was 0x40)
+
+**Renderer**
+- set default color limit to 40 colors
+- create color palette for 8-bit indexed image
+- resulting png files are now in 8-bit colormap format
+- disable png zlib compression for speed
+
 ## 0.8.4-beta
 
 **PGS Encoder**
