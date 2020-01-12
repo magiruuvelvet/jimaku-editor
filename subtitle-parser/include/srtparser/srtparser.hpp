@@ -116,6 +116,7 @@ private:
 };
 
 std::vector<SubtitleItem> parse(const std::string &fileName, bool *error = nullptr, std::string *exception = nullptr);
+std::vector<SubtitleItem> parseFromMemory(const std::string &contents, bool *error = nullptr, std::string *exception = nullptr);
 
 } // namespace SrtParser
 

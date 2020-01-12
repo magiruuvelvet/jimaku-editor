@@ -48,8 +48,6 @@ static void skip_utf8_bom(std::ifstream &fs)
 
 std::vector<SubtitleItem> parse(const std::string &fileName, bool *error, std::string *exception)
 {
-    std::vector<SubtitleItem> subtitles;
-
     // check if file exists before attempting to read it
     if (!(std::filesystem::exists(fileName) && std::filesystem::is_regular_file(fileName)))
     {
@@ -64,6 +62,31 @@ std::vector<SubtitleItem> parse(const std::string &fileName, bool *error, std::s
     // read file and ignore BOM when present (causing parsing issues with std::getline)
     std::ifstream infile(fileName, std::ios::in);
     skip_utf8_bom(infile);
+    std::string lines;
+    std::string fline;
+    while (std::getline(infile, fline))
+    {
+        lines += fline + '\n';
+    }
+
+    return parseFromMemory(lines, error, exception);
+}
+
+std::vector<SubtitleItem> parseFromMemory(const std::string &contents, bool *error, std::string *exception)
+{
+    std::vector<SubtitleItem> subtitles;
+    std::string contents_c = contents;
+
+    // check and remove UTF-8 BOM
+    if (contents.size() >= 3)
+    {
+        if (contents.at(0) == char(0xEF) && contents.at(1) == char(0xBB) && contents.at(2) == char(0xBF))
+        {
+            contents_c.erase(0, 3);
+        }
+    }
+
+    std::stringstream lines(contents_c);
 
     std::string line, start, end, completeLine = "", timeLine = "";
     sub_number_t subNo = 0;
@@ -77,7 +100,7 @@ std::vector<SubtitleItem> parse(const std::string &fileName, bool *error, std::s
 
     try
     {
-        while (std::getline(infile, line))
+        while (std::getline(lines, line))
         {
             // remove carriage return line breaks from line (only keep line feeds)
             line.erase(std::remove(line.begin(), line.end(), '\r'), line.end());
@@ -121,12 +144,11 @@ std::vector<SubtitleItem> parse(const std::string &fileName, bool *error, std::s
                 completeLine = timeLine = "";
             }
 
-            if (infile.eof())
+            if (lines.eof())
             {
                 subtitles.emplace_back(SubtitleItem(subNo, start, end, completeLine));
             }
         }
-
     }
     catch (std::exception &e)
     {

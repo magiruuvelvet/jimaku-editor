@@ -152,6 +152,8 @@ private:
 };
 
 std::vector<StyledSubtitleItem> parseStyled(const std::string &fileName, bool *error = nullptr, std::string *exception = nullptr);
+std::vector<StyledSubtitleItem> parseStyledFromMemory(const std::string &contents, bool *error = nullptr, std::string *exception = nullptr);
+std::vector<StyledSubtitleItem> parseStyledWithExternalHints(const std::string &fileName, const std::string &hintData, bool *error = nullptr, std::string *exception = nullptr);
 
 } // namespace SrtParser
 

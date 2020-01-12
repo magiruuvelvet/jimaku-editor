@@ -108,6 +108,77 @@ static std::string extract_hints(const SubtitleItem &sub, style_hints_t &target_
     return cleanLines.substr(0, cleanLines.length() - 1);
 }
 
+std::vector<StyledSubtitleItem> parse_helper(std::vector<SubtitleItem> &subs, bool *error)
+{
+    // global style hint is mandatory
+    if (subs.empty())
+    {
+        if (error)
+        {
+            (*error) = true;
+        }
+
+        return {};
+    }
+
+    // global style hints
+    style_hints_t global_hints = default_hints;
+
+    // extract global style hints (sub with number 0)
+    extract_hints(subs.at(0), global_hints);
+
+//#ifdef DEBUG_BUILD
+//    for (auto&& global_hint : global_hints)
+//    {
+//        std::cerr << global_hint.first << " -> " << global_hint.second << std::endl;
+//    }
+//#endif
+
+    // remove global style hint frame
+    subs.erase(subs.begin());
+
+    std::vector<StyledSubtitleItem> subtitles;
+
+    // iterate over all subtitles
+    for (auto&& unstyledSub : subs)
+    {
+        StyledSubtitleItem sub(unstyledSub);
+        style_hints_t overwrite_hints = global_hints;
+        sub.setText(extract_hints(unstyledSub, overwrite_hints));
+
+        const auto &text_direction = overwrite_hints.at("text-direction");
+
+        // check for overwrite properties
+        if (overwrite_hints.find("margin-overwrite") != overwrite_hints.end())
+        {
+            const auto margin_overwrite = overwrite_hints.at("margin-overwrite");
+
+            if (text_direction == "horizontal")
+            {
+                overwrite_hints["margin-bottom"] = margin_overwrite;
+            }
+            else if (text_direction == "vertical")
+            {
+                overwrite_hints["margin-side"] = margin_overwrite;
+            }
+
+            // remove overwrite properties
+            overwrite_hints.erase(overwrite_hints.find("margin-overwrite"));
+        }
+
+        // set default text alignment to right on vertical when value is center
+        if (text_direction == "vertical" && overwrite_hints["text-alignment"] == "center")
+        {
+            overwrite_hints["text-alignment"] = "right";
+        }
+
+        sub.setStyleHints(overwrite_hints);
+        subtitles.emplace_back(sub);
+    }
+
+    return subtitles;
+}
+
 } // anonymous namespace
 
 unsigned StyledSubtitleItem::width() const
@@ -260,74 +331,37 @@ const std::string StyledSubtitleItem::get_property_value(const std::string &prop
 std::vector<StyledSubtitleItem> parseStyled(const std::string &fileName, bool *error, std::string *exception)
 {
     auto subs = parse(fileName, error, exception);
+    return parse_helper(subs, error);
+}
 
-    // global style hint is mandatory
-    if (subs.empty())
+std::vector<StyledSubtitleItem> parseStyledFromMemory(const std::string &contents, bool *error, std::string *exception)
+{
+    auto subs = parseFromMemory(contents, error, exception);
+    return parse_helper(subs, error);
+}
+
+std::vector<StyledSubtitleItem> parseStyledWithExternalHints(const std::string &fileName, const std::string &hintData, bool *error, std::string *exception)
+{
+    // parse subtitles
+    auto subs = parse(fileName, error, exception);
+
+    if (error && (*error))
     {
-        if (error)
-        {
-            (*error) = true;
-        }
-
         return {};
     }
 
-    // global style hints
-    style_hints_t global_hints = default_hints;
+    // parse hint data
+    auto hints = parseFromMemory(hintData, error, exception);
 
-    // extract global style hints (sub with number 0)
-    extract_hints(subs.at(0), global_hints);
-
-//#ifdef DEBUG_BUILD
-//    for (auto&& global_hint : global_hints)
-//    {
-//        std::cerr << global_hint.first << " -> " << global_hint.second << std::endl;
-//    }
-//#endif
-
-    // remove global style hint frame
-    subs.erase(subs.begin());
-
-    std::vector<StyledSubtitleItem> subtitles;
-
-    // iterate over all subtitles
-    for (auto&& unstyledSub : subs)
+    if (error && (*error))
     {
-        StyledSubtitleItem sub(unstyledSub);
-        style_hints_t overwrite_hints = global_hints;
-        sub.setText(extract_hints(unstyledSub, overwrite_hints));
-
-        const auto &text_direction = overwrite_hints.at("text-direction");
-
-        // check for overwrite properties
-        if (overwrite_hints.find("margin-overwrite") != overwrite_hints.end())
-        {
-            const auto margin_overwrite = overwrite_hints.at("margin-overwrite");
-
-            if (text_direction == "horizontal")
-            {
-                overwrite_hints["margin-bottom"] = margin_overwrite;
-            }
-            else if (text_direction == "vertical")
-            {
-                overwrite_hints["margin-side"] = margin_overwrite;
-            }
-
-            // remove overwrite properties
-            overwrite_hints.erase(overwrite_hints.find("margin-overwrite"));
-        }
-
-        // set default text alignment to right on vertical when value is center
-        if (text_direction == "vertical" && overwrite_hints["text-alignment"] == "center")
-        {
-            overwrite_hints["text-alignment"] = "right";
-        }
-
-        sub.setStyleHints(overwrite_hints);
-        subtitles.emplace_back(sub);
+        return {};
     }
 
-    return subtitles;
+    // prepend to parsed subtitles
+    subs.insert(subs.begin(), hints.begin(), hints.end());
+
+    return parse_helper(subs, error);
 }
 
 } // namespace SrtParser

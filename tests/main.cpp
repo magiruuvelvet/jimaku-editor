@@ -49,6 +49,7 @@ int main(void)
 
     test("SrtParser::parse_basic", srtparser_tests::parse_basic);
     test("SrtParser::parse_styled", srtparser_tests::parse_styled);
+    test("SrtParser::parse_styled_external_hints", srtparser_tests::parse_styled_external_hints);
 
     // horizontal rendering tests
     test("PngRenderer::render_simple", renderer_tests::render_simple, "test1.png", "ここがウチの村", false);
