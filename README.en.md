@@ -309,3 +309,10 @@ this list.
 ## Documentation
 
 [English](./doc/DOCUMENTATION.en.md)
+
+
+## Build Instructions
+
+- [Linux & \*BSD](./doc/BUILD_INSTRUCTIONS_UNIX.md)
+- macOS (TODO)
+- Windows (TODO)
