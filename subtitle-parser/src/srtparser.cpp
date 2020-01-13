@@ -46,6 +46,20 @@ static void skip_utf8_bom(std::ifstream &fs)
 
 } // anonymous namespace
 
+std::string readFile(const std::string &fileName)
+{
+    // read file and ignore BOM when present (causing parsing issues with std::getline)
+    std::ifstream infile(fileName, std::ios::in);
+    skip_utf8_bom(infile);
+    std::string lines;
+    std::string fline;
+    while (std::getline(infile, fline))
+    {
+        lines += fline + '\n';
+    }
+    return lines;
+}
+
 std::vector<SubtitleItem> parse(const std::string &fileName, bool *error, std::string *exception)
 {
     // check if file exists before attempting to read it
@@ -56,19 +70,15 @@ std::vector<SubtitleItem> parse(const std::string &fileName, bool *error, std::s
             (*error) = true;
         }
 
+        if (exception)
+        {
+            (*exception) = fileName + ": no such file";
+        }
+
         return {};
     }
 
-    // read file and ignore BOM when present (causing parsing issues with std::getline)
-    std::ifstream infile(fileName, std::ios::in);
-    skip_utf8_bom(infile);
-    std::string lines;
-    std::string fline;
-    while (std::getline(infile, fline))
-    {
-        lines += fline + '\n';
-    }
-
+    const auto lines = readFile(fileName);
     return parseFromMemory(lines, error, exception);
 }
 

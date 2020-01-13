@@ -115,6 +115,8 @@ private:
     std::string _endTimeString;
 };
 
+std::string readFile(const std::string &fileName);
+
 std::vector<SubtitleItem> parse(const std::string &fileName, bool *error = nullptr, std::string *exception = nullptr);
 std::vector<SubtitleItem> parseFromMemory(const std::string &contents, bool *error = nullptr, std::string *exception = nullptr);
 

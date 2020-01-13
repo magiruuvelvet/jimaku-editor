@@ -1,4 +1,5 @@
 #include <iostream>
+#include <filesystem>
 
 #include <config/version.hpp>
 
@@ -25,6 +26,7 @@ int main(int argc, char **argv)
     // optimal options
     options.add_options("optimal options")
       ("command",      "Run a command on all PNG files (file placeholder is %f)", cxxopts::value<std::string>())
+      ("hints",        "Use external styling hints (overwrites global hints in srt file)", cxxopts::value<std::string>())
       ;
 
     // debug options
@@ -69,6 +71,7 @@ int main(int argc, char **argv)
     bool hasSrt = result.count("srt-file") == 1;
     bool hasOutDir = result.count("output-dir") == 1;
     bool hasCommand = result.count("command") == 1;
+    bool hasExternalHints = result.count("hints") == 1;
 
     if (!hasSrt)
     {
@@ -88,7 +91,27 @@ int main(int argc, char **argv)
 
     bool error;
     std::string exception;
-    const auto subtitles = SrtParser::parseStyled(srt_file, &error, &exception);
+    std::vector<SrtParser::StyledSubtitleItem> subtitles;
+
+    if (hasExternalHints)
+    {
+        const auto fileName = result["hints"].as<std::string>();
+
+        std::cout << "using external hints file: " << fileName << std::endl;
+
+        if (!(std::filesystem::exists(fileName) && std::filesystem::is_regular_file(fileName)))
+        {
+            std::cerr << "error: hints file does not exist" << std::endl;
+            return 1;
+        }
+
+        const auto hintData = SrtParser::readFile(fileName);
+        subtitles = SrtParser::parseStyledWithExternalHints(srt_file, hintData, &error, &exception);
+    }
+    else
+    {
+        subtitles = SrtParser::parseStyled(srt_file, &error, &exception);
+    }
 
     if (error)
     {

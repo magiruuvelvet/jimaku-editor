@@ -125,7 +125,15 @@ std::vector<StyledSubtitleItem> parse_helper(std::vector<SubtitleItem> &subs, bo
     style_hints_t global_hints = default_hints;
 
     // extract global style hints (sub with number 0)
-    extract_hints(subs.at(0), global_hints);
+    if (subs.at(0).subNumber() == 0)
+    {
+        extract_hints(subs.at(0), global_hints);
+    }
+    else
+    {
+        std::cout << "warning: subtitle has no global hints and no external hints were specified.\n" <<
+                     "         application defaults will be used." << std::endl;
+    }
 
 //#ifdef DEBUG_BUILD
 //    for (auto&& global_hint : global_hints)
@@ -135,7 +143,10 @@ std::vector<StyledSubtitleItem> parse_helper(std::vector<SubtitleItem> &subs, bo
 //#endif
 
     // remove global style hint frame
-    subs.erase(subs.begin());
+    if (subs.at(0).subNumber() == 0)
+    {
+        subs.erase(subs.begin());
+    }
 
     std::vector<StyledSubtitleItem> subtitles;
 
@@ -355,6 +366,21 @@ std::vector<StyledSubtitleItem> parseStyledWithExternalHints(const std::string &
 
     if (error && (*error))
     {
+        return {};
+    }
+
+    if (hints.empty())
+    {
+        if (error)
+        {
+            (*error) = true;
+        }
+
+        if (exception)
+        {
+            (*exception) = "hints file is empty";
+        }
+
         return {};
     }
 
