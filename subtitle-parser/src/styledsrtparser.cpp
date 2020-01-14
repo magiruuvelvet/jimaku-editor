@@ -131,7 +131,7 @@ std::vector<StyledSubtitleItem> parse_helper(std::vector<SubtitleItem> &subs, bo
     }
     else
     {
-        std::cout << "warning: subtitle has no global hints and no external hints were specified.\n" <<
+        std::cerr << "warning: subtitle has no global hints and no external hints were specified.\n" <<
                      "         application defaults will be used." << std::endl;
     }
 

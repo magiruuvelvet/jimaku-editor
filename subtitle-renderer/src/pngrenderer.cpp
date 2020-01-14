@@ -806,7 +806,7 @@ const std::vector<char> PNGRenderer::render(size_t *_size, pos_t *_pos, unsigned
     // check for conversion errors
     if (res != 0)
     {
-        std::printf("\nLodePNG error: %s\n", lodepng_error_text(res));
+        std::fprintf(stderr, "\nLodePNG error: %s\n", lodepng_error_text(res));
 
         // return ImageMagick PNG instead of Indexed PNG on error
         // note: ImageMagick can't handle semi-transparent pixels in 8-bit colormap PNG images
@@ -849,7 +849,7 @@ const std::vector<char> PNGRenderer::render(size_t *_size, pos_t *_pos, unsigned
 
     if (res != 0)
     {
-        std::printf("\nLodePNG error: %s\n", lodepng_error_text(res));
+        std::fprintf(stderr, "\nLodePNG error: %s\n", lodepng_error_text(res));
 
         // return ImageMagick PNG instead of Indexed PNG on error
         // note: ImageMagick can't handle semi-transparent pixels in 8-bit colormap PNG images
