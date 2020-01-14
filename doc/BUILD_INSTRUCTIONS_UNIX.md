@@ -14,7 +14,7 @@ On most distributions packages are split into multiple components.
 Required: `qtcore`, `qtgui`, `imagemagick` (with C++ bindings), `libpng`
 
 **Note to distributors:** Embedded dependencies are **modified** to fit the
-needs of the project. Using shared versions them is unsupported and may
+needs of the project. Using shared versions of them is unsupported and may
 cause problems or breakage. Ignoring this notice causes all support requests
 to be silently ignored and closed. You have been warned.
 
