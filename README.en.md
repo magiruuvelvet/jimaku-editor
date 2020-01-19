@@ -5,7 +5,8 @@ A work-in-progress subtitle editor with
 
 Already functional for many use cases.
 
-Examples and rendering tests available at [jimaku-editor-examples](https://github.com/magiruuvelvet/jimaku-editor-examples)
+Examples and rendering tests available at
+[jimaku-editor-examples](https://github.com/magiruuvelvet/jimaku-editor-examples)
 
 ## Disclaimer
 
@@ -84,7 +85,7 @@ All numeric values can be either negative or positive, unless otherwise mentione
    The alignment of the text on the screen.
 
    Possible values for `horizontal`: `left`, `center` (default), `right`\
-   Possible values for `vertical`: `right` (default), `left` (example image below is `right` aligned)
+   Possible values for `vertical`: `right` (default), `left`
 
  - `text-justify`
 
