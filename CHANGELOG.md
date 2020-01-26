@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.9-beta
+
+- improved error handling
+
+**Parser**
+- support for external style hints
+
 ## 0.8.5-beta
 
 **PGS Encoder**
