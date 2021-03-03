@@ -293,7 +293,7 @@ const std::vector<char> PNGRenderer::render(size_t *_size, pos_t *_pos, unsigned
     const QFont fontFurigana = QFont(_fontFamily.c_str(), int(_furiganaFontSize));
 
     // split lines
-    QStringList lines = text.split('\n', QString::KeepEmptyParts);
+    QStringList lines = text.split('\n', Qt::KeepEmptyParts);
 
     // calculate necessary size for subtitle image
     QSize size{0, 0};
