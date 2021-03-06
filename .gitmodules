@@ -1,3 +1,6 @@
 [submodule "libs/reproc"]
 	path = libs/reproc
 	url = https://github.com/DaanDeMeyer/reproc
+[submodule "cmake/modules"]
+	path = cmake/modules
+	url = https://github.com/magiruuvelvet/shared-cmake-modules.git
