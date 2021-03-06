@@ -2,7 +2,7 @@ set(CURRENT_TARGET "unit-tests")
 
 message(STATUS "\nConfiguring target ${CURRENT_TARGET}...")
 
-CreateTarget(${CURRENT_TARGET} EXECUTABLE unit-tests 17)
+CreateTarget(${CURRENT_TARGET} EXECUTABLE unit-tests C++ 17)
 
 target_link_libraries(${CURRENT_TARGET}
 PRIVATE

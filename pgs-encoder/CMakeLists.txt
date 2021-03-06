@@ -2,7 +2,7 @@ set(CURRENT_TARGET "pgs-encoder")
 
 message(STATUS "\nConfiguring target ${CURRENT_TARGET}...")
 
-CreateTarget(${CURRENT_TARGET} EXECUTABLE pgs-encoder 0)
+CreateTarget(${CURRENT_TARGET} EXECUTABLE pgs-encoder C 11)
 
 # find libpng
 pkg_check_modules(LIBPNG REQUIRED libpng)

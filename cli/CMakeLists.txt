@@ -2,7 +2,7 @@ set(CURRENT_TARGET "cli")
 
 message(STATUS "\nConfiguring target ${CURRENT_TARGET}...")
 
-CreateTarget(${CURRENT_TARGET} EXECUTABLE jimaku-renderer 17)
+CreateTarget(${CURRENT_TARGET} EXECUTABLE jimaku-renderer C++ 17)
 
 set(CLI_INCLUDE_DIR "${CURRENT_TARGET_DIR}")
 set(CLI_INCLUDE_DIR "${CURRENT_TARGET_DIR}" PARENT_SCOPE)

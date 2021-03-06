@@ -2,7 +2,7 @@ set(CURRENT_TARGET "subtitle-renderer")
 
 message(STATUS "\nConfiguring target ${CURRENT_TARGET}...")
 
-CreateTarget(${CURRENT_TARGET} STATIC subtitle-renderer 17)
+CreateTarget(${CURRENT_TARGET} STATIC subtitle-renderer C++ 17)
 
 # Find Qt Framework
 message(STATUS "Finding Qt...")

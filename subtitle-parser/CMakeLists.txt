@@ -2,7 +2,7 @@ set(CURRENT_TARGET "subtitle-parser")
 
 message(STATUS "\nConfiguring target ${CURRENT_TARGET}...")
 
-CreateTarget(${CURRENT_TARGET} STATIC subtitle-parser 17)
+CreateTarget(${CURRENT_TARGET} STATIC subtitle-parser C++ 17)
 
 set(SUBTITLEPARSER_INCLUDE_DIR "${CURRENT_TARGET_DIR}/include")
 set(SUBTITLEPARSER_INCLUDE_DIR "${CURRENT_TARGET_DIR}/include" PARENT_SCOPE)
