@@ -1,12 +1,9 @@
 cmake_minimum_required(VERSION 3.14)
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_CURRENT_LIST_DIR}/cmake/modules")
 
-include(ProjectSetup)
-
 # 字幕エーディタ (Subtitle Editor)
 project(jimaku-editor CXX C)
-
-DetectAdditionalDebugOptions()
+include(ProjectSetup)
 
 # Setup project version config
 option(INCLUDE_GIT_TRACKING "Include git version tracking" ON)
