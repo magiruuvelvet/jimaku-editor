@@ -1,7 +1,5 @@
 set(CURRENT_TARGET "subtitle-renderer")
 
-message(STATUS "\nConfiguring target ${CURRENT_TARGET}...")
-
 CreateTarget(${CURRENT_TARGET} STATIC subtitle-renderer C++ 17)
 
 # Find Qt Framework
@@ -47,5 +45,3 @@ endif()
 add_library(SubtitleRendererInterface INTERFACE)
 target_include_directories(SubtitleRendererInterface INTERFACE "${SUBTITLERENDERER_INCLUDE_DIR}")
 target_link_libraries(SubtitleRendererInterface INTERFACE ${CURRENT_TARGET})
-
-message(STATUS "Configured target ${CURRENT_TARGET}.\n")

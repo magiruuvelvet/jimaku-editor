@@ -1,7 +1,5 @@
 set(CURRENT_TARGET "subtitle-parser")
 
-message(STATUS "\nConfiguring target ${CURRENT_TARGET}...")
-
 CreateTarget(${CURRENT_TARGET} STATIC subtitle-parser C++ 17)
 
 set(SUBTITLEPARSER_INCLUDE_DIR "${CURRENT_TARGET_DIR}/include")
@@ -18,5 +16,3 @@ endif()
 add_library(SubtitleParserInterface INTERFACE)
 target_include_directories(SubtitleParserInterface INTERFACE "${SUBTITLEPARSER_INCLUDE_DIR}")
 target_link_libraries(SubtitleParserInterface INTERFACE ${CURRENT_TARGET})
-
-message(STATUS "Configured target ${CURRENT_TARGET}.\n")

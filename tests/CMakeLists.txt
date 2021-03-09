@@ -1,7 +1,5 @@
 set(CURRENT_TARGET "unit-tests")
 
-message(STATUS "\nConfiguring target ${CURRENT_TARGET}...")
-
 CreateTarget(${CURRENT_TARGET} EXECUTABLE unit-tests C++ 17)
 
 target_link_libraries(${CURRENT_TARGET}
@@ -20,5 +18,3 @@ target_compile_definitions(${CURRENT_TARGET} PRIVATE "-DUNIT_TEST_TEMPORARY_DIR=
 
 message(STATUS "Directory of unit tests source code: ${UNIT_TEST_CURRENT_DIR}")
 message(STATUS "Temporary directory for unit tests: ${UNIT_TEST_TEMPORARY_DIR}")
-
-message(STATUS "Configured target ${CURRENT_TARGET}.\n")

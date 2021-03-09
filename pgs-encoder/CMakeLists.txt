@@ -1,7 +1,5 @@
 set(CURRENT_TARGET "pgs-encoder")
 
-message(STATUS "\nConfiguring target ${CURRENT_TARGET}...")
-
 CreateTarget(${CURRENT_TARGET} EXECUTABLE pgs-encoder C 11)
 
 # find libpng
@@ -29,5 +27,3 @@ endif()
 
 set_target_properties(${CURRENT_TARGET} PROPERTIES PREFIX "")
 set_target_properties(${CURRENT_TARGET} PROPERTIES OUTPUT_NAME "pgssup")
-
-message(STATUS "Configured target ${CURRENT_TARGET}.\n")

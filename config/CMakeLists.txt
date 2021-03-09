@@ -1,7 +1,5 @@
 set(CURRENT_TARGET "config")
 
-message(STATUS "\nConfiguring target ${CURRENT_TARGET}...")
-
 CreateTarget(${CURRENT_TARGET} STATIC project-config C++ 17)
 
 set(PROJECTCONFIG_INCLUDE_DIR "${CURRENT_TARGET_DIR}/include")
@@ -18,5 +16,3 @@ endif()
 add_library(ProjectConfigInterface INTERFACE)
 target_include_directories(ProjectConfigInterface INTERFACE "${PROJECTCONFIG_INCLUDE_DIR}")
 target_link_libraries(ProjectConfigInterface INTERFACE ${CURRENT_TARGET})
-
-message(STATUS "Configured target ${CURRENT_TARGET}.\n")
