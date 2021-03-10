@@ -20,12 +20,12 @@ pkg_check_modules(MAGICKPP REQUIRED Magick++)
 message(STATUS "Magick++ library: ${IMAGICKPP_LIBRARIES}")
 message(STATUS "Magick++ include directory: ${MAGICKPP_INCLUDE_DIRS}")
 
-set(SUBTITLERENDERER_INCLUDE_DIR "${CURRENT_TARGET_DIR}/include")
-set(SUBTITLERENDERER_INCLUDE_DIR "${CURRENT_TARGET_DIR}/include" PARENT_SCOPE)
+set(SUBTITLERENDERER_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
+set(SUBTITLERENDERER_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include" PARENT_SCOPE)
 message(STATUS "${CURRENT_TARGET} include directory: ${SUBTITLERENDERER_INCLUDE_DIR}")
 
 target_include_directories(${CURRENT_TARGET} PRIVATE ${MAGICKPP_INCLUDE_DIRS})
-target_include_directories(${CURRENT_TARGET} PRIVATE "${CURRENT_TARGET_DIR}/include/renderer")
+target_include_directories(${CURRENT_TARGET} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/renderer")
 
 target_link_libraries(${CURRENT_TARGET}
 PUBLIC

@@ -2,11 +2,11 @@ set(CURRENT_TARGET "config")
 
 CreateTarget(${CURRENT_TARGET} STATIC project-config C++ 17)
 
-set(PROJECTCONFIG_INCLUDE_DIR "${CURRENT_TARGET_DIR}/include")
-set(PROJECTCONFIG_INCLUDE_DIR "${CURRENT_TARGET_DIR}/include" PARENT_SCOPE)
+set(PROJECTCONFIG_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
+set(PROJECTCONFIG_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include" PARENT_SCOPE)
 message(STATUS "${CURRENT_TARGET} include directory: ${PROJECTCONFIG_INCLUDE_DIR}")
 
-target_include_directories(${CURRENT_TARGET} PRIVATE "${CURRENT_TARGET_DIR}/include/config")
+target_include_directories(${CURRENT_TARGET} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/config")
 
 # update version file on changes
 if (INCLUDE_GIT_TRACKING)
