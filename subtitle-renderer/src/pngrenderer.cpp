@@ -19,6 +19,8 @@
 #include <QBuffer>
 #include <QRegularExpression>
 
+#include <cstring>
+
 // TODO:
 //  -> furigana-spacing
 //  -> horizontal-numbers
