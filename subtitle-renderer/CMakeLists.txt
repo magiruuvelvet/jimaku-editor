@@ -16,7 +16,7 @@ add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x060000)
 add_definitions(-DQT_NO_FOREACH)
 
 # find ImageMagick C++ library
-pkg_check_modules(MAGICKPP REQUIRED Magick++)
+pkg_check_modules(MAGICKPP REQUIRED "Magick++>=7.0") # v6 has a different API and is not supported
 message(STATUS "Magick++ library: ${IMAGICKPP_LIBRARIES}")
 message(STATUS "Magick++ include directory: ${MAGICKPP_INCLUDE_DIRS}")
 

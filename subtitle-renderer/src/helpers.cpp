@@ -17,7 +17,7 @@ unsigned cropDetectionRow(Magick::Image *image, bool fromTop)
             bool quit = false;
 
             // image width
-            const auto quant = image->getConstPixels(0, row, image->size().width(), 1);
+            const Magick::Quantum *quant = image->getConstPixels(0, row, image->size().width(), 1);
 
             // pixel count (RGBA => width*4)
             for (auto col = 0U; col < image->size().width() * 4; ++col)
@@ -44,7 +44,7 @@ unsigned cropDetectionRow(Magick::Image *image, bool fromTop)
             bool quit = false;
 
             // image width
-            const auto quant = image->getConstPixels(0, row, image->size().width(), 1);
+            const Magick::Quantum *quant = image->getConstPixels(0, row, image->size().width(), 1);
 
             // pixel count (RGBA => width*4)
             for (auto col = 0U; col < image->size().width() * 4; ++col)
