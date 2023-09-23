@@ -680,6 +680,9 @@ int main(int argc, char *argv[])
         png_read_end(png_ptr, end_info);
         png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
 
+        // close PNG file here as it is no longer needed
+        fclose(pngf);
+
         // 0x17 (WDS)
         supdata[supt] = 0x50;
         supdata[supt + 1] = 0x47;
