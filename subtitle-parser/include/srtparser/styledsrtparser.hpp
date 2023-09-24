@@ -27,11 +27,13 @@ public:
         FontFamily,
         FontSize,
         FontColor,
+        FontStyle,
         HorizontalNumbers,
         FuriganaSpacing,
         FuriganaDistance,
         FuriganaFontSize,
         FuriganaFontColor,
+        FuriganaFontStyle,
         LineSpaceReduction,
         FuriganaLineSpaceReduction,
         BorderColor,
@@ -131,11 +133,13 @@ protected:
             case FontFamily:            return "font-family";
             case FontSize:              return "font-size";
             case FontColor:             return "font-color";
+            case FontStyle:             return "font-style";
             case HorizontalNumbers:     return "horizontal-numbers";
             case FuriganaSpacing:       return "furigana-spacing";
             case FuriganaDistance:      return "furigana-distance";
             case FuriganaFontSize:      return "furigana-font-size";
             case FuriganaFontColor:     return "furigana-font-color";
+            case FuriganaFontStyle:     return "furigana-font-style";
             case LineSpaceReduction:    return "line-space-reduction";
             case FuriganaLineSpaceReduction: return "furigana-line-space-reduction";
             case BorderColor:           return "border-color";

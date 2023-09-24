@@ -112,6 +112,22 @@ static bool hasLineFurigana(const QString &line)
     return !furiganaPairs.empty();
 }
 
+static const QFont compileFont(const std::string &fontFamily, unsigned long fontSize, const std::string &fontStyle)
+{
+    QFont font(fontFamily.c_str(), int(fontSize));
+
+    if (fontStyle == "italic") {
+        font.setItalic(true);
+    } else if (fontStyle == "bold") {
+        font.setBold(true);
+    } else if (fontStyle == "bold-italic") {
+        font.setBold(true);
+        font.setItalic(true);
+    }
+
+    return font;
+}
+
 static QStringList splitIntoCharacters(const QString &str)
 {
     QStringList chars;
@@ -291,8 +307,8 @@ PNGRenderer::PNGRenderer(const std::string &text, const std::string &fontFamily,
 const std::vector<char> PNGRenderer::render(size_t *_size, pos_t *_pos, unsigned long *color_count) const
 {
     const QString text = QString::fromUtf8(_text.c_str());
-    const QFont font = QFont(_fontFamily.c_str(), int(_fontSize));
-    const QFont fontFurigana = QFont(_fontFamily.c_str(), int(_furiganaFontSize));
+    const QFont font = compileFont(_fontFamily, _fontSize, _fontStyle);
+    const QFont fontFurigana = compileFont(_fontFamily, _furiganaFontSize, _furiganaFontStyle);
 
     // split lines
     QStringList lines = text.split('\n', Qt::KeepEmptyParts);

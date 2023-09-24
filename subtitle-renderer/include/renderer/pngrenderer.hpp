@@ -75,6 +75,11 @@ public:
         _fontColor = fontColor;
     }
 
+    inline void setFontStyle(const std::string &fontStyle)
+    {
+        _fontStyle = fontStyle;
+    }
+
     inline void setFuriganaFontSize(unsigned long furiganaFontSize)
     {
         _furiganaFontSize = furiganaFontSize;
@@ -83,6 +88,11 @@ public:
     inline void setFuriganaFontColor(const std::string &furiganaFontColor)
     {
         _furiganaFontColor = furiganaFontColor;
+    }
+
+    inline void setFuriganaFontStyle(const std::string &furiganaFontStyle)
+    {
+        _furiganaFontStyle = furiganaFontStyle;
     }
 
     inline void setLineSpaceReduction(int lineSpaceReduction)
@@ -179,8 +189,10 @@ private:
     std::string _fontFamily;
     unsigned long _fontSize = 46;
     std::string _fontColor = "#f1f1f1";
+    std::string _fontStyle = "regular";
     unsigned long _furiganaFontSize = 20;
     std::string _furiganaFontColor = "#f1f1f1";
+    std::string _furiganaFontStyle = "regular";
     int _lineSpaceReduction = 0;
     int _furiganaLineSpaceReduction = 0;
     TextJustify _textJustify = TextJustify::Center;

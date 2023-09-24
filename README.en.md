@@ -143,6 +143,13 @@ All numeric values can be either negative or positive, unless otherwise mentione
 
    Recommended colors: `#e6e6e6`, `#d9d9d9`
 
+ - `font-style`
+
+   The font style to use for rendering. This affects the entire subtitle frame, except Furigana.\
+   Default is `regular`.
+
+   Supported values: `regular`, `italic`, `bold`, `bold-italic`
+
  - `horizontal-numbers`
 
    This property only applies when `vertical` text direction is used.
@@ -180,6 +187,14 @@ All numeric values can be either negative or positive, unless otherwise mentione
    Default is `#f1f1f1`.
 
    Recommended colors: `#e6e6e6`, `#d9d9d9`
+
+ - `furigana-font-style`
+
+   The font style to use for rendering of Furigana. This affects all Furigana in the entire subtitle frame.\
+   Styling individual parts of the Furigana is not supported.\
+   Default is `regular`.
+
+   Supported values: `regular`, `italic`, `bold`, `bold-italic`
 
  - `line-space-reduction`, `furigana-line-space-reduction`
 

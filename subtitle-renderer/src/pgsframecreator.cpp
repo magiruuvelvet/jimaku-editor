@@ -141,6 +141,8 @@ PGSFrameCreator::ErrorCode PGSFrameCreator::render(const std::string &_out_path,
         // font
         renderer.setFontColor(sub.property(StyledSubtitleItem::FontColor));
         renderer.setFuriganaFontColor(sub.property(StyledSubtitleItem::FuriganaFontColor));
+        renderer.setFontStyle(sub.property(StyledSubtitleItem::FontStyle));
+        renderer.setFuriganaFontStyle(sub.property(StyledSubtitleItem::FuriganaFontStyle));
 
         // border
         renderer.setBorderColor(sub.property(StyledSubtitleItem::BorderColor));
